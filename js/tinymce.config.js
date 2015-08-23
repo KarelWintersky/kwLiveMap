@@ -1,7 +1,7 @@
 var tiny_config = {
     'full' : {
         theme: "modern",
-        skin: "light",
+        skin: "lightgray",
         language: 'ru',
 
         forced_root_block : "",

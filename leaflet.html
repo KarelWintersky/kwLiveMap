@@ -39,26 +39,24 @@
                 crs: L.CRS.Simple
             });
 
-            // dimensions of the image
             var     w = 2096,
                     h = 1653,
                     url = 'images/maps/trollfjorden_xl.png';
-            // url = 'http://trollfjorden.wintersky.ru/trollfjorden_xl.png';
-
 
             // calculate the edges of the image, in coordinate space
             var southWest = map.unproject([0, h], map.getMaxZoom()-1);
             var northEast = map.unproject([w, 0], map.getMaxZoom()-1);
             var bounds = new L.LatLngBounds(southWest, northEast);
 
-            // add the image overlay,
-            // so that it covers the entire map
+            // add the image overlay, so that it covers the entire map
             L.imageOverlay(url, bounds).addTo(map);
 
             // tell leaflet that the map is exactly as big as the image
             map.setMaxBounds(bounds);
-
+            // set view position
             map.setView(new L.LatLng(-100, 200), 2);
+
+
 
 
 
