@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>kwRPG Map Engine :: Trollfjorden</title>
+    <title>kwRPG Map Engine :: Trollfjorden (leaflet)</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <!-- styles -->
     <link rel="stylesheet" type="text/css" href="css/main.css" />
@@ -18,55 +18,77 @@
     <!-- leaflet -->
     <link rel="stylesheet" href="css/leaflet.css" />
     <script type="text/javascript" src="js/leaflet.js"></script>
+    <link rel="stylesheet" href="js/leaflet/L.Control.MousePosition.css">
+    <script type="text/javascript" src="js/leaflet/L.Control.MousePosition.js"></script>
+    <script type="text/javascript" src="js/leaflet/singleclick.js"></script>
 
     <!-- internal js -->
     <script type="text/javascript">
         var hex_loaded_content = '';
         var hex_current_coords = '';
 
-        // create the slippy map
-
-
-
         $(document).ready(function(){
             $.ajaxSetup({cache: false});
             /* init leaflet */
+            var leaflet_config = {
+                w:          4192,
+                h:          3306,
+                url:        'images/maps/trollfjorden_xl.png',
+                ief:        4, // image enlarge factor
+                min_zoom:   1,
+                max_zoom:   5,
+                curr_zoom:  2.5
+            };
+
             var map = L.map('leafletmap', {
-                minZoom: 1,
-                maxZoom: 4,
-                center: [0, 0],
-                zoom: 2,
-                crs: L.CRS.Simple
+                minZoom:    leaflet_config.min_zoom,
+                maxZoom:    leaflet_config.max_zoom,
+                zoom:       leaflet_config.curr_zoom,
+                center:     [-100, 120],
+                crs:        L.CRS.Simple
             });
 
-            var     w = 2096,
-                    h = 1653,
-                    url = 'images/maps/trollfjorden_xl.png';
-
             // calculate the edges of the image, in coordinate space
-            var southWest = map.unproject([0, h], map.getMaxZoom()-1);
-            var northEast = map.unproject([w, 0], map.getMaxZoom()-1);
+            var southWest = map.unproject([0, leaflet_config.h], map.getMaxZoom()-1);
+            var northEast = map.unproject([leaflet_config.w, 0], map.getMaxZoom()-1);
             var bounds = new L.LatLngBounds(southWest, northEast);
 
             // add the image overlay, so that it covers the entire map
-            L.imageOverlay(url, bounds).addTo(map);
+            L.imageOverlay(leaflet_config.url, bounds).addTo(map);
 
             // tell leaflet that the map is exactly as big as the image
             map.setMaxBounds(bounds);
             // set view position
-            map.setView(new L.LatLng(-100, 200), 2);
+            // map.setView(new L.LatLng(-100, 200), 2);
+
+            L.control.mousePosition({
+                numDigits   : 2,
+                lngFirst    :   true,
+                latFormatter: function(data){
+                    return -Math.floor(data);
+                },
+                lngFormatter: function(data){
+                    return Math.floor(data);
+                }
+            }).addTo(map);
+
+            // hook mouseclick
+            map.on('singleclick',function ( e ) {
+                var leaflet_coords = {
+                    x:      Math.floor(e.latlng.lng),
+                    y:     -Math.floor(e.latlng.lat)
+                };
 
 
 
+                var pow_factor = Math.pow(2, leaflet_config.max_zoom - leaflet_config.ief + 1);
+                var mx = leaflet_coords.x * pow_factor;
+                var my = leaflet_coords.y * pow_factor;
 
+                // load hex info
 
-
-            /* binds */
-            $("#themap").on('click', function(event){
-                var coords = getXYCoords(this, event);
-                var hex = getHex(coords.x, coords.y);
+                var hex = getHex(mx, my);
                 hex_current_coords = pad(hex.col, 2) + pad(hex.row, 2);
-
                 if (loadHexInfo(hex, "#colorboxed-view-content")) {
                     var str_title =
                             '&nbsp;<img src="images/cursor_drag_arrow_2.png" align="bottom" width="16" width="16">&nbsp;&nbsp;'
@@ -83,7 +105,7 @@
                         title: str_title
                     });
                 }
-            }); // themap click
+            } );
 
             $(document).on('click', '#actor-edit', function(){
                 document.location.href = 'edit.php?id='+ hex_current_coords;
@@ -98,12 +120,9 @@
 </head>
 <body>
 <h3>Trollfjoren live map</h3>
+Нажмите на <strike>кексик</strike> гексик карты и... =^.^=<br><br>
 <div id="leafletmap"></div>
 
-<!-- <img src="images/maps/trollfjordenmap.png" id="themap" border="1">
-<br>
-Нажмите на <strike>кексик</strike> гексик карты и... =^.^=
--->
 <div style="display:none">
     <div id="colorboxed-view" style="padding:10px; background:#fff;">
         <div id="colorboxed-view-content"></div>

@@ -60,7 +60,8 @@
     </script>
 </head>
 <body>
-<img src="images/maps/trollfjordenmap.png" id="themap" border="1">
+<!-- <img src="images/maps/trollfjordenmap.png" id="themap" border="1"> -->
+<img src="images/maps/trollfjorden_l.png" id="themap" border="1">
 <br>
 Нажмите на <strike>кексик</strike> гексик карты и... =^.^= <a href="leaflet.html">Leaflet version</a>
 <div style="display:none">
