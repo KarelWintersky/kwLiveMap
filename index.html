@@ -3,32 +3,84 @@
 <head>
     <title>kwRPG Map Engine :: Trollfjorden</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!-- styles -->
     <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" href="css/colorbox.css">
+    <!-- core js -->
     <script type="text/javascript" src="js/html5shiv.js"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.colorbox.js"></script>
+    <script type="text/javascript" src="js/jquery.tiny-draggable.js"></script>
+    <!-- custom js -->
     <script type="text/javascript" src="js/kwrpg.core.js"></script>
-    <!-- -->
+    <!-- map js -->
     <script type="text/javascript" src="js/map.trollfjorden.js"></script>
 
+    <!-- internal js -->
     <script type="text/javascript">
+        function loadHexInfo(col, row)
+        {
+            if (col && row) {
+            }
+        }
 
         $(document).ready(function(){
+            $.ajaxSetup({cache: false});
+
             $("#themap").on('click', function(event){
                 var coords = getXYCoords(this, event);
-
                 var hex = getHex(coords.x, coords.y);
-                var hexcoord = pad(hex.col, 2) + pad(hex.row, 2);
-                console.log(hexcoord);
+
+                if (hex.row + hex.col != 0)
+                {
+                    var request = $.ajax({
+                        url:    'core/hex.getinfo.php?'+$.param(hex),
+                        async:  false,
+                        type:   'GET',
+                    });
+                }
 
 
+
+                request.done(function(data){
+                    $("#colorboxed-hex-coords").html(hex.hexcoord);
+                    $("#colorboxed-hex-content").html(data);
+
+                    var str_title =
+                            '&nbsp;<img src="images/cursor_drag_arrow_2.png" align="bottom" width="16" width="16">&nbsp;&nbsp;'
+                            + 'Координаты: </span>'
+                            + hex.hexcoord
+                            + '&nbsp;&nbsp;&nbsp;';
+
+                    $.colorbox({
+                        inline: true,
+                        href: '#colorboxed',
+                        width: 800,
+                        height: 600,
+                        title: str_title
+                    });
+                });
+
+                $("#colorbox").tinyDraggable({
+                    handle: '#cboxTitle'
+                });
             });
 
         });
     </script>
 </head>
 <body>
-<img src="images/maps/trollfjordenmap.png" id="themap" border="0">
+<img src="images/maps/trollfjordenmap.png" id="themap" border="1">
+
+<div style="display:none">
+    <div id="colorboxed" style="padding:10px; background:#fff;">
+
+        <div id="colorboxed-hex-content" class="content-scrollable">
+
+        </div>
 
 
+    </div>
+</div>
 </body>
 </html>

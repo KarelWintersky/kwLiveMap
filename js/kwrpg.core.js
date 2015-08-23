@@ -1,9 +1,20 @@
 var sqrt3 = Math.sqrt(3);
 
-function pad(a,b){return(1e15+a+"").slice(-b)}
+/**
+ * Дополняет value нулями слева до полной длины строкового представления длиной stringsize.
+ * @param value
+ * @param stringsize
+ * @return {*|Blob}
+ */
+function pad(value,stringsize){return(1e15+value+"").slice(-stringsize)}
 
-function floor(x) { return Math.floor(x); }
-
+/**
+ * Возвращает координаты точки, на которую кликнули по картинке.
+ * Вызов: getXYCoords('#imageid', event);
+ * @param target - картинка
+ * @param event - событие, вызвавшее клик
+ * @return {Object}
+ */
 function getXYCoords(target, event)
 {
     var $target = $(target);
@@ -14,6 +25,13 @@ function getXYCoords(target, event)
         y:  (event.pageY - offset.top - bordersize) | 0
     }
 }
+
+/**
+ * Возвращает объект-вектор
+ * @param X
+ * @param Y
+ * @return { x: X, y: Y}
+ */
 function Vector(X,Y)
 {
     return {
@@ -22,6 +40,13 @@ function Vector(X,Y)
     }
 }
 
+
+/**
+ *
+ * @param mx
+ * @param my
+ * @return { col, row, hexcoord (col+row)}
+ */
 function getHex(mx, my)
 {
     var r = map_object.hexgrid_size;
@@ -66,6 +91,7 @@ function getHex(mx, my)
     // снова инвертирование, только вывода - X отвечает за высоту, Y за ширину
     return {
         row     :   ++X,
-        col     :   ++Y
+        col     :   ++Y,
+        hexcoord:   pad(Y, 2) + pad(X, 2)
     }
 }
