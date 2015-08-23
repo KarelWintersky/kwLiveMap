@@ -15,13 +15,44 @@
     <script type="text/javascript" src="js/kwrpgmaps.core.js"></script>
     <!-- map js -->
     <script type="text/javascript" src="js/map.trollfjorden.js"></script>
+    <!-- leaflet -->
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <script type="text/javascript" src="js/leaflet.js"></script>
 
     <!-- internal js -->
     <script type="text/javascript">
         var hex_loaded_content = '';
         var hex_current_coords = '';
 
+        // create the slippy map
+        var map = L.map('leafletmap', {
+            minZoom: 1,
+            maxZoom: 4,
+            center: [0, 0],
+            zoom: 1,
+            crs: L.CRS.Simple
+        });
 
+        // dimensions of the image
+        var     w = 2096,
+                h = 1653,
+                url = 'images/maps/trollfjorden_xl.png';
+                // url = 'http://trollfjorden.wintersky.ru/trollfjorden_xl.png';
+
+
+        // calculate the edges of the image, in coordinate space
+        var southWest = map.unproject([0, h], map.getMaxZoom()-1);
+        var northEast = map.unproject([w, 0], map.getMaxZoom()-1);
+        var bounds = new L.LatLngBounds(southWest, northEast);
+
+        // add the image overlay,
+        // so that it covers the entire map
+        L.imageOverlay(url, bounds).addTo(map);
+
+        // tell leaflet that the map is exactly as big as the image
+        map.setMaxBounds(bounds);
+
+/*
         $(document).ready(function(){
             $.ajaxSetup({cache: false});
 
@@ -57,12 +88,16 @@
                 exclude: 'button'
             });
         });
+        */
     </script>
 </head>
 <body>
-<img src="images/maps/trollfjordenmap.png" id="themap" border="1">
+<div id="leafletmap"></div>
+
+<!-- <img src="images/maps/trollfjordenmap.png" id="themap" border="1">
 <br>
-Нажмите на <strike>кексик</strike> гексик карты и... =^.^= <a href="leaflet.html">Leaflet version</a>
+Нажмите на <strike>кексик</strike> гексик карты и... =^.^=
+-->
 <div style="display:none">
     <div id="colorboxed-view" style="padding:10px; background:#fff;">
         <div id="colorboxed-view-content"></div>

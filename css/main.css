@@ -7,3 +7,11 @@
 button {
     font-size: large;
 }
+
+/* Leaflet */
+#leafletmap {
+    width: 800px;
+    height: 600px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}

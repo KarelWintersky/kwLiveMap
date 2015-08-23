@@ -95,3 +95,27 @@ function getHex(mx, my)
         hexcoord:   pad(Y, 2) + pad(X, 2)
     }
 }
+
+/**
+ *
+ * @param hexcoord
+ * @param target
+ * @return {Boolean}
+ */
+function loadHexInfo(hexcoord, target)
+{
+    if (hexcoord.col && hexcoord.row) {
+        var request = $.ajax({
+            url:    'core/get.content.php?'+$.param(hexcoord),
+            async:  false,
+            type:   'GET',
+        });
+        request.done(function(data){
+            hex_loaded_content = data;
+            $(target).html(data)
+        });
+        return true;
+    } else {
+        return false;
+    }
+}
