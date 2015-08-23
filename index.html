@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>kwRPG Map Engine :: Trollfjorden</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <script type="text/javascript" src="js/html5shiv.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/kwrpg.core.js"></script>
+    <!-- -->
+    <script type="text/javascript" src="js/map.trollfjorden.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            $("#themap").on('click', function(event){
+                var coords = getXYCoords(this, event);
+
+                var hex = getHex(coords.x, coords.y);
+                var hexcoord = pad(hex.col, 2) + pad(hex.row, 2);
+                console.log(hexcoord);
+
+
+            });
+
+        });
+    </script>
+</head>
+<body>
+<img src="images/maps/trollfjordenmap.png" id="themap" border="0">
+
+
+</body>
+</html>
