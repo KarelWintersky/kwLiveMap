@@ -25,37 +25,45 @@
         var hex_current_coords = '';
 
         // create the slippy map
-        var map = L.map('leafletmap', {
-            minZoom: 1,
-            maxZoom: 4,
-            center: [0, 0],
-            zoom: 1,
-            crs: L.CRS.Simple
-        });
-
-        // dimensions of the image
-        var     w = 2096,
-                h = 1653,
-                url = 'images/maps/trollfjorden_xl.png';
-                // url = 'http://trollfjorden.wintersky.ru/trollfjorden_xl.png';
 
 
-        // calculate the edges of the image, in coordinate space
-        var southWest = map.unproject([0, h], map.getMaxZoom()-1);
-        var northEast = map.unproject([w, 0], map.getMaxZoom()-1);
-        var bounds = new L.LatLngBounds(southWest, northEast);
 
-        // add the image overlay,
-        // so that it covers the entire map
-        L.imageOverlay(url, bounds).addTo(map);
-
-        // tell leaflet that the map is exactly as big as the image
-        map.setMaxBounds(bounds);
-
-/*
         $(document).ready(function(){
             $.ajaxSetup({cache: false});
+            /* init leaflet */
+            var map = L.map('leafletmap', {
+                minZoom: 1,
+                maxZoom: 4,
+                center: [0, 0],
+                zoom: 2,
+                crs: L.CRS.Simple
+            });
 
+            // dimensions of the image
+            var     w = 2096,
+                    h = 1653,
+                    url = 'images/maps/trollfjorden_xl.png';
+            // url = 'http://trollfjorden.wintersky.ru/trollfjorden_xl.png';
+
+
+            // calculate the edges of the image, in coordinate space
+            var southWest = map.unproject([0, h], map.getMaxZoom()-1);
+            var northEast = map.unproject([w, 0], map.getMaxZoom()-1);
+            var bounds = new L.LatLngBounds(southWest, northEast);
+
+            // add the image overlay,
+            // so that it covers the entire map
+            L.imageOverlay(url, bounds).addTo(map);
+
+            // tell leaflet that the map is exactly as big as the image
+            map.setMaxBounds(bounds);
+
+            map.setView(new L.LatLng(-100, 200), 2);
+
+
+
+
+            /* binds */
             $("#themap").on('click', function(event){
                 var coords = getXYCoords(this, event);
                 var hex = getHex(coords.x, coords.y);
@@ -88,10 +96,10 @@
                 exclude: 'button'
             });
         });
-        */
     </script>
 </head>
 <body>
+<h3>Trollfjoren live map</h3>
 <div id="leafletmap"></div>
 
 <!-- <img src="images/maps/trollfjordenmap.png" id="themap" border="1">
