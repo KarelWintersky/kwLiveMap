@@ -49,7 +49,7 @@
             }); // themap click
 
             $(document).on('click', '#actor-edit', function(){
-                document.location.href = 'edit.php?id='+ hex_current_coords;
+                document.location.href = 'edit.php?frontend=imagemap&id='+ hex_current_coords;
             });
 
             $("#colorbox").tinyDraggable({
@@ -60,7 +60,6 @@
     </script>
 </head>
 <body>
-<!-- <img src="images/maps/trollfjordenmap.png" id="themap" border="1"> -->
 <img src="images/maps/trollfjorden_l.png" id="themap" border="1">
 <br>
 Нажмите на <strike>кексик</strike> гексик карты и... =^.^= <a href="leaflet.html">Leaflet version</a>

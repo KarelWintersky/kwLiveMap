@@ -78,14 +78,11 @@
                     x:      Math.floor(e.latlng.lng),
                     y:     -Math.floor(e.latlng.lat)
                 };
-
-
-
                 var pow_factor = Math.pow(2, leaflet_config.max_zoom - leaflet_config.ief + 1);
                 var mx = leaflet_coords.x * pow_factor;
                 var my = leaflet_coords.y * pow_factor;
 
-                // load hex info
+                // --------------------------------- load hex info
 
                 var hex = getHex(mx, my);
                 hex_current_coords = pad(hex.col, 2) + pad(hex.row, 2);
@@ -107,6 +104,7 @@
                 }
             } );
 
+            // other binds
             $(document).on('click', '#actor-edit', function(){
                 document.location.href = 'edit.php?id='+ hex_current_coords;
             });
