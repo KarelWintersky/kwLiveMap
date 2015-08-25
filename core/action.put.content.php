@@ -14,15 +14,6 @@ $callback
     ? '/map/leaflet.html'
     : '/map/index.html';
 
-try {
-    $dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
-    $dbh->exec("SET NAMES utf8");
-    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-}
-catch (PDOException $e) {
-    echo $e->getMessage();
-}
-
 $data = array(
     'hexcol'    =>  intval($_POST['hexcoord_col']),
     'hexrow'    =>  intval($_POST['hexcoord_row']),
@@ -34,6 +25,23 @@ $data = array(
     'edit_reason'=> $_POST['edit_reason'],
     'ip'        =>  $_SERVER['REMOTE_ADDR']
 );
+
+if ($data['editor'] != '')
+    setcookie('kwtrpglme_auth_editorname', $data['editor']);
+
+
+
+
+try {
+    $dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
+    $dbh->exec("SET NAMES utf8");
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+}
+catch (PDOException $e) {
+    echo $e->getMessage();
+}
+
+
 
 try{
     $sth = $dbh->prepare("INSERT INTO lme_map_tiles_data (hexcol, hexrow, hexcoords, title, content, editor, edit_date, edit_reason, ip)
