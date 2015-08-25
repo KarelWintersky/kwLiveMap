@@ -46,5 +46,11 @@ catch (PDOException $e) {
 $dbh = null;
 
 ?>
-<h4><?php echo $template['title']; ?></h4>
-<?php echo $template['text']; ?>
+<hr>
+<fieldset class="region-content">
+    <legend> <?php echo $template['title']; ?> </legend>
+
+    <?php echo $template['text']; ?>
+</fieldset>
+
+

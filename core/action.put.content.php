@@ -5,8 +5,6 @@ require_once 'core.auth.php';
 require_once 'core.pdo.php';
 global $CONFIG;
 
-var_dump($_POST);
-
 // check access rights
 $is_can_edit = auth_CanIEdit();
 if (!$is_can_edit) die('Hacking attempt!');
@@ -50,7 +48,7 @@ catch (PDOException $e) {
 
 $dbh = null;
 
-$timeout = 600;
+$timeout = 5;
 ?>
 <!DOCTYPE html>
 <html>

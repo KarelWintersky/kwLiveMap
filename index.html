@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="css/main.css" />
     <link rel="stylesheet" href="css/colorbox.css">
     <!-- core js -->
+    <link href='https://fonts.googleapis.com/css?family=Didact+Gothic&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
     <script type="text/javascript" src="js/html5shiv.js"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.colorbox.js"></script>
@@ -29,8 +30,6 @@
                 var coords = getXYCoords(this, event);
                 var hex_coords = getHex(coords.x, coords.y);
                 hex_current_coords = hex_coords;
-
-                // hex_current_coords = pad(hex.col, 2) + pad(hex.row, 2);
 
                 var hex_status = checkHexContent(hex_coords);
                 if (hex_status['result'] == 'ignore') return false;
