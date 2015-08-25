@@ -119,3 +119,30 @@ function loadHexInfo(hexcoord, target)
         return false;
     }
 }
+
+/**
+ * Проверяет в базе наличие информации о гексе с координатами, описанными в hexcoord.
+ * Возвращает:
+ * -    anydata - есть какая-то инфа для просмотра
+ * -    ignore  - инфы нет, но мы не можем редактировать гекс и клик игнорируем
+ * -    empty   - инфы нет, но мы можем редактировать гекс
+ * @param hexcoord
+ * @return {ignore|empty|anydata}
+ */
+function checkHexContent(hexcoord)
+{
+    var ret;
+    if (hexcoord.col && hexcoord.row) {
+        var request = $.ajax({
+            url:    'core/ajax.check.content.php?'+ $.param(hexcoord),
+            async:  false,
+            type:   'GET'
+        });
+        request.done(function(data){
+            ret = $.parseJSON(data);
+        });
+    } else {
+        ret['result'] = 'ignore';
+    }
+    return ret;
+}

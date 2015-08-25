@@ -27,29 +27,57 @@
 
             $("#themap").on('click', function(event){
                 var coords = getXYCoords(this, event);
-                var hex = getHex(coords.x, coords.y);
-                hex_current_coords = pad(hex.col, 2) + pad(hex.row, 2);
+                var hex_coords = getHex(coords.x, coords.y);
+                hex_current_coords = hex_coords;
 
-                if (loadHexInfo(hex, "#colorboxed-view-content")) {
-                    var str_title =
-                            '&nbsp;<img src="images/cursor_drag_arrow_2.png" align="bottom" width="16" width="16">&nbsp;&nbsp;'
-                                    + 'Координаты: </span>'
-                                    + hex_current_coords
-                                    + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
-                                    + '<button id="actor-edit"> Редактировать </button>';
+                // hex_current_coords = pad(hex.col, 2) + pad(hex.row, 2);
 
-                    $.colorbox({
-                        inline: true,
-                        href: '#colorboxed-view',
-                        width: 800,
-                        height: 600,
-                        title: str_title
-                    });
+                var hex_status = checkHexContent(hex_coords);
+                if (hex_status['result'] == 'ignore') return false;
+                else {
+
                 }
+
+                switch (hex_status['result']) {
+                    case 'ignore': {
+                        return false;
+                        break;
+                    }
+                    case 'empty': {
+                        $("#colorboxed-view-content").html('Информации нет! Но можно добавить: <button id="actor-edit"> Редактировать </button>');
+                        $.colorbox({
+                            inline: true,
+                            href: '#colorboxed-view',
+                            width: 800,
+                            height: 600,
+                            title: 'Информации нет!'
+                        });
+                        break;
+                    }
+                    case 'anydata': {
+                        var str_title =
+                                '&nbsp;<img src="images/cursor_drag_arrow_2.png" align="bottom" width="16" width="16">&nbsp;&nbsp;'
+                                        + 'Координаты: </span>'
+                                        + pad(hex_coords.col, 2) + pad(hex_coords.row, 2)
+                                        + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+                                        + '<button id="actor-edit"> Редактировать </button>';
+
+                        $.colorbox({
+                            href: 'core/get.content.php?'+$.param(hex_coords),
+                            width: 800,
+                            height: 600,
+                            title: str_title
+                        });
+
+                        break;
+                    }
+
+                }
+
             }); // themap click
 
             $(document).on('click', '#actor-edit', function(){
-                document.location.href = 'edit.php?frontend=imagemap&id='+ hex_current_coords;
+                document.location.href = 'edit.php?frontend=imagemap&'+ $.param(hex_current_coords);
             });
 
             $("#colorbox").tinyDraggable({
@@ -62,7 +90,7 @@
 <body>
 <img src="images/maps/trollfjorden_l.png" id="themap" border="1">
 <br>
-Нажмите на <strike>кексик</strike> гексик карты и... =^.^= <a href="leaflet.html">Leaflet version</a>
+Нажмите на <strike>кексик</strike> гексик карты и... =^.^=
 <div style="display:none">
     <div id="colorboxed-view" style="padding:10px; background:#fff;">
         <div id="colorboxed-view-content"></div>
