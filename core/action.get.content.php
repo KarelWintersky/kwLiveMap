@@ -12,11 +12,14 @@ $is_can_edit = auth_CanIEdit();
 $coords_col = intval($_GET['col']);
 $coords_row = intval($_GET['row']);
 
-$dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
-$dbh->exec("SET NAMES utf8");
-
-// $dbh = new PDO('mysql:host=localhost;dbname=kwdb', 'root', 'password' , array( PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8' ));
-
+try {
+    $dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
+    $dbh->exec("SET NAMES utf8");
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+}
+catch (PDOException $e) {
+    echo $e->getMessage();
+}
 
 try {
     $sth = $dbh->query("
@@ -43,6 +46,5 @@ catch (PDOException $e) {
 $dbh = null;
 
 ?>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <h4><?php echo $template['title']; ?></h4>
 <?php echo $template['text']; ?>

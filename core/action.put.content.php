@@ -5,29 +5,30 @@ require_once 'core.auth.php';
 require_once 'core.pdo.php';
 global $CONFIG;
 
+var_dump($_POST);
+
 // check access rights
 $is_can_edit = auth_CanIEdit();
-
 if (!$is_can_edit) die('Hacking attempt!');
 
-// $callback = at($_POST, 'callback', '/map/index.html');
 $callback
     = ($_POST['callback'] == 'leaflet')
     ? '/map/leaflet.html'
     : '/map/index.html';
 
-$coords_col = intval($_POST['hexcoord_col']);
-$coords_row = intval($_POST['hexcoord_row']);
-
-
-// $dbh = new PDO('mysql:host=localhost;dbname=kwdb', 'root', 'password');
-$dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
-$dbh->exec("SET NAMES utf8");
+try {
+    $dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
+    $dbh->exec("SET NAMES utf8");
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+}
+catch (PDOException $e) {
+    echo $e->getMessage();
+}
 
 $data = array(
-    'hexcol'       =>  $coords_col,
-    'hexrow'       =>  $coords_row,
-    'coords'    =>  $_POST['hexcoords'],
+    'hexcol'    =>  intval($_POST['hexcoord_col']),
+    'hexrow'    =>  intval($_POST['hexcoord_row']),
+    'hexcoords' =>  $_POST['hexcoords'],
     'title'     =>  $_POST['title'],
     'content'   =>  $_POST['textdata'],
     'editor'    =>  $_POST['editor_name'],
@@ -36,24 +37,20 @@ $data = array(
     'ip'        =>  $_SERVER['REMOTE_ADDR']
 );
 
-$sth = $dbh->prepare("
-    INSERT INTO lme_map_tiles_data (`col`, `row`, `coords`, `title`, `content`, `editor`, `edit_date`, `edit_reason`, `ip`)
-     VALUES (:hexcol, :hexrow, :coords, :title, :content, :editor, :edit_date, :edit_reason, :ip)");
+try{
+    $sth = $dbh->prepare("INSERT INTO lme_map_tiles_data (hexcol, hexrow, hexcoords, title, content, editor, edit_date, edit_reason, ip)
+     VALUES (:hexcol, :hexrow, :hexcoords, :title, :content, :editor, :edit_date, :edit_reason, :ip)");
 
-
-try {
-    $flag = $sth->execute($data);
-    // $last_insert_id = $dbh->lastInsertId();
+    $success = $sth->execute($data);
 
 }
 catch (PDOException $e) {
-    die($e->getMessage());
+    echo $e->getMessage();
 }
-
 
 $dbh = null;
 
-$timeout = 5;
+$timeout = 600;
 ?>
 <!DOCTYPE html>
 <html>

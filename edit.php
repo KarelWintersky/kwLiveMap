@@ -13,10 +13,15 @@ $html_callback = ($_GET['frontend'] == 'imagemap') ? '/map/index.html' : '/map/l
 $coords_col = intval($_GET['col']);
 $coords_row = intval($_GET['row']);
 
-//
-// $dbh = new PDO('mysql:host=localhost;dbname=kwdb', 'root', 'password');
-$dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
-$dbh->exec("SET NAMES utf8");
+try {
+    $dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
+    $dbh->exec("SET NAMES utf8");
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+}
+catch (PDOException $e) {
+    echo $e->getMessage();
+}
+
 
 // проверяем, сколько ревизий текста у гекса
 try {
@@ -30,7 +35,15 @@ catch (PDOException $e) {
     die($e->getMessage());
 }
 
+// в зависимости от количества ревизий заполняем данные шаблона
 if ($revisions_count != 0) {
+
+    try{
+
+    }
+    catch (PDOException $e) {
+        die($e->getMessage());
+    }
 
     $sth = $dbh->query("
     SELECT title, content, editor, edit_reason
@@ -79,34 +92,87 @@ $dbh = null;
                 document.location.href = '<?php echo $html_callback  ?>';
             });
         });
-
     </script>
+    <style type="text/css">
+        body {
+            font-size:14pt;
+        }
+        fieldset {
+            margin: 0;
+        }
+        .fields_area {
+            float: left;
+            clear: both;
+        }
+        .field {
+            clear:both;
+            text-align:right;
+            line-height:30px;
+        }
+        label {
+            float:left;
+            padding-right:55px;
+        }
+        .label_textarea {
+            padding: 0;
+        }
+        .label_fullwidth {
+            width: 100%;
+        }
+        .clear {
+            clear: both;
+        }
+    </style>
 </head>
 
 <body>
 <h2>Координаты: <?php echo $_GET['hexcoord']?> </h2>
 
-<form action="core/save.content.php" method="post">
+<form action="core/action.put.content.php" method="post">
     <input type="hidden" name="hexcoords" value="<?php echo $_GET['hexcoord']?>">
     <input type="hidden" name="hexcoord_col" value="<?php echo $coords_col; ?>">
     <input type="hidden" name="hexcoord_row" value="<?php echo $coords_row; ?>">
     <input type="hidden" name="callback" value="<?php echo $_GET['frontend']; ?>">
 
-    Название региона: <input type="text" name="title" size="60" value="<?php echo $template['title'] ?>"><br/><br/>
-    <textarea name="textdata" id="edit-textarea" cols="10" tabindex="3"><?php echo $template['text'] ?></textarea>
-    <br/>
-    Причина редактирования:
-    <input type="text" name="edit_reason" value="<?php echo $template['edit_reason'] ?>"><br/><br/>
-    Редактор:
-    <input type="text" name="editor_name" value="<?php echo $template['editor_name'] ?>"><br/><br/>
-    <button type="submit">Сохранить</button>
-    <button type="button" id="actor-back" style="float:right">Назад на карту</button>
-    <br/>
+    <fieldset class="fields_area">
+        <div class="field ">
+            <label for="title">Название региона:</label>
+            <input type="text" name="title" id="title" size="60" value="<?php echo $template['title'] ?>">
+        </div>
+    </fieldset>
+
+    <label for="edit-textarea" class="label_textarea label_fullwidth">
+        <textarea name="textdata" id="edit-textarea" cols="10" tabindex="3"><?php echo $template['text'] ?></textarea>
+    </label>
+
+    <fieldset  class="fields_area">
+        <div class="field">
+            <label for="edit_reason">Причина редактирования:</label>
+            <input type="text" name="edit_reason" id="edit_reason" size="60" value="<?php echo $template['edit_reason'] ?>">
+        </div>
+        <div class="field">
+            <label for="editor_name">Редактор:</label>
+            <input type="text" name="editor_name" id="editor_name" size="60" value="<?php echo $template['editor_name'] ?>">
+        </div>
+
+    </fieldset>
+    <div class="clear"></div>
+    <fieldset>
+        <div class="label_fullwidth">
+            <button type="submit">Сохранить</button>
+            <button type="button" id="actor-back" style="float:right">Назад на карту</button>
+        </div>
+    </fieldset>
+
 </form>
 <br/>
-<fieldset>
+<fieldset class="fields_area" style="width:90%">
     <legend>Revision history</legend>
-    is empty!
+    <ul>
+        <li>
+            <a -href="edit.php?frontend=imagemap&col=1&row=1&hexcoord=0101&revision=1">Дата, Arris</a> <em>(IP)</em>: Первое добавление
+        </li>
+    </ul>
 </fieldset>
 </body>
 </html>

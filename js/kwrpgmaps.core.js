@@ -106,7 +106,7 @@ function loadHexInfo(hexcoord, target)
 {
     if (hexcoord.col && hexcoord.row) {
         var request = $.ajax({
-            url:    'core/get.content.php?'+$.param(hexcoord),
+            url:    'core/action.get.content.php?'+$.param(hexcoord),
             async:  false,
             type:   'GET',
         });
@@ -134,7 +134,7 @@ function checkHexContent(hexcoord)
     var ret;
     if (hexcoord.col && hexcoord.row) {
         var request = $.ajax({
-            url:    'core/ajax.check.content.php?'+ $.param(hexcoord),
+            url:    'core/action.check.content.php?'+ $.param(hexcoord),
             async:  false,
             type:   'GET'
         });
