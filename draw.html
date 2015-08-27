@@ -25,13 +25,18 @@
                 v5: Vector(shift 		+ 	xperiod, ybase + h  +   h*(R-1)),
                 v6: Vector(0 			+ 	xperiod, ybase + hh +   h*(R-1))
             };
+            var area = '';
+            var coordsarray = [];
+            $.each(hv, function(index, coord){
+                coordsarray.push(coord.x, coord.y);
+            });
+            console.log(C, R, ' :: ', coordsarray.join());
             return hv;
         }
 
         function drawHex(ctx, c, r)
         {
             var hexpath = Hex(c, r);
-            console.log(c, r, hexpath.v1 );
 
             ctx.lineWidth = 1;
             ctx.strokeStyle = 'rgba(0,0,0,0)';
@@ -62,21 +67,24 @@
 
         $(document).ready(function(){
             var
-                    canvas = document.getElementById('mapcanvas'),
-                    ctx = canvas.getContext('2d');
+                canvas = document.getElementById('mapcanvas'),
+                ctx = canvas.getContext('2d');
 
-            // var img = new Image;
-            // img.src = 'images/maps/trollfjorden_l.png';
-            // ctx.drawImage(img, 0, 0, demo.width, demo.height);
-            // ctx.drawImage(img, 0, 0, 1047, 826);
+            for(var x=1;x<24;x++) {
+                for (var y=1; y<3; y++) {
+                    if (y == 16 && (x % 2) == 0) continue;
+                    drawHex(ctx, x, y);
+                }
+            }
 
-
-            $("#mapcanvas").on('click', function(event){
+            /* $("#mapcanvas").on('click', function(event){
                 var coords = getCanvasXYPos(this, event);
                 var hexcoords = getHex(coords.x, coords.y);
 
                 drawHex(ctx, hexcoords.col, hexcoords.row );
-            });
+            }); */
+
+
 
         });
 
@@ -95,6 +103,7 @@
         #mapcanvas{
             position:relative;
             z-index:20;
+
         }
     </style>
 
