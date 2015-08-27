@@ -10,12 +10,12 @@ function pad(value,stringsize){return(1e15+value+"").slice(-stringsize)}
 
 /**
  * Возвращает координаты точки, на которую кликнули по картинке.
- * Вызов: getXYCoords('#imageid', event);
+ * Вызов: getImageXYCoords('#imageid', event);
  * @param target - картинка
  * @param event - событие, вызвавшее клик
  * @return {Object}
  */
-function getXYCoords(target, event)
+function getImageXYCoords(target, event)
 {
     var $target = $(target);
     var offset = $target.offset();
@@ -35,7 +35,7 @@ function getXYCoords(target, event)
  */
 function getCanvasXYPos(canvas, event) {
     var rect = canvas.getBoundingClientRect();
-    var bordersize = $(canvas).attr('border');
+    var bordersize = map_object.border_size || 0;
     return {
         x: event.clientX - rect.left - bordersize,
         y: event.clientY - rect.top - bordersize
@@ -43,21 +43,23 @@ function getCanvasXYPos(canvas, event) {
 }
 
 /**
- * Возвращает объект-вектор
+ * Возвращает объект-вектор с учетом
  * @param X
  * @param Y
  * @return { x: X, y: Y}
  */
 function Vector(X,Y)
 {
+    var local_x = map_object.x0 || 0;
+    var local_y = map_object.y0 || 0;
     return {
-        x: X,
-        y: Y
+        x: local_x + X,
+        y: local_y + Y
     }
 }
 
 /**
- * Возвращает объект-вектор с учетом начала координат
+ * Возвращает объект-вектор с учетом начала координат, использует глобальный объект map_object
  * @param x
  * @param y
  * @return {Object}
@@ -65,21 +67,22 @@ function Vector(X,Y)
  */
 function Vector0(x,y) {
     return {
-        x: Math.floor(x0 + x),
-        y: Math.floor(y0 + y)
+        x: Math.floor(map_object.x0 + x),
+        y: Math.floor(map_object.y0 + y)
     };
 }
 
 
 /**
- *
+ * Вычисляет координаты гекса по указанным пиксельным координатам.
+ * Требуется доработка под произвольный размер гекса (описанный в map_object) и его ориентацию.
  * @param mx
  * @param my
  * @return { col, row, hexcoord (col+row)}
  */
 function getHex(mx, my)
 {
-    var r = map_object.hexgrid_size;
+    var r = map_object.edge;
     var width = r * sqrt3;
     var rowheight = 1.5 * r;
     var height = 2.0 * r;
@@ -127,7 +130,7 @@ function getHex(mx, my)
 }
 
 /**
- *
+ * @todo: ИСПОЛЬЗУЕТСЯ ТОЛЬКО В LEAFLET, обеспечивает устаревшую механику
  * @param hexcoord
  * @param target
  * @return {Boolean}
@@ -208,9 +211,15 @@ function loadRevealedAreas()
  */
 function getHexPath(C, R)
 {
-    var xperiod = (edge+shift) * (C-1);
-    var yperiod = (hh) * (R-1);
-    var ybase = ((C % 2)==0) ? hh : 0;
+    var xperiod = (map_object.edge + map_object.shift) * (C-1);
+    var yperiod = (map_object.halfheight) * (R-1);
+    var ybase = ((C % 2)==0) ? map_object.halfheight : 0;
+
+    var shift = map_object.shift;
+    var edge = map_object.edge;
+    var hh = map_object.halfheight;
+    var h = map_object.height;
+
     var hv = {
         v1: Vector(shift        +   xperiod, ybase +        h*(R-1)),
         v2: Vector(shift + edge +	xperiod, ybase +        h*(R-1)),
@@ -250,4 +259,40 @@ function drawHex(ctx, c, r, alpha)
     ctx.fillStyle = 'rgba(0, 0, 0, ' + local_alpha + ')';
     ctx.fill();
     ctx.stroke();
+}
+
+/**
+ * Рисует туман войны в областях, не указанных в объекте revealed_areas
+ * @param canvas_context - контекст канваса
+ * @param revealed_areas - объект данными об исследованных зонах
+ * @param alpha          - альфа
+ */
+function drawFogOfWar(canvas_context, revealed_areas, alpha)
+{
+
+    var zkey,
+        maxcol  = map_object.max_col,
+        maxrow  = map_object.max_row;
+    var localalpha  = alpha || map_object.areas_hidden;
+    console.log(map_object);
+
+    for (var col=1; col <= maxcol; col++) {
+        for (var row=1; row <= maxrow; row++) {
+            zkey = 'z'+pad(col,2)+pad(row,2);
+            if (zkey in revealed_areas) continue;
+            if (row == maxrow && (col % 2) == 0) continue;
+            drawHex(canvas_context, col, row, localalpha);
+        }
+    }
+}
+
+/**
+ * Проводит доинициализацию объекта map_object
+ */
+function initHexGrid()
+{
+    with (map_object) {
+        shift   = edge / 2;
+        halfheight = height / 2;
+    }
 }

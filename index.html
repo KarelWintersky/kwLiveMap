@@ -17,22 +17,57 @@
     <!-- internal js -->
     <script type="text/javascript">
         var map_object = {
-            hexgrid_size    :   29.82,
+            // параметры изображения
             image           :   'images/maps/trollfjorden_l.png',
+            border_size     :   1,
             // ноль координат
             x0              :   0,
-            y0              :   0
+            y0              :   0,
+            // параметры гексагональной сетки
+            grid_type       :   'hex:x_oriented',
+            max_col         :   23,
+            max_row         :   16,
+            // заполняются отдельно, так как вычисляются
+            edge            :   29.82, // hexgrid_size
+            shift           :   null,
+            height          :   51.62,
+            halfheight      :   null,
+
+            // настройки отрисовки
+            areas_hidden    :   0.2,
+            areas_revealed  :   0
         }
 
         var hex_loaded_content = '';
         var hex_current_coords = '';
 
 
+
+
         $(document).ready(function(){
+            initHexGrid(29.82, 51.62);
+
+            console.log(map_object);
+
             $.ajaxSetup({cache: false});
+            var canvas = document.getElementById('mapcanvas'),
+                ctx = canvas.getContext('2d');
+
+            // создаем "туман войны"
+            var revealedAreas = loadRevealedAreas();
+            drawFogOfWar(ctx, revealedAreas);
+
+            // отлавливаем координаты клика
+            $("#mapcanvas").on('click', function(event){
+                var coords = getCanvasXYPos(this, event);
+                var hexcoords = getHex(coords.x, coords.y);
+                alert(hexcoords.col + ':' + hexcoords.row);
+            });
+
+
 
             $("#themap").on('click', function(event){
-                var coords = getXYCoords(this, event);
+                var coords = getImageXYCoords(this, event);
                 var hex_coords = getHex(coords.x, coords.y);
                 hex_current_coords = hex_coords;
 
@@ -90,11 +125,35 @@
             });
         });
     </script>
+    <style type="text/css">
+        .themap{position:absolute;z-index:1;}
+
+        #container{
+            display:inline-block;
+            width:1048px;
+            height:827px;
+            margin: 0 auto;
+            position:relative;
+        }
+
+        #mapcanvas{
+            position:relative;
+            z-index:20;
+        }
+        .themap {
+            opacity: 0.8;
+        }
+    </style>
 </head>
 <body>
-<img src="images/maps/trollfjorden_l.png" id="themap" border="1">
-<br>
+
+<div id="container">
+    <img class='themap' src="images/maps/trollfjorden_l.png" border="1"/>
+    <canvas id="mapcanvas" width="1048" height="827"></canvas>
+</div>
+<br/>
 Нажмите на <strike>кексик</strike> гексик карты и... =^.^=
+
 <div style="display:none">
     <div id="colorboxed-view" style="padding:10px; background:#fff;">
         <div id="colorboxed-view-content"></div>
