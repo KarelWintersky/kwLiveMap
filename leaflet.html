@@ -13,8 +13,6 @@
     <script type="text/javascript" src="js/jquery.tiny-draggable.js"></script>
     <!-- custom js -->
     <script type="text/javascript" src="js/kwrpgmaps.core.js"></script>
-    <!-- map js -->
-    <script type="text/javascript" src="js/map.trollfjorden.js"></script>
     <!-- leaflet -->
     <link rel="stylesheet" href="css/leaflet.css" />
     <script type="text/javascript" src="js/leaflet.js"></script>
@@ -24,6 +22,10 @@
 
     <!-- internal js -->
     <script type="text/javascript">
+        var map_object = {
+            hexgrid_size    :   29.82,
+            image           :   'images/maps/trollfjorden_l.png'
+        }
         var hex_loaded_content = '';
         var hex_current_coords = '';
 
@@ -33,7 +35,7 @@
             var leaflet_config = {
                 w:          4192,
                 h:          3306,
-                url:        'images/maps/trollfjorden_xl.png',
+                url:        'images/maps/trollfjorden_xxl.jpg',
                 ief:        4, // image enlarge factor
                 min_zoom:   1,
                 max_zoom:   5,
@@ -79,6 +81,7 @@
                     y:     -Math.floor(e.latlng.lat)
                 };
                 var pow_factor = Math.pow(2, leaflet_config.max_zoom - leaflet_config.ief + 1);
+                //@todo: оптимизировать - нужен битовый сдвиг!!!
                 var mx = leaflet_coords.x * pow_factor;
                 var my = leaflet_coords.y * pow_factor;
 
@@ -106,7 +109,7 @@
 
             // other binds
             $(document).on('click', '#actor-edit', function(){
-                document.location.href = 'edit.php?id='+ hex_current_coords;
+                document.location.href = 'edit.php?frontend=leaflet&'+ hex_current_coords;
             });
 
             $("#colorbox").tinyDraggable({

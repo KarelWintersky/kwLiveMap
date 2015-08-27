@@ -120,6 +120,9 @@ WHERE hexcol = {$coords_col} AND hexrow = {$coords_row}"
                 $row->edit_reason
             );
         }
+        if ($revisions_string == '')
+            $revisions_string = 'Это будет первая версия статьи!';
+
     }
     catch(PDOException $e) {
         die($e->getMessage());
@@ -206,7 +209,7 @@ $dbh = null;
     <input type="hidden" name="callback" value="<?php echo $_GET['frontend']; ?>">
 
     <fieldset class="fields_area">
-        <div class="field ">
+        <div class="field">
             <label for="title">Название региона:</label>
             <input type="text" name="title" id="title" size="60" value="<?php echo $template['title'] ?>">
         </div>
@@ -216,14 +219,14 @@ $dbh = null;
         <textarea name="textdata" id="edit-textarea" cols="10" tabindex="3"><?php echo $template['text'] ?></textarea>
     </label>
 
-    <fieldset  class="fields_area">
+    <fieldset class="fields_area">
         <div class="field">
             <label for="edit_reason">Причина редактирования:</label>
-            <input type="text" name="edit_reason" id="edit_reason" size="60" value="<?php echo $template['edit_reason'] ?>">
+            <input required placeholder="<?php echo $template['edit_reason'] ?>" type="text" name="edit_reason" id="edit_reason" size="60">
         </div>
         <div class="field">
             <label for="editor_name">Редактор:</label>
-            <input type="text" name="editor_name" id="editor_name" size="60" value="<?php echo $template['editor_name'] ?>">
+            <input required type="text" name="editor_name" id="editor_name" size="60" value="<?php echo $template['editor_name'] ?>">
         </div>
         <span> <?php echo $template['message']; ?> </span>
 

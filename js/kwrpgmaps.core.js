@@ -27,6 +27,21 @@ function getXYCoords(target, event)
 }
 
 /**
+ * Возвращает координаты точки на элементе CANVAS
+ * Вызов: var mousePos = getMousePos(canvas, event); - аналогично getXYCoods()
+ * @param canvas
+ * @param evt
+ * @return {Object}
+ */
+function getCanvasXYPos(canvas, event) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
+    };
+}
+
+/**
  * Возвращает объект-вектор
  * @param X
  * @param Y

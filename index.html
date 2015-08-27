@@ -14,11 +14,13 @@
     <script type="text/javascript" src="js/jquery.tiny-draggable.js"></script>
     <!-- custom js -->
     <script type="text/javascript" src="js/kwrpgmaps.core.js"></script>
-    <!-- map js -->
-    <script type="text/javascript" src="js/map.trollfjorden.js"></script>
-
     <!-- internal js -->
     <script type="text/javascript">
+        var map_object = {
+            hexgrid_size    :   29.82,
+            image           :   'images/maps/trollfjorden_l.png'
+        }
+
         var hex_loaded_content = '';
         var hex_current_coords = '';
 
@@ -43,7 +45,7 @@
                         break;
                     }
                     case 'empty': {
-                        $("#colorboxed-view-content").html('Информации нет! Но можно добавить: <button id="actor-edit"> Редактировать </button>');
+                        $("#colorboxed-view-content").html('По гексу '+ hex_coords.hexcoord +' информации нет! Но можно добавить: <button id="actor-edit"> Редактировать </button>');
                         $.colorbox({
                             inline: true,
                             href: '#colorboxed-view',

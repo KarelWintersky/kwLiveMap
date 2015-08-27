@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My canvas test</title>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/kwrpgmaps.core.js"></script>
+    <script>
+        function random(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function Vector(x,y) {
+            return {
+                x: Math.floor(x0 + x),
+                y: Math.floor(y0 + y)
+            };
+        }
+        function Hex(C, R)
+        {
+            var xperiod = (edge+shift) * (C-1);
+            var yperiod = (hh) * (R-1);
+            var ybase = ((C % 2)==0) ? hh : 0;
+            var hv = {
+                v1: Vector(shift        +   xperiod, ybase +        h*(R-1)),
+                v2: Vector(shift + edge +	xperiod, ybase +        h*(R-1)),
+                v3: Vector(edge  + edge + 	xperiod, ybase + hh	+   h*(R-1)),
+                v4: Vector(shift + edge	+ 	xperiod, ybase + h  +   h*(R-1)),
+                v5: Vector(shift 		+ 	xperiod, ybase + h  +   h*(R-1)),
+                v6: Vector(0 			+ 	xperiod, ybase + hh +   h*(R-1))
+            };
+            return hv;
+        }
+
+        function drawHex(ctx, c, r)
+        {
+            var hexpath = Hex(c, r);
+            console.log(c, r, hexpath.v1 );
+
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(0,0,0,0)';
+
+            ctx.beginPath();
+            ctx.moveTo(hexpath.v1.x, hexpath.v1.y);
+            ctx.lineTo(hexpath.v2.x, hexpath.v2.y);
+            ctx.lineTo(hexpath.v3.x, hexpath.v3.y);
+            ctx.lineTo(hexpath.v4.x, hexpath.v4.y);
+            ctx.lineTo(hexpath.v5.x, hexpath.v5.y);
+            ctx.lineTo(hexpath.v6.x, hexpath.v6.y);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.fill();
+            ctx.stroke();
+        }
+        var     edge = 29.82,
+                shift = edge/ 2,
+                // h = edge * Math.sqrt(3),
+                h = 51.62,
+                hh = h / 2,
+                x0 = 0,
+                y0 = 0,
+                map_object = {
+                    hexgrid_size : edge
+                };
+
+
+        $(document).ready(function(){
+            var
+                    canvas = document.getElementById('mapcanvas'),
+                    ctx = canvas.getContext('2d');
+
+            // var img = new Image;
+            // img.src = 'images/maps/trollfjorden_l.png';
+            // ctx.drawImage(img, 0, 0, demo.width, demo.height);
+            // ctx.drawImage(img, 0, 0, 1047, 826);
+
+
+            $("#mapcanvas").on('click', function(event){
+                var coords = getCanvasXYPos(this, event);
+                var hexcoords = getHex(coords.x, coords.y);
+
+                drawHex(ctx, hexcoords.col, hexcoords.row );
+            });
+
+        });
+
+    </script>
+    <style type="text/css">
+        .themap{position:absolute;z-index:1;}
+
+        #container{
+            display:inline-block;
+            width:1048px;
+            height:827px;
+            margin: 0 auto;
+            position:relative;
+        }
+
+        #mapcanvas{
+            position:relative;
+            z-index:20;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div id="container">
+    <img class='themap' src="images/maps/trollfjorden_l.png" />
+    <canvas id="mapcanvas" width="1048" height="827"></canvas>
+</div>
+
+</body>
+</html>
