@@ -1,4 +1,4 @@
-var sqrt3 = Math.sqrt(3);
+var sqrt3 = Math.sqrt(3); // 1.732
 
 /**
  * Дополняет value нулями слева до полной длины строкового представления длиной stringsize.
@@ -29,15 +29,16 @@ function getXYCoords(target, event)
 /**
  * Возвращает координаты точки на элементе CANVAS
  * Вызов: var mousePos = getMousePos(canvas, event); - аналогично getXYCoods()
- * @param canvas
- * @param evt
- * @return {Object}
+ * @param canvas    - элемент канвас
+ * @param evt       - событие
+ * @return { x, y }
  */
 function getCanvasXYPos(canvas, event) {
     var rect = canvas.getBoundingClientRect();
+    var bordersize = $(canvas).attr('border');
     return {
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top
+        x: event.clientX - rect.left - bordersize,
+        y: event.clientY - rect.top - bordersize
     };
 }
 
@@ -53,6 +54,20 @@ function Vector(X,Y)
         x: X,
         y: Y
     }
+}
+
+/**
+ * Возвращает объект-вектор с учетом начала координат
+ * @param x
+ * @param y
+ * @return {Object}
+ * @constructor
+ */
+function Vector0(x,y) {
+    return {
+        x: Math.floor(x0 + x),
+        y: Math.floor(y0 + y)
+    };
 }
 
 
@@ -160,4 +175,79 @@ function checkHexContent(hexcoord)
         ret['result'] = 'ignore';
     }
     return ret;
+}
+
+/**
+ * Загружает из базы массив с информацией о разведанных областях.
+ * @return {
+ *    z0101:  {col:"1", row:"1"},
+ *    z0301:  {col:"3", row:"1"}
+ *    etc
+ * }
+ */
+function loadRevealedAreas()
+{
+    var ret = '';
+    var request = $.ajax({
+        url:    'core/action.get.revealed.php',
+        async:  false,
+        type:   'GET'
+    });
+    request.done(function(data){
+        ret = $.parseJSON(data);
+    });
+    return ret;
+}
+
+/**
+ * Возвращает структуру с координатами вершин гексагона, заданного координатами Col-Row
+ * требует в глобальной области видимости переменные edge, shift, h, hh
+ * @param C
+ * @param R
+ * @return {Object}
+ */
+function getHexPath(C, R)
+{
+    var xperiod = (edge+shift) * (C-1);
+    var yperiod = (hh) * (R-1);
+    var ybase = ((C % 2)==0) ? hh : 0;
+    var hv = {
+        v1: Vector(shift        +   xperiod, ybase +        h*(R-1)),
+        v2: Vector(shift + edge +	xperiod, ybase +        h*(R-1)),
+        v3: Vector(edge  + edge + 	xperiod, ybase + hh	+   h*(R-1)),
+        v4: Vector(shift + edge	+ 	xperiod, ybase + h  +   h*(R-1)),
+        v5: Vector(shift 		+ 	xperiod, ybase + h  +   h*(R-1)),
+        v6: Vector(0 			+ 	xperiod, ybase + hh +   h*(R-1))
+    };
+    return hv;
+}
+
+
+
+/**
+ * Рисует гексагон
+ * @param ctx   - контекст канваса
+ * @param c     - колонка (X-координана)
+ * @param r     - строка (Y-координана)
+ * @param alpha - альфа затемнения
+ */
+function drawHex(ctx, c, r, alpha)
+{
+    var hexpath = getHexPath(c, r);
+    var local_alpha = alpha || 0.3;
+
+    ctx.lineWidth = 0;
+    ctx.strokeStyle = 'rgba(0,0,0,0)';
+
+    ctx.beginPath();
+    ctx.moveTo(hexpath.v1.x, hexpath.v1.y);
+    ctx.lineTo(hexpath.v2.x, hexpath.v2.y);
+    ctx.lineTo(hexpath.v3.x, hexpath.v3.y);
+    ctx.lineTo(hexpath.v4.x, hexpath.v4.y);
+    ctx.lineTo(hexpath.v5.x, hexpath.v5.y);
+    ctx.lineTo(hexpath.v6.x, hexpath.v6.y);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(0, 0, 0, ' + local_alpha + ')';
+    ctx.fill();
+    ctx.stroke();
 }

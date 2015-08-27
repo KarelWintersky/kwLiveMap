@@ -3,40 +3,66 @@
 <head>
     <title>My canvas test</title>
     <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/kwrpgmaps.core.js"></script>
+    <script type="text/javascript" src="js/kw_lme.core.js"></script>
     <script>
         function random(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-        function Vector(x,y) {
-            return {
-                x: Math.floor(x0 + x),
-                y: Math.floor(y0 + y)
-            };
-        }
-        function Hex(C, R)
+
+        /**
+         * Возвращает структуру с координатами вершин гексагона, заданного координатами Col-Row
+         * @param C
+         * @param R
+         * @return {Object}
+         */
+        function getHexPath(C, R)
         {
             var xperiod = (edge+shift) * (C-1);
             var yperiod = (hh) * (R-1);
             var ybase = ((C % 2)==0) ? hh : 0;
             var hv = {
-                v1: Vector(shift        +   xperiod, ybase +        h*(R-1)),
-                v2: Vector(shift + edge +	xperiod, ybase +        h*(R-1)),
-                v3: Vector(edge  + edge + 	xperiod, ybase + hh	+   h*(R-1)),
-                v4: Vector(shift + edge	+ 	xperiod, ybase + h  +   h*(R-1)),
-                v5: Vector(shift 		+ 	xperiod, ybase + h  +   h*(R-1)),
-                v6: Vector(0 			+ 	xperiod, ybase + hh +   h*(R-1))
+                v1: Vector0(shift        +   xperiod, ybase +        h*(R-1)),
+                v2: Vector0(shift + edge +	xperiod, ybase +        h*(R-1)),
+                v3: Vector0(edge  + edge + 	xperiod, ybase + hh	+   h*(R-1)),
+                v4: Vector0(shift + edge	+ 	xperiod, ybase + h  +   h*(R-1)),
+                v5: Vector0(shift 		+ 	xperiod, ybase + h  +   h*(R-1)),
+                v6: Vector0(0 			+ 	xperiod, ybase + hh +   h*(R-1))
             };
-            var area = '';
-            var coordsarray = [];
-            $.each(hv, function(index, coord){
-                coordsarray.push(coord.x, coord.y);
-            });
-            console.log(C, R, ' :: ', coordsarray.join());
             return hv;
         }
 
-        function drawHex(ctx, c, r)
+        /**
+         * Рисует гексагон
+         * @param ctx   - контекст канваса
+         * @param c     - колонка (X-координана)
+         * @param r     - строка (Y-координана)
+         * @param alpha - альфа затемнения
+         */
+        function drawHex(ctx, c, r, alpha)
         {
-            var hexpath = Hex(c, r);
+            var hexpath = getHexPath(c, r);
+            var local_alpha = alpha || 0.3;
+
+            ctx.lineWidth = 0;
+            ctx.strokeStyle = 'rgba(0,0,0,0)';
+
+            ctx.beginPath();
+            ctx.moveTo(hexpath.v1.x, hexpath.v1.y);
+            ctx.lineTo(hexpath.v2.x, hexpath.v2.y);
+            ctx.lineTo(hexpath.v3.x, hexpath.v3.y);
+            ctx.lineTo(hexpath.v4.x, hexpath.v4.y);
+            ctx.lineTo(hexpath.v5.x, hexpath.v5.y);
+            ctx.lineTo(hexpath.v6.x, hexpath.v6.y);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0, 0, 0, ' + local_alpha + ')';
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        /*
+        function drawHoverHex(canvas, c, r, alpha)
+        {
+            var hexpath = HexPath(c, r);
+            var local_alpha = alpha || 0.3;
+            var ctx = canvas.getContext('2d');
 
             ctx.lineWidth = 1;
             ctx.strokeStyle = 'rgba(0,0,0,0)';
@@ -49,13 +75,32 @@
             ctx.lineTo(hexpath.v5.x, hexpath.v5.y);
             ctx.lineTo(hexpath.v6.x, hexpath.v6.y);
             ctx.closePath();
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.fillStyle = 'rgba(0, 0, 0, ' + local_alpha + ')';
             ctx.fill();
             ctx.stroke();
-        }
+        } */
+
+
+        /* var lastC = 0, lastR = 0;
+        var saved_canvas;
+
+        function handleMouseMove(target, event)
+        {
+            var coords = getCanvasXYPos(target, event);
+            var hc = getHex(coords.x, coords.y);
+
+            if ((hc.row == lastR) && (hc.col == lastC)) return;
+
+            drawHoverHex(target, hc.col, hc.row, 0.3);
+
+            // drawHoverHex(target, lastC, lastR, 0.1 );
+
+            lastC = hc.col;
+            lastR = hc.row;
+        } */
+
         var     edge = 29.82,
                 shift = edge/ 2,
-                // h = edge * Math.sqrt(3),
                 h = 51.62,
                 hh = h / 2,
                 x0 = 0,
@@ -64,27 +109,47 @@
                     hexgrid_size : edge
                 };
 
+        function loadRevealedAreas()
+        {
+            var ret = '';
+            var request = $.ajax({
+                url:    'core/action.get.revealed.php',
+                async:  false,
+                type:   'GET'
+            });
+            request.done(function(data){
+                ret = $.parseJSON(data);
+            });
+            return ret;
+        }
+
 
         $(document).ready(function(){
             var
                 canvas = document.getElementById('mapcanvas'),
                 ctx = canvas.getContext('2d');
 
-            for(var x=1;x<24;x++) {
-                for (var y=1; y<3; y++) {
-                    if (y == 16 && (x % 2) == 0) continue;
-                    drawHex(ctx, x, y);
-                }
-            }
-
-            /* $("#mapcanvas").on('click', function(event){
+            /**
+             * отлавливаем клик по канвасу
+             */
+            $("#mapcanvas").on('click', function(event){
                 var coords = getCanvasXYPos(this, event);
                 var hexcoords = getHex(coords.x, coords.y);
+                alert(hexcoords.col + ':' + hexcoords.row);
+            });
 
-                drawHex(ctx, hexcoords.col, hexcoords.row );
-            }); */
+            var revealedAreas = loadRevealedAreas();
+            console.log(revealedAreas.toSource());
 
-
+            var zkey, maxcol=23, maxrow = 16;
+            for(var col=1; col <= maxcol; col++) {
+                for (var row=1; row <= maxrow; row++) {
+                    zkey = 'z'+pad(col,2)+pad(row,2);
+                    if (zkey in revealedAreas) continue;
+                    if (row == 16 && (col % 2) == 0) continue;
+                    drawHex(ctx, col, row, 0.2);
+                }
+            }
 
         });
 
@@ -103,8 +168,11 @@
         #mapcanvas{
             position:relative;
             z-index:20;
-
         }
+        .themap {
+            opacity: 0.8;
+        }
+        area:hover {border: 1px solid red}
     </style>
 
 </head>
@@ -112,9 +180,10 @@
 <body>
 
 <div id="container">
-    <img class='themap' src="images/maps/trollfjorden_l.png" />
+    <img class='themap' src="images/maps/trollfjorden_l.png" border=""/>
     <canvas id="mapcanvas" width="1048" height="827"></canvas>
 </div>
+
 
 </body>
 </html>

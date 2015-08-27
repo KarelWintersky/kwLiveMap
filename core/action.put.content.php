@@ -23,14 +23,13 @@ $data = array(
     'editor'    =>  $_POST['editor_name'],
     'edit_date' =>  time(),
     'edit_reason'=> $_POST['edit_reason'],
-    'ip'        =>  $_SERVER['REMOTE_ADDR']
+    'ip'        =>  $_SERVER['REMOTE_ADDR'],
+    'project_id'=>  1,
+    'project_title' =>  'trollfjorden'
 );
 
 if ($data['editor'] != '')
     setcookie('kwtrpglme_auth_editorname', $data['editor']);
-
-
-
 
 try {
     $dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
@@ -41,14 +40,11 @@ catch (PDOException $e) {
     echo $e->getMessage();
 }
 
-
-
 try{
-    $sth = $dbh->prepare("INSERT INTO lme_map_tiles_data (hexcol, hexrow, hexcoords, title, content, editor, edit_date, edit_reason, ip)
-     VALUES (:hexcol, :hexrow, :hexcoords, :title, :content, :editor, :edit_date, :edit_reason, :ip)");
+    $sth = $dbh->prepare("INSERT INTO lme_map_tiles_data (hexcol, hexrow, hexcoords, title, content, editor, edit_date, edit_reason, ip, project_id, project_title)
+                          VALUES (:hexcol, :hexrow, :hexcoords, :title, :content, :editor, :edit_date, :edit_reason, :ip, :project_id, :project_title)");
 
     $success = $sth->execute($data);
-
 }
 catch (PDOException $e) {
     echo $e->getMessage();
