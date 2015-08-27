@@ -51,7 +51,7 @@ if ($revisions_count != 0) {
             $sth = $dbh->query("
             SELECT title, content, editor, edit_reason
             FROM lme_map_tiles_data
-            WHERE `hexcol` = {$coords_col} AND `hexrow` = {$coords_row}
+            WHERE hexcol = {$coords_col} AND hexrow = {$coords_row}
             ORDER BY edit_date DESC
             LIMIT 1");
 
@@ -62,7 +62,7 @@ if ($revisions_count != 0) {
                 'text'      =>  $row['content'],
                 'title'     =>  $row['title'],
                 'edit_reason'   =>  $row['edit_reason'],
-                'editor_name'   =>  at($_COOKIE, 'kwtrpglme_auth_editorname', ""),
+                'editor_name'   =>  at($_COOKIE, 'kw_trpg_lme_auth_editorname', ""),
             );
 
         }
@@ -86,7 +86,7 @@ if ($revisions_count != 0) {
                 'text'      =>  $row['content'],
                 'title'     =>  $row['title'],
                 'edit_reason'   =>  "".$row['edit_reason'],
-                'editor_name'   =>  at($_COOKIE, 'kwtrpglme_auth_editorname', ""),
+                'editor_name'   =>  at($_COOKIE, 'kw_trpg_lme_auth_editorname', ""),
             );
 
 
@@ -102,14 +102,14 @@ if ($revisions_count != 0) {
 
     try{
         $sth = $dbh->query("
-SELECT id, hexcol, hexrow, hexcoords, DATE_FORMAT(FROM_UNIXTIME(edit_date), '%d-%m-%Y') AS edit_date, editor, edit_reason, ip
+SELECT id, hexcol, hexrow, hexcoords, DATE_FORMAT(FROM_UNIXTIME(edit_date), '%d-%m-%Y %H:%m:%s') AS edit_date, editor, edit_reason, ip
 FROM lme_map_tiles_data
 WHERE hexcol = {$coords_col} AND hexrow = {$coords_row}"
             , PDO::FETCH_OBJ);
 
         while($row = $sth->fetch(PDO::FETCH_OBJ)){
             $revisions_string .= sprintf(
-                '<li><a href="edit.php?frontend=imagemap&col=%s&row=%s&hexcoord=%s&revision=%s">%s, %s</a> <em>(%s)</em>: %s</li>'."\r\n",
+                '<li><a href="edit.php?frontend=imagemap&col=%s&row=%s&hexcoord=%s&revision=%s">%s, %s</a> <em>(IP: %s)</em>: %s</li>'."\r\n",
                 $row->hexcol,
                 $row->hexrow,
                 $row->hexcoords,
@@ -149,7 +149,7 @@ $dbh = null;
     <script src="js/tinymce/tinymce.min.js"></script>
     <script src="js/tinymce.config.js"></script>
     <!-- styles -->
-    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" href="css/frontend.edit.css" />
     <script type="text/javascript">
         $(document).ready(function(){
             tinify(tiny_config['full'], 'edit-textarea');
@@ -158,60 +158,21 @@ $dbh = null;
             });
         });
     </script>
-    <style type="text/css">
-        body {
-            font-size:14pt;
-        }
-        fieldset {
-            margin: 0;
-        }
-        .fields_area {
-            float: left;
-            clear: both;
-        }
-        .field {
-            clear:both;
-            text-align:right;
-            line-height:20pt;
-        }
-        label {
-            float:left;
-            padding-right:55px;
-        }
-        .label_textarea {
-            padding: 0;
-        }
-        .label_fullwidth {
-            width: 100%;
-        }
-        .clear {
-            clear: both;
-        }
-        ul {
-            margin:0;
-        }
-        #revisions_fieldset {
-            float: left;
-            clear: both;
-            width:90%;
-            font-size: 10pt;
-        }
-    </style>
 </head>
 
 <body>
 <h2>Координаты: <?php echo $_GET['hexcoord']?> </h2>
 
 <form action="core/action.put.content.php" method="post">
-    <input type="hidden" name="hexcoords" value="<?php echo $_GET['hexcoord']?>">
-    <input type="hidden" name="hexcoord_col" value="<?php echo $coords_col; ?>">
-    <input type="hidden" name="hexcoord_row" value="<?php echo $coords_row; ?>">
-    <input type="hidden" name="callback" value="<?php echo $_GET['frontend']; ?>">
+    <input type="hidden" name="hexcoords" value="<?php echo $_GET['hexcoord']?>" />
+    <input type="hidden" name="hexcoord_col" value="<?php echo $coords_col; ?>" />
+    <input type="hidden" name="hexcoord_row" value="<?php echo $coords_row; ?>" />
+    <input type="hidden" name="callback" value="<?php echo $_GET['frontend']; ?>" />
 
     <fieldset class="fields_area">
         <div class="field">
             <label for="title">Название региона:</label>
-            <input type="text" name="title" id="title" size="60" value="<?php echo $template['title'] ?>">
+            <input type="text" name="title" id="title" size="60" value="<?php echo $template['title'] ?>" />
         </div>
     </fieldset>
 
@@ -222,11 +183,11 @@ $dbh = null;
     <fieldset class="fields_area">
         <div class="field">
             <label for="edit_reason">Причина редактирования:</label>
-            <input required placeholder="<?php echo $template['edit_reason'] ?>" type="text" name="edit_reason" id="edit_reason" size="60">
+            <input type="text" name="edit_reason" id="edit_reason" size="60" value="<?php echo $template['edit_reason'] ?>" />
         </div>
         <div class="field">
             <label for="editor_name">Редактор:</label>
-            <input required type="text" name="editor_name" id="editor_name" size="60" value="<?php echo $template['editor_name'] ?>">
+            <input required type="text" name="editor_name" id="editor_name" size="60" value="<?php echo $template['editor_name'] ?>"/>
         </div>
         <span> <?php echo $template['message']; ?> </span>
 

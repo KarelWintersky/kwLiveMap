@@ -83,11 +83,12 @@ function Vector0(x,y) {
 function getHex(mx, my)
 {
     var r = map_object.edge;
+    // внимание, все следующие значения даны для OY-ориентированной сетки!!!
+    // Аррис, не забудь!
     var width = r * sqrt3;
     var rowheight = 1.5 * r;
     var height = 2.0 * r;
     var halfwidth = r * sqrt3 * 0.5;
-
 
     var rise = height - rowheight;
     var slope = rise / halfwidth;
@@ -274,7 +275,6 @@ function drawFogOfWar(canvas_context, revealed_areas, alpha)
         maxcol  = map_object.max_col,
         maxrow  = map_object.max_row;
     var localalpha  = alpha || map_object.areas_hidden;
-    console.log(map_object);
 
     for (var col=1; col <= maxcol; col++) {
         for (var row=1; row <= maxrow; row++) {

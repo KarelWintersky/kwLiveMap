@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>kwRPG Map Engine :: Trollfjorden</title>
+    <title>Trollfjorden -- Троллячьи фьорды, живая карта</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <!-- styles -->
-    <link rel="stylesheet" type="text/css" href="css/main.css" />
-    <link rel="stylesheet" href="css/colorbox.css">
+    <link rel="stylesheet" type="text/css" href="css/frontend.view.css" />
+    <link rel="stylesheet" type="text/css" href="css/colorbox.css">
     <!-- core js -->
     <link href='https://fonts.googleapis.com/css?family=Didact+Gothic&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
     <script type="text/javascript" src="js/html5shiv.js"></script>
@@ -16,6 +16,7 @@
     <script type="text/javascript" src="js/kw_lme.core.js"></script>
     <!-- internal js -->
     <script type="text/javascript">
+        // в дальнейшем этот объект будет "приезжать" в шаблон из контроллера
         var map_object = {
             // параметры изображения
             image           :   'images/maps/trollfjorden_l.png',
@@ -41,15 +42,11 @@
         var hex_loaded_content = '';
         var hex_current_coords = '';
 
-
-
-
         $(document).ready(function(){
-            initHexGrid(29.82, 51.62);
-
-            console.log(map_object);
-
+            // инициализация
             $.ajaxSetup({cache: false});
+            initHexGrid();
+
             var canvas = document.getElementById('mapcanvas'),
                 ctx = canvas.getContext('2d');
 
@@ -59,31 +56,24 @@
 
             // отлавливаем координаты клика
             $("#mapcanvas").on('click', function(event){
-                var coords = getCanvasXYPos(this, event);
-                var hexcoords = getHex(coords.x, coords.y);
-                alert(hexcoords.col + ':' + hexcoords.row);
-            });
+                var canvas_coords = getCanvasXYPos(this, event);
+                var hexgrid_coords = getHex(canvas_coords.x, canvas_coords.y);
 
+                hex_current_coords = hexgrid_coords;
 
+                var hex_status = checkHexContent(hexgrid_coords);
 
-            $("#themap").on('click', function(event){
-                var coords = getImageXYCoords(this, event);
-                var hex_coords = getHex(coords.x, coords.y);
-                hex_current_coords = hex_coords;
-
-                var hex_status = checkHexContent(hex_coords);
                 if (hex_status['result'] == 'ignore') return false;
-                else {
 
-                }
-
+                // разбор различных состояний
                 switch (hex_status['result']) {
                     case 'ignore': {
                         return false;
                         break;
                     }
                     case 'empty': {
-                        $("#colorboxed-view-content").html('По гексу '+ hex_coords.hexcoord +' информации нет! Но можно добавить: <button id="actor-edit"> Редактировать </button>');
+                        //@todo: вынести вставляемый текст в отдельный див!
+                        $("#colorboxed-view-content").html('По гексу `'+ hexgrid_coords.hexcoord +'` информации нет! Но можно добавить: <button id="actor-edit"> Редактировать </button>');
                         $.colorbox({
                             inline: true,
                             href: '#colorboxed-view',
@@ -94,15 +84,16 @@
                         break;
                     }
                     case 'anydata': {
+                        //@todo:брать title из отдельного дива или переменной, обдумать!
                         var str_title =
                                 '&nbsp;<img src="images/cursor_drag_arrow_2.png" align="bottom" width="16" width="16">&nbsp;&nbsp;'
                                         + 'Координаты: </span>'
-                                        + pad(hex_coords.col, 2) + pad(hex_coords.row, 2)
+                                        + pad(hexgrid_coords.col, 2) + pad(hexgrid_coords.row, 2)
                                         + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
                                         + '<button id="actor-edit"> Редактировать </button>';
 
                         $.colorbox({
-                            href: 'core/action.get.content.php?'+$.param(hex_coords),
+                            href: 'core/action.get.content.php?'+$.param(hexgrid_coords),
                             width: 800,
                             height: 600,
                             title: str_title
@@ -111,44 +102,26 @@
                         break;
                     }
 
-                }
-
+                } // switch
             }); // themap click
 
+            // `Edit this` click event
             $(document).on('click', '#actor-edit', function(){
                 document.location.href = 'edit.php?frontend=imagemap&'+ $.param(hex_current_coords);
             });
 
+            // draggable plugin
             $("#colorbox").tinyDraggable({
                 handle: '#cboxTitle',
                 exclude: 'button'
             });
         });
     </script>
-    <style type="text/css">
-        .themap{position:absolute;z-index:1;}
-
-        #container{
-            display:inline-block;
-            width:1048px;
-            height:827px;
-            margin: 0 auto;
-            position:relative;
-        }
-
-        #mapcanvas{
-            position:relative;
-            z-index:20;
-        }
-        .themap {
-            opacity: 0.8;
-        }
-    </style>
 </head>
 <body>
 
-<div id="container">
-    <img class='themap' src="images/maps/trollfjorden_l.png" border="1"/>
+<div id="map-container">
+    <img class="themap" src="images/maps/trollfjorden_l.png" border="1"/>
     <canvas id="mapcanvas" width="1048" height="827"></canvas>
 </div>
 <br/>
