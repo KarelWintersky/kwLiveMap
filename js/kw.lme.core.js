@@ -1,4 +1,4 @@
-var sqrt3 = Math.sqrt(3); // 1.732
+;var sqrt3 = Math.sqrt(3); // 1.732
 
 /**
  * Дополняет value нулями слева до полной длины строкового представления длиной stringsize.
@@ -165,8 +165,10 @@ function loadHexInfo(hexcoord, target)
  */
 function checkHexContent(hexcoord)
 {
-    var ret;
-    if (hexcoord.col && hexcoord.row) {
+    var ret = [];
+    if ((hexcoord.col && hexcoord.row)
+        && (hexcoord.col != (map_object.max_col + 1))
+        ) {
         var request = $.ajax({
             url:    'core/action.check.content.php?'+ $.param(hexcoord),
             async:  false,
@@ -294,5 +296,9 @@ function initHexGrid()
     with (map_object) {
         shift   = edge / 2;
         halfheight = height / 2;
+        x0      = border_size;
+        y0      = border_size;
     }
 }
+
+

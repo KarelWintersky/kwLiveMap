@@ -29,7 +29,7 @@ $data = array(
 );
 
 if ($data['editor'] != '')
-    setcookie('kw_trpg_lme_auth_editorname', $data['editor']);
+    setcookie('kw_trpg_lme_auth_editorname', $data['editor'],  time()+60*60*24*7, '/map/');
 
 try {
     $dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);

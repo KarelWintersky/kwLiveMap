@@ -13,7 +13,9 @@
     <script type="text/javascript" src="js/jquery.colorbox.js"></script>
     <script type="text/javascript" src="js/jquery.tiny-draggable.js"></script>
     <!-- custom js -->
-    <script type="text/javascript" src="js/kw_lme.core.js"></script>
+    <script type="text/javascript" src="js/kw.lme.core.js"></script>
+    <script type="text/javascript" src="js/kw.wlh.js"></script>
+    <script type="text/javascript" src="js/kw.lme.view.js"></script>
     <!-- internal js -->
     <script type="text/javascript">
         // в дальнейшем этот объект будет "приезжать" в шаблон из контроллера
@@ -22,8 +24,8 @@
             image           :   'images/maps/trollfjorden_l.png',
             border_size     :   1,
             // ноль координат
-            x0              :   0,
-            y0              :   0,
+            x0              :   1,
+            y0              :   1,
             // параметры гексагональной сетки
             grid_type       :   'hex:x_oriented',
             max_col         :   23,
@@ -43,6 +45,7 @@
         var hex_current_coords = '';
 
         $(document).ready(function(){
+            var hex_status;
             // инициализация
             $.ajaxSetup({cache: false});
             initHexGrid();
@@ -54,14 +57,32 @@
             var revealedAreas = loadRevealedAreas();
             drawFogOfWar(ctx, revealedAreas);
 
+            // анализируем hash-строку. Если её формат правильный - открываем нужный гексик
+            var incoming_hash_array = getHashArray();
+            var hc = incoming_hash_array['hexcoords'];
+
+            if (incoming_hash_array['hexcoords'] && incoming_hash_array['hexcoords'].length == 4) {
+                var coords = {
+                    'hexcoord'  :   hc,
+                    'col'       :   hc.substr(0, 2),
+                    'row'       :   hc.substr(3, 2)
+                };
+                hex_current_coords = coords;
+                hex_status = checkHexContent(coords);
+                if (hex_status['result'] == 'anydata') {
+                    popupInfoBox(coords);
+                } else {
+                    clearHash();
+                }
+            }
+
+
             // отлавливаем координаты клика
             $("#mapcanvas").on('click', function(event){
                 var canvas_coords = getCanvasXYPos(this, event);
-                var hexgrid_coords = getHex(canvas_coords.x, canvas_coords.y);
+                hex_current_coords = getHex(canvas_coords.x, canvas_coords.y);
 
-                hex_current_coords = hexgrid_coords;
-
-                var hex_status = checkHexContent(hexgrid_coords);
+                hex_status = checkHexContent(hex_current_coords);
 
                 if (hex_status['result'] == 'ignore') return false;
 
@@ -72,32 +93,11 @@
                         break;
                     }
                     case 'empty': {
-                        //@todo: вынести вставляемый текст в отдельный див!
-                        $("#colorboxed-view-content").html('По гексу `'+ hexgrid_coords.hexcoord +'` информации нет! Но можно добавить: <button id="actor-edit"> Редактировать </button>');
-                        $.colorbox({
-                            inline: true,
-                            href: '#colorboxed-view',
-                            width: 800,
-                            height: 600,
-                            title: 'Информации нет!'
-                        });
+                        popupEmptyInfoBox(hex_current_coords);
                         break;
                     }
                     case 'anydata': {
-                        //@todo:брать title из отдельного дива или переменной, обдумать!
-                        var str_title =
-                                '&nbsp;<img src="images/cursor_drag_arrow_2.png" align="bottom" width="16" width="16">&nbsp;&nbsp;'
-                                        + 'Координаты: </span>'
-                                        + pad(hexgrid_coords.col, 2) + pad(hexgrid_coords.row, 2)
-                                        + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
-                                        + '<button id="actor-edit"> Редактировать </button>';
-
-                        $.colorbox({
-                            href: 'core/action.get.content.php?'+$.param(hexgrid_coords),
-                            width: 800,
-                            height: 600,
-                            title: str_title
-                        });
+                        popupInfoBox(hex_current_coords);
 
                         break;
                     }
@@ -114,6 +114,11 @@
             $("#colorbox").tinyDraggable({
                 handle: '#cboxTitle',
                 exclude: 'button'
+            });
+
+            // on close colorbox clear document location hash
+            $(document).on('cbox_closed', function(){
+                clearHash();
             });
         });
     </script>
