@@ -60,9 +60,13 @@ $dbh = null;
 
 // параметр callback больше не передаем - отображение карты зависит от настроек в конфиге
 $TEMPLATE_DATA = array(
-    'html_callback'         =>  '/trollfjorden/map',
+    'project_name'          =>  $project_name,
+    'map_name'              =>  $map_name,
+    //
+    'html_callback'         =>  "/{$project_name}/{$map_name}",
     'project_title'         =>  'Trollfjorden -- Троллячьи фьорды',
     'map_title'             =>  'основная карта',
+    //
     'hexcoord'              =>  $_GET['hexcoord'],
     'coords_col'            =>  $coords_col,
     'coords_row'            =>  $coords_row,

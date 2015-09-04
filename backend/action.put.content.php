@@ -7,11 +7,19 @@ require_once 'websun.php';
 
 global $CONFIG;
 
-// var_dump($_POST);
-
 // check access rights
 $is_can_edit = auth_CanIEdit();
 if (!$is_can_edit) die('Hacking attempt!');
+
+$project_name
+    = isset($_POST['project_name'])
+    ? $_POST['project_name']
+    : die('No such project!');
+
+$map_name
+    = isset($_POST['map_name'])
+    ? $_POST['map_name']
+    : die('No such map!');
 
 $data = array(
     'hexcol'        =>  intval($_POST['hexcoord_col']),
@@ -24,37 +32,22 @@ $data = array(
     'edit_reason'   =>  $_POST['edit_reason'],
     'ip'            =>  $_SERVER['REMOTE_ADDR'],
     'project_id'    =>  1,
-    'project_name'  =>  'trollfjorden',
+    'project_name'  =>  $project_name,
     'map_id'        =>  0,
-    'map_name'      =>  'map'
+    'map_name'      =>  $map_name
 );
 
 if ($data['editor'] != '')
-    setcookie('kw_trpg_lme_auth_editorname', $data['editor'],  time()+60*60*24*7, '/trollfjorden/');
+    setcookie('kw_trpg_lme_auth_editorname', $data['editor'],  time()+60*60*24*7, "/{$project_name}/");
 
-try {
-    $dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
-    $dbh->exec("SET NAMES utf8");
-    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-}
-catch (PDOException $e) {
-    echo $e->getMessage();
-}
+$dbh = DB_Connect();
 
-try{
-    $sth = $dbh->prepare("INSERT INTO lme_map_tiles_data (hexcol, hexrow, hexcoords, title, content, editor, edit_date, edit_reason, ip, project_id, project_name, map_id, map_name)
-                          VALUES (:hexcol, :hexrow, :hexcoords, :title, :content, :editor, :edit_date, :edit_reason, :ip, :project_id, :project_name, :map_id, :map_name)");
-
-    $success = $sth->execute($data);
-}
-catch (PDOException $e) {
-    echo $e->getMessage();
-}
+DB_UpdateHexTile($dbh, $data);
 
 $dbh = null;
 
 $TEMPLATE_DATA = array(
-    'html_callback'         =>  '/trollfjorden/map',
+    'html_callback'         =>  "/{$project_name}/{$map_name}",
     'html_callback_timeout' =>  500,
 );
 

@@ -151,3 +151,17 @@ WHERE hexcol = {$coords_col} AND hexrow = {$coords_row}"
     }
     return $revisions_string;
 }
+
+function DB_UpdateHexTile($dbh, $data)
+{
+    try{
+        $sth = $dbh->prepare("INSERT INTO lme_map_tiles_data (hexcol, hexrow, hexcoords, title, content, editor, edit_date, edit_reason, ip, project_id, project_name, map_id, map_name)
+                          VALUES (:hexcol, :hexrow, :hexcoords, :title, :content, :editor, :edit_date, :edit_reason, :ip, :project_id, :project_name, :map_id, :map_name)");
+
+        $success = $sth->execute($data);
+    }
+    catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+
+}

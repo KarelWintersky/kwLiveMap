@@ -66,6 +66,8 @@
 <h2>Координаты: {*hexcoord*} </h2>
 
 <form action="/backend/action.put.content.php" method="post">
+    <input type="hidden" name="project_name" value="{*project_name*}" />
+    <input type="hidden" name="map_name" value="{*map_name*}" />
     <input type="hidden" name="hexcoords" value="{*hexcoord*}" />
     <input type="hidden" name="hexcoord_col" value="{*coords_col*}" />
     <input type="hidden" name="hexcoord_row" value="{*coords_row*}" />
