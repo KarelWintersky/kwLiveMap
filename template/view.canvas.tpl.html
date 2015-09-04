@@ -107,7 +107,7 @@
 
             // `Edit this` click event
             $(document).on('click', '#actor-edit', function(){
-                document.location.href = '/{*project_name*}/{*map_name*}/edit?frontend=imagemap&'+ $.param(hex_current_coords);
+                document.location.href = '/{*project_name*}/{*map_name*}/edit?callback=canvas&'+ $.param(hex_current_coords);
             });
 
             // draggable plugin

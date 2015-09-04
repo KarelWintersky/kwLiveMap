@@ -1,15 +1,3 @@
-<?php
-/**
- * User: Arris
- * Date: 03.09.15, time: 21:18
- */
-
-var_dump(__FILE__);
-echo '<hr/>';
-var_dump($_GET);
-
-?>
-
 <!DOCTYPE html>
 <html>
 <head>
