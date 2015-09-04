@@ -163,14 +163,14 @@ function loadHexInfo(hexcoord, target)
  * @param hexcoord
  * @return {ignore|empty|anydata}
  */
-function checkHexContent(hexcoord)
+function checkHexContent(hexcoord, projectdata)
 {
     var ret = [];
     if ((hexcoord.col && hexcoord.row)
         && (hexcoord.col != (map_object.max_col + 1))
         ) {
         var request = $.ajax({
-            url:    '/backend/action.check.content.php?'+ $.param(hexcoord),
+            url:    '/backend/action.check.content.php?'+ $.param(hexcoord) + '&' + $.param(projectdata),
             async:  false,
             type:   'GET'
         });
@@ -191,11 +191,11 @@ function checkHexContent(hexcoord)
  *    etc
  * }
  */
-function loadRevealedAreas()
+function loadRevealedAreas(projectdata)
 {
     var ret = '';
     var request = $.ajax({
-        url:    '/backend/action.get.revealed.php',
+        url:    '/backend/action.get.revealed.php?'+$.param(projectdata),
         async:  false,
         type:   'GET'
     });

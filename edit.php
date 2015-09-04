@@ -28,7 +28,7 @@ $map_name
 $dbh = DB_Connect();
 
 // проверяем, сколько ревизий текста у гекса
-$revisions_count = DB_GetRevisionsCount($dbh, $coords_col, $coords_row);
+$revisions_count = DB_GetRevisionsCount($dbh, $coords_col, $coords_row, $project_name, $map_name);
 
 // в зависимости от количества ревизий заполняем данные шаблона
 if ($revisions_count != 0) {
@@ -44,10 +44,10 @@ if ($revisions_count != 0) {
     }
 
     // выгружаем список ревизий
-    $revisions_string = DB_GetRevisionsList($dbh, $coords_col, $coords_row);
+    $revisions_string = DB_GetListRevisions($dbh, $coords_col, $coords_row, $project_name, $map_name);
 } else {
     // заполняем данные
-    $template = array(
+    $revision = array(
         'text'      =>  '',
         'title'     =>  '',
         'edit_reason'   =>  'Первое редактирование',
@@ -70,15 +70,15 @@ $TEMPLATE_DATA = array(
     'hexcoord'              =>  $_GET['hexcoord'],
     'coords_col'            =>  $coords_col,
     'coords_row'            =>  $coords_row,
-    'region_name'           =>  $revision['title'],
+    'region_title'          =>  $revision['title'],
     'region_text'           =>  $revision['text'],
     'region_edit_reason'    =>  $revision['edit_reason'],
-    'region_editor_name'    =>  $revision['editor_name'],
+    'region_editor_name'    =>  at($_COOKIE, 'kw_trpg_lme_auth_editorname', ""),
     // revisions
     'region_revisions'      =>  $revisions_string,
     // other
     'info_message'          =>  $revision['message'],
-    'copyright'             =>  '(c) Karel Wintersky, 2015, ver 0.5.1'
+    'copyright'             =>  '(c) Karel Wintersky, 2015, ver 0.5.+'
 );
 
 $tpl_file = 'edit.html';

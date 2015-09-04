@@ -3,54 +3,38 @@ require_once 'config/config.php';
 require_once 'core.php';
 require_once 'core.auth.php';
 require_once 'core.pdo.php';
+require_once 'websun.php';
 global $CONFIG;
-
-$hex_coords = $_GET['hexcoord'];
 
 $is_can_edit = auth_CanIEdit();
 
 $coords_col = intval($_GET['col']);
 $coords_row = intval($_GET['row']);
+$hex_coords = $_GET['hexcoord'];
 
-try {
-    $dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
-    $dbh->exec("SET NAMES utf8");
-    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-}
-catch (PDOException $e) {
-    echo $e->getMessage();
-}
+$project_name
+    = isset($_GET['project_name'])
+    ? $_GET['project_name']
+    : die('No such project!');
 
-try {
-    $sth = $dbh->query("
-    SELECT title, content
-    FROM lme_map_tiles_data
-    WHERE hexcol = {$coords_col} AND hexrow = {$coords_row}
-    ORDER BY edit_date DESC
-    LIMIT 1", PDO::FETCH_ASSOC);
+$map_name
+    = isset($_GET['map_name'])
+    ? $_GET['map_name']
+    : die('No such map!');
 
-    $row = $sth->fetch(PDO::FETCH_ASSOC);
+$dbh = DB_Connect();
 
-    $template = array(
-        'text'      =>  $row['content'],
-        'title'     =>  $row['title'],
-        'edit_reason'   =>  $row['edit_reason'],
-        'editor_name'   =>  at($_COOKIE, 'kwtrpglme_auth_editorname', $row['editor']),
-    );
-
-}
-catch (PDOException $e) {
-    die($e->getMessage());
-}
+$revision = DB_GetRevisionLast($dbh, $coords_col, $coords_row, $project_name, $map_name);
 
 $dbh = null;
 
-?>
-<hr>
-<fieldset class="region-content">
-    <legend> <?php echo $template['title']; ?> </legend>
+$TEMPLATE_DATA = array(
+    'tileinfo_title'        =>  $revision['title'],
+    'tileinfo_text'         =>  $revision['text']
+);
 
-    <?php echo $template['text']; ?>
-</fieldset>
+$tpl_file = 'get_content.ajaxed.html';
 
+$html = websun_parse_template_path($TEMPLATE_DATA, $tpl_file, '$/template');
 
+echo $html;

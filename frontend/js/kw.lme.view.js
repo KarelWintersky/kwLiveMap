@@ -10,7 +10,7 @@ function popupEmptyInfoBox(hexgrid_coords)
     });
 }
 
-function popupInfoBox(hexgrid_coords)
+function popupInfoBox(hexgrid_coords, projectdata)
 {
     //@todo:брать title из отдельного дива или переменной, обдумать!
     var str_title =
@@ -23,7 +23,7 @@ function popupInfoBox(hexgrid_coords)
     setHash('#hexcoords='+hexgrid_coords.hexcoord);
 
     $.colorbox({
-        href: '/backend/action.get.content.php?'+$.param(hexgrid_coords),
+        href: '/backend/action.get.content.php?' + $.param(hexgrid_coords) + '&' + $.param(projectdata),
         width: 800,
         height: 600,
         title: str_title

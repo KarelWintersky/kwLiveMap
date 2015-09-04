@@ -5,6 +5,24 @@
  */
 require_once 'backend/websun.php';
 
+$project_name
+    = isset($_GET['project'])
+    ? $_GET['project']
+    : die('No such project!');
+
+$map_name
+    = isset($_GET['map'])
+    ? $_GET['map']
+    : die('No such map!');
+
+/*
+Теперь нужно по полученным данным (project_name, map_name) извлечь из таблиц
+lme_projects    : настройки проекта
+lme_maps        : настройки конкретной карты
+
+
+*/
+
 $TEMPLATE_DATA = array(
     // project variables
     'project_title' =>  "Trollfjorden -- Троллячьи фьорды",

@@ -19,7 +19,13 @@
     <!-- internal js -->
     <script type="text/javascript">
         // в дальнейшем этот объект будет "приезжать" в шаблон из контроллера
+        var this_project = {
+            // параметры проекта и карты
+            project_name    :   '{*project_name*}',
+            map_name        :   '{*map_name*}',
+        }
         var map_object = {
+
             // параметры изображения
             image           :   '{*map_imagefile*}',
             border_size     :   {*map_bordersize*},
@@ -54,7 +60,7 @@
                     ctx = canvas.getContext('2d');
 
             // создаем "туман войны"
-            var revealedAreas = loadRevealedAreas();
+            var revealedAreas = loadRevealedAreas(this_project);
             drawFogOfWar(ctx, revealedAreas);
 
             // анализируем hash-строку. Если её формат правильный - открываем нужный гексик
@@ -68,9 +74,9 @@
                     'row'       :   hc.substr(3, 2)
                 };
                 hex_current_coords = coords;
-                hex_status = checkHexContent(coords);
+                hex_status = checkHexContent(coords, this_project);
                 if (hex_status['result'] == 'anydata') {
-                    popupInfoBox(coords);
+                    popupInfoBox(coords, this_project);
                 } else {
                     clearHash();
                 }
@@ -82,7 +88,7 @@
                 var canvas_coords = getCanvasXYPos(this, event);
                 hex_current_coords = getHex(canvas_coords.x, canvas_coords.y);
 
-                hex_status = checkHexContent(hex_current_coords);
+                hex_status = checkHexContent(hex_current_coords, this_project);
 
                 if (hex_status['result'] == 'ignore') return false;
 
@@ -93,11 +99,11 @@
                         break;
                     }
                     case 'empty': {
-                        popupEmptyInfoBox(hex_current_coords);
+                        popupEmptyInfoBox(hex_current_coords, this_project);
                         break;
                     }
                     case 'anydata': {
-                        popupInfoBox(hex_current_coords);
+                        popupInfoBox(hex_current_coords, this_project);
 
                         break;
                     }
@@ -107,7 +113,7 @@
 
             // `Edit this` click event
             $(document).on('click', '#actor-edit', function(){
-                document.location.href = '/{*project_name*}/{*map_name*}/edit?callback=canvas&'+ $.param(hex_current_coords);
+                document.location.href = '/{*project_name*}/{*map_name*}/edit?callback=canvas&' + $.param(hex_current_coords) + '&' + $.param(this_project) ;
             });
 
             // draggable plugin
