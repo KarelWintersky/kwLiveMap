@@ -81,8 +81,8 @@ $TEMPLATE_DATA = array(
     'copyright'             =>  '(c) Karel Wintersky, 2015, ver 0.5.1'
 );
 
-$tpl_file = 'template/edit.html';
+$tpl_file = 'edit.html';
 
-$html = websun_parse_template_path($TEMPLATE_DATA, $tpl_file);
+$html = websun_parse_template_path($TEMPLATE_DATA, $tpl_file, '$/template');
 
 echo $html;

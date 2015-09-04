@@ -23,8 +23,8 @@ $TEMPLATE_DATA = array(
     'map_fog_hidden'    =>  0.2
 );
 
-$tpl_file = 'template/view.canvas.html';
+$tpl_file = 'view.canvas.html';
 
-$html = websun_parse_template_path($TEMPLATE_DATA, $tpl_file);
+$html = websun_parse_template_path($TEMPLATE_DATA, $tpl_file, '$/template');
 
 echo $html;

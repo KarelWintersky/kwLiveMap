@@ -48,11 +48,11 @@ $dbh = null;
 
 $TEMPLATE_DATA = array(
     'html_callback'         =>  "/{$project_name}/{$map_name}",
-    'html_callback_timeout' =>  500,
+    'html_callback_timeout' =>  10,
 );
 
-$tpl_file = '../template/put_content.callback.html';
+$tpl_file = 'put_content.callback.html';
 
-$html = websun_parse_template_path($TEMPLATE_DATA, $tpl_file);
+$html = websun_parse_template_path($TEMPLATE_DATA, $tpl_file, '$/template');
 
 echo $html;
