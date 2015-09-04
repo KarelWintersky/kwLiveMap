@@ -140,7 +140,7 @@ function loadHexInfo(hexcoord, target)
 {
     if (hexcoord.col && hexcoord.row) {
         var request = $.ajax({
-            url:    'core/action.get.content.php?'+$.param(hexcoord),
+            url:    '/backend/action.get.content.php?'+$.param(hexcoord),
             async:  false,
             type:   'GET',
         });
@@ -170,7 +170,7 @@ function checkHexContent(hexcoord)
         && (hexcoord.col != (map_object.max_col + 1))
         ) {
         var request = $.ajax({
-            url:    'core/action.check.content.php?'+ $.param(hexcoord),
+            url:    '/backend/action.check.content.php?'+ $.param(hexcoord),
             async:  false,
             type:   'GET'
         });
@@ -195,7 +195,7 @@ function loadRevealedAreas()
 {
     var ret = '';
     var request = $.ajax({
-        url:    'core/action.get.revealed.php',
+        url:    '/backend/action.get.revealed.php',
         async:  false,
         type:   'GET'
     });

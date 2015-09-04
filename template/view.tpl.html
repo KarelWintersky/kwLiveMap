@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{*project_title*}, {*map_title*}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!-- styles -->
+    <link rel="stylesheet" type="text/css" href="/frontend/css/frontend.view.css" />
+    <link rel="stylesheet" type="text/css" href="/frontend/css/colorbox.css">
+    <!-- core js -->
+    <link href='https://fonts.googleapis.com/css?family=Didact+Gothic&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="/frontend/js/html5shiv.js"></script>
+    <script type="text/javascript" src="/frontend/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/frontend/js/jquery.colorbox.js"></script>
+    <script type="text/javascript" src="/frontend/js/jquery.tiny-draggable.js"></script>
+    <!-- custom js -->
+    <script type="text/javascript" src="/frontend/js/kw.lme.core.js"></script>
+    <script type="text/javascript" src="/frontend/js/kw.wlh.js"></script>
+    <script type="text/javascript" src="/frontend/js/kw.lme.view.js"></script>
+    <!-- internal js -->
+    <script type="text/javascript">
+        // в дальнейшем этот объект будет "приезжать" в шаблон из контроллера
+        var map_object = {
+            // параметры изображения
+            image           :   '{*map_imagefile*}',
+            border_size     :   {*map_bordersize*},
+            // ноль координат
+            x0              :   null,
+            y0              :   null,
+            // параметры гексагональной сетки
+            grid_type       :   '{*map_grid_type*}',
+            max_col         :   {*map_max_col*},
+            max_row         :   {*map_max_row*},
+            // заполняются отдельно, так как вычисляются
+            edge            :   {*map_grid_edge*}, // hexgrid_size
+            shift           :   null,
+            height          :   {*map_grid_height*},
+            halfheight      :   null,
+
+            // настройки отрисовки
+            areas_hidden    :   {*map_fog_hidden*},
+            areas_revealed  :   0
+        }
+
+        var hex_loaded_content = '';
+        var hex_current_coords = '';
+
+        $(document).ready(function(){
+            var hex_status;
+            // инициализация
+            $.ajaxSetup({cache: false});
+            initHexGrid();
+
+            var canvas = document.getElementById('mapcanvas'),
+                    ctx = canvas.getContext('2d');
+
+            // создаем "туман войны"
+            var revealedAreas = loadRevealedAreas();
+            drawFogOfWar(ctx, revealedAreas);
+
+            // анализируем hash-строку. Если её формат правильный - открываем нужный гексик
+            var incoming_hash_array = getHashArray();
+            var hc = incoming_hash_array['hexcoords'];
+
+            if (incoming_hash_array['hexcoords'] && incoming_hash_array['hexcoords'].length == 4) {
+                var coords = {
+                    'hexcoord'  :   hc,
+                    'col'       :   hc.substr(0, 2),
+                    'row'       :   hc.substr(3, 2)
+                };
+                hex_current_coords = coords;
+                hex_status = checkHexContent(coords);
+                if (hex_status['result'] == 'anydata') {
+                    popupInfoBox(coords);
+                } else {
+                    clearHash();
+                }
+            }
+
+
+            // отлавливаем координаты клика
+            $("#mapcanvas").on('click', function(event){
+                var canvas_coords = getCanvasXYPos(this, event);
+                hex_current_coords = getHex(canvas_coords.x, canvas_coords.y);
+
+                hex_status = checkHexContent(hex_current_coords);
+
+                if (hex_status['result'] == 'ignore') return false;
+
+                // разбор различных состояний
+                switch (hex_status['result']) {
+                    case 'ignore': {
+                        return false;
+                        break;
+                    }
+                    case 'empty': {
+                        popupEmptyInfoBox(hex_current_coords);
+                        break;
+                    }
+                    case 'anydata': {
+                        popupInfoBox(hex_current_coords);
+
+                        break;
+                    }
+
+                } // switch
+            }); // themap click
+
+            // `Edit this` click event
+            $(document).on('click', '#actor-edit', function(){
+                document.location.href = '/{*project_name*}/{*map_name*}/edit?frontend=imagemap&'+ $.param(hex_current_coords);
+            });
+
+            // draggable plugin
+            $("#colorbox").tinyDraggable({
+                handle: '#cboxTitle',
+                exclude: 'button'
+            });
+
+            // on close colorbox clear document location hash
+            $(document).on('cbox_closed', function(){
+                clearHash();
+            });
+        });
+    </script>
+</head>
+<body>
+
+<div id="map-container">
+    <img class="themap" src="{*map_imagefile*}" border="1"/>
+    <canvas id="mapcanvas" width="1048" height="827"></canvas>
+</div>
+<br/>
+Нажмите на <strike>кексик</strike> гексик карты и... =^.^=
+
+<div style="display:none">
+    <div id="colorboxed-view" style="padding:10px; background:#fff;">
+        <div id="colorboxed-view-content"></div>
+    </div>
+</div>
+
+
+</body>
+</html>

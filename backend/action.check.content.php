@@ -1,8 +1,8 @@
 <?php
 require_once 'config/config.php';
-require_once 'core.php';
-require_once 'core.auth.php';
-require_once 'core.pdo.php';
+require_once 'core/core.php';
+require_once 'core/core.auth.php';
+require_once 'core/core.pdo.php';
 global $CONFIG;
 
 $is_can_edit = auth_CanIEdit();

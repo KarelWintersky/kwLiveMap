@@ -1,8 +1,8 @@
 <?php
-require_once 'core/config/config.php';
-require_once 'core/core.php';
-require_once 'core/core.auth.php';
-require_once 'core/core.pdo.php';
+require_once 'backend/config/config.php';
+require_once 'backend/core/core.php';
+require_once 'backend/core/core.auth.php';
+require_once 'backend/core/core.pdo.php';
 global $CONFIG;
 
 // init null values
@@ -144,12 +144,12 @@ $dbh = null;
 <head>
     <title>kwRPG Map Engine :: Trollfjorden</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <script type="text/javascript" src="js/html5shiv.js"></script>
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script src="js/tinymce/tinymce.min.js"></script>
-    <script src="js/tinymce.config.js"></script>
+    <script type="text/javascript" src="frontend/js/html5shiv.js"></script>
+    <script type="text/javascript" src="frontend/js/jquery.min.js"></script>
+    <script src="frontend/js/tinymce/tinymce.min.js"></script>
+    <script src="frontend/js/tinymce.config.js"></script>
     <!-- styles -->
-    <link rel="stylesheet" type="text/css" href="css/frontend.edit.css" />
+    <link rel="stylesheet" type="text/css" href="frontend/css/frontend.edit.css" />
     <script type="text/javascript">
         $(document).ready(function(){
             tinify(tiny_config['full'], 'edit-textarea');
@@ -163,7 +163,7 @@ $dbh = null;
 <body>
 <h2>Координаты: <?php echo $_GET['hexcoord']?> </h2>
 
-<form action="core/action.put.content.php" method="post">
+<form action="backend/action.put.content.php" method="post">
     <input type="hidden" name="hexcoords" value="<?php echo $_GET['hexcoord']?>" />
     <input type="hidden" name="hexcoord_col" value="<?php echo $coords_col; ?>" />
     <input type="hidden" name="hexcoord_row" value="<?php echo $coords_row; ?>" />

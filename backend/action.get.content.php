@@ -1,8 +1,8 @@
 <?php
 require_once 'config/config.php';
-require_once 'core.php';
-require_once 'core.auth.php';
-require_once 'core.pdo.php';
+require_once 'core/core.php';
+require_once 'core/core.auth.php';
+require_once 'core/core.pdo.php';
 global $CONFIG;
 
 $hex_coords = $_GET['hexcoord'];
@@ -25,7 +25,7 @@ try {
     $sth = $dbh->query("
     SELECT title, content
     FROM lme_map_tiles_data
-    WHERE `hexcol` = {$coords_col} AND `hexrow` = {$coords_row}
+    WHERE hexcol = {$coords_col} AND hexrow = {$coords_row}
     ORDER BY edit_date DESC
     LIMIT 1", PDO::FETCH_ASSOC);
 

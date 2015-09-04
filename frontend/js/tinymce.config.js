@@ -22,10 +22,12 @@ var tiny_config = {
         image_advtab: true, // advanced tab (without rel or class add)
         // responsive filemanager
         relative_urls: false,
-        document_base_url: "/map/",
-        external_filemanager_path:"/map/js/filemanager/",
+        document_base_url: "/",
+        external_filemanager_path:"/frontend/js/filemanager/",
         filemanager_title:"Responsive Filemanager" ,
-        external_plugins: { "filemanager" : "/map/js/filemanager/plugin.js"}
+        external_plugins: {
+            "filemanager" : "/frontend/js/filemanager/plugin.js"
+        }
     },
     'no-menu' : {
         forced_root_block : "",

@@ -14,7 +14,7 @@ function popupInfoBox(hexgrid_coords)
 {
     //@todo:брать title из отдельного дива или переменной, обдумать!
     var str_title =
-        '&nbsp;<img src="images/cursor_drag_arrow_2.png" align="bottom" width="16" width="16">&nbsp;&nbsp;'
+        '&nbsp;<img src="/frontend/images/cursor_drag_arrow_2.png" align="bottom" width="16" width="16">&nbsp;&nbsp;'
             + 'Координаты: </span>'
             + pad(hexgrid_coords.col, 2) + pad(hexgrid_coords.row, 2)
             + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
@@ -23,7 +23,7 @@ function popupInfoBox(hexgrid_coords)
     setHash('#hexcoords='+hexgrid_coords.hexcoord);
 
     $.colorbox({
-        href: 'core/action.get.content.php?'+$.param(hexgrid_coords),
+        href: '/backend/action.get.content.php?'+$.param(hexgrid_coords),
         width: 800,
         height: 600,
         title: str_title

@@ -1,0 +1,27 @@
+# ErrorDocument 404 /404.php
+
+RewriteEngine on
+RewriteBase /
+
+# RewriteCond %{REQUEST_FILENAME} !^favicon\.ico
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+
+#root rules
+#RewriteRule ^register$ auth.php?action=register [L,QSA]
+#RewriteRule ^login$ auth.php?action=login [L,QSA]
+#RewriteRule ^logout$ auth.php?action=logout [L,QSA]
+#RewriteRule ^remember$ auth.php?action=remember [L,QSA]
+
+#project info
+#RewriteRule ^([A-Za-z0-9-]+)$ info.php?project=$1 [L,QSA]
+
+#project settings
+#RewriteRule ^([A-Za-z0-9-]+)/editusers$ editusers.php?project=$1 [L,QSA]
+#RewriteRule ^([A-Za-z0-9-]+)/settings$ settings.php?project=$1 [L,QSA]
+
+#any project map
+RewriteRule ^([A-Za-z0-9-]+)/([^/]+)([/]?)$ view.php?project=$1&map=$2 [L,QSA]
+
+#any project, any map, edit
+RewriteRule ^([A-Za-z0-9-]+)/([^/]+)/edit$ /edit.php?project=$1&map=$2 [L,QSA]
