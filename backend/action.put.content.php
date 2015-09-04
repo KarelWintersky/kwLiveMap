@@ -15,21 +15,23 @@ $callback
     : '/map/index.html';
 
 $data = array(
-    'hexcol'    =>  intval($_POST['hexcoord_col']),
-    'hexrow'    =>  intval($_POST['hexcoord_row']),
-    'hexcoords' =>  $_POST['hexcoords'],
-    'title'     =>  $_POST['title'],
-    'content'   =>  $_POST['textdata'],
-    'editor'    =>  $_POST['editor_name'],
-    'edit_date' =>  time(),
-    'edit_reason'=> $_POST['edit_reason'],
-    'ip'        =>  $_SERVER['REMOTE_ADDR'],
-    'project_id'=>  1,
-    'project_title' =>  'trollfjorden'
+    'hexcol'        =>  intval($_POST['hexcoord_col']),
+    'hexrow'        =>  intval($_POST['hexcoord_row']),
+    'hexcoords'     =>  $_POST['hexcoords'],
+    'title'         =>  $_POST['title'],
+    'content'       =>  $_POST['textdata'],
+    'editor'        =>  $_POST['editor_name'],
+    'edit_date'     =>  time(),
+    'edit_reason'   =>  $_POST['edit_reason'],
+    'ip'            =>  $_SERVER['REMOTE_ADDR'],
+    'project_id'    =>  1,
+    'project_name'  =>  'trollfjorden',
+    'map_id'        =>  0,
+    'map_name'      =>  'map'
 );
 
 if ($data['editor'] != '')
-    setcookie('kw_trpg_lme_auth_editorname', $data['editor'],  time()+60*60*24*7, '/map/');
+    setcookie('kw_trpg_lme_auth_editorname', $data['editor'],  time()+60*60*24*7, '/trollfjorden/');
 
 try {
     $dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
@@ -41,8 +43,8 @@ catch (PDOException $e) {
 }
 
 try{
-    $sth = $dbh->prepare("INSERT INTO lme_map_tiles_data (hexcol, hexrow, hexcoords, title, content, editor, edit_date, edit_reason, ip, project_id, project_title)
-                          VALUES (:hexcol, :hexrow, :hexcoords, :title, :content, :editor, :edit_date, :edit_reason, :ip, :project_id, :project_title)");
+    $sth = $dbh->prepare("INSERT INTO lme_map_tiles_data (hexcol, hexrow, hexcoords, title, content, editor, edit_date, edit_reason, ip, project_id, project_name, map_id, map_name)
+                          VALUES (:hexcol, :hexrow, :hexcoords, :title, :content, :editor, :edit_date, :edit_reason, :ip, :project_id, :project_name, :map_id, :map_name)");
 
     $success = $sth->execute($data);
 }

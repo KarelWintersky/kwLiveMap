@@ -1,55 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>kwRPG Map Engine :: Trollfjorden</title>
+    <title>{*project_title*}, {*map_title*}, EDIT</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-    <script type="text/javascript" src="frontend/js/html5shiv.js"></script>
-    <script type="text/javascript" src="frontend/js/jquery.min.js"></script>
-    <script type="text/javascript" src="frontend/js/tinymce/tinymce.min.js"></script>
-    <script type="text/javascript" src="frontend/js/tinymce.config.js"></script>
+    <script type="text/javascript" src="/frontend/js/html5shiv.js"></script>
+    <script type="text/javascript" src="/frontend/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/frontend/js/tinymce/tinymce.min.js"></script>
+    <script type="text/javascript" src="/frontend/js/tinymce.config.js"></script>
     <!-- styles -->
-    <link rel="stylesheet" type="text/css" href="frontend/css/frontend.edit.css" />
+    <link rel="stylesheet" type="text/css" href="/frontend/css/frontend.edit.css" />
     <script type="text/javascript">
         $(document).ready(function(){
             tinify(tiny_config['full'], 'edit-textarea');
             $("#actor-back").on('click', function(){
-                document.location.href = '<?php echo $html_callback  ?>';
+                document.location.href = '{*html_callback*}';
             });
         });
     </script>
 </head>
 
 <body>
-<h2>Координаты: <?php echo $_GET['hexcoord']?> </h2>
+<h2>Координаты: {*hexcoord*} </h2>
 
-<form action="backend/action.put.content.php" method="post">
-    <input type="hidden" name="hexcoords" value="<?php echo $_GET['hexcoord']?>" />
-    <input type="hidden" name="hexcoord_col" value="<?php echo $coords_col; ?>" />
-    <input type="hidden" name="hexcoord_row" value="<?php echo $coords_row; ?>" />
-    <input type="hidden" name="callback" value="<?php echo $_GET['frontend']; ?>" />
+<form action="/backend/action.put.content.php" method="post">
+    <input type="hidden" name="hexcoords" value="{*hexcoord*}" />
+    <input type="hidden" name="hexcoord_col" value="{*coords_col*}" />
+    <input type="hidden" name="hexcoord_row" value="{*coords_row*}" />
+    <input type="hidden" name="callback" value="{*html_callback*}" />
 
     <fieldset class="fields_area">
         <div class="field">
             <label for="title">Название региона:</label>
-            <input type="text" name="title" id="title" size="60" value="<?php echo $template['title'] ?>" />
+            <input type="text" name="title" id="title" size="60" value="{*region_name*}" />
         </div>
     </fieldset>
 
     <label for="edit-textarea" class="label_textarea label_fullwidth">
-        <textarea name="textdata" id="edit-textarea" cols="10" tabindex="3"><?php echo $template['text'] ?></textarea>
+        <textarea name="textdata" id="edit-textarea" cols="10" tabindex="3">{*region_text*}</textarea>
     </label>
 
     <fieldset class="fields_area">
         <div class="field">
             <label for="edit_reason">Причина редактирования:</label>
-            <input type="text" name="edit_reason" id="edit_reason" size="60" value="<?php echo $template['edit_reason'] ?>" />
+            <input type="text" name="edit_reason" id="edit_reason" size="60" value="{*region_edit_reason*}" />
         </div>
         <div class="field">
             <label for="editor_name">Редактор:</label>
-            <input required type="text" name="editor_name" id="editor_name" size="60" value="<?php echo $template['editor_name'] ?>"/>
+            <input required type="text" name="editor_name" id="editor_name" size="60" value="{*region_editor_name*}"/>
         </div>
-        <span> <?php echo $template['message']; ?> </span>
+        <span> {*info_message*} </span>
 
     </fieldset>
     <div class="clear"></div>
@@ -65,12 +65,12 @@
 <fieldset id="revisions_fieldset">
     <legend>Revision history</legend>
     <ul>
-        <?php echo $revisions_string; ?>
+        {*region_revisions*}
     </ul>
 </fieldset>
 <div class="clear"></div>
 <hr>
-<small><em>(c) Karel Wintersky, Aug 2015</em></small>
+<small><em>{*copyright*}</em></small>
 
 </body>
 </html>

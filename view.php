@@ -3,7 +3,7 @@
  * User: Arris
  * Date: 03.09.15, time: 21:18
  */
-require_once 'backend/core/websun.php';
+require_once 'backend/websun.php';
 
 $TEMPLATE_DATA = array(
     // project variables

@@ -1,135 +1,50 @@
 <?php
-require_once 'backend/config/config.php';
-require_once 'backend/core/core.php';
-require_once 'backend/core/core.auth.php';
-require_once 'backend/core/core.pdo.php';
-global $CONFIG;
-
-var_dump($_GET);
+require_once 'backend/core.php';
+require_once 'backend/core.auth.php';
+require_once 'backend/core.pdo.php';
+require_once 'backend/websun.php';
 
 // init null values
 $revisions_string = '';
+$revision = array();
 
 // check access rights
 $is_can_edit = auth_CanIEdit();
 
-// check callback
-$html_callback = ($_GET['frontend'] == 'canvas') ? '/map/index.html' : '/map/leaflet.html';
-
 $coords_col = intval($_GET['col']);
 $coords_row = intval($_GET['row']);
 
-// коннект с базой
-try {
-    $dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
-    $dbh->exec("SET NAMES utf8");
-    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-}
-catch (PDOException $e) {
-    echo $e->getMessage();
-}
+$project_name
+    = isset($_GET['project'])
+    ? $_GET['project']
+    : die('No such project!');
 
+$map_name
+    = isset($_GET['map'])
+    ? $_GET['map']
+    : die('No such map!');
+
+// коннект с базой
+$dbh = DB_Connect();
 
 // проверяем, сколько ревизий текста у гекса
-try {
-    $sth = $dbh->query("SELECT COUNT(id) AS count_id FROM lme_map_tiles_data WHERE `hexcol` = {$coords_col} AND `hexrow` = {$coords_row}", PDO::FETCH_ASSOC);
-
-    $row = $sth->fetch(PDO::FETCH_ASSOC);
-
-    $revisions_count = $row['count_id'];
-}
-catch (PDOException $e) {
-    die($e->getMessage());
-}
+$revisions_count = DB_GetRevisionsCount($dbh, $coords_col, $coords_row);
 
 // в зависимости от количества ревизий заполняем данные шаблона
 if ($revisions_count != 0) {
 
     // если во входящих параметрах нет идентификатора ревизии - загружаем последнюю
     if (!isset($_GET['revision'])) {
-
         // загружаем последнюю ревизию
-        try{
-
-            $sth = $dbh->query("
-            SELECT title, content, editor, edit_reason
-            FROM lme_map_tiles_data
-            WHERE hexcol = {$coords_col} AND hexrow = {$coords_row}
-            ORDER BY edit_date DESC
-            LIMIT 1");
-
-            $row = $sth->fetch(PDO::FETCH_ASSOC);
-
-            $template = array(
-                'message'   =>  '',
-                'text'      =>  $row['content'],
-                'title'     =>  $row['title'],
-                'edit_reason'   =>  $row['edit_reason'],
-                'editor_name'   =>  at($_COOKIE, 'kw_trpg_lme_auth_editorname', ""),
-            );
-
-        }
-        catch (PDOException $e) {
-            die(__LINE__ . $e->getMessage());
-        }
+        $revision = DB_GetRevisionLast($dbh, $coords_col, $coords_row, $project_name, $map_name);
     } else {
         // загружаем нужную ревизию по идентификатору
-        $revision = $_GET['revision'];
-        try {
-            $sth = $dbh->query("
-            SELECT title, content, editor, edit_reason
-            FROM lme_map_tiles_data
-            WHERE id = {$revision}
-            ");
-
-            $row = $sth->fetch(PDO::FETCH_ASSOC);
-
-            $template = array(
-                'message'   =>  'Fork revision #'.$revision,
-                'text'      =>  $row['content'],
-                'title'     =>  $row['title'],
-                'edit_reason'   =>  "".$row['edit_reason'],
-                'editor_name'   =>  at($_COOKIE, 'kw_trpg_lme_auth_editorname', ""),
-            );
-
-
-        }
-        catch (PDOException $e){
-            die($e->getMessage());
-        }
-
+        $revision_id = $_GET['revision'];
+        $revision = DB_GetRevisionById($dbh, $revision_id);
     }
-
 
     // выгружаем список ревизий
-
-    try{
-        $sth = $dbh->query("
-SELECT id, hexcol, hexrow, hexcoords, DATE_FORMAT(FROM_UNIXTIME(edit_date), '%d-%m-%Y %H:%m:%s') AS edit_date, editor, edit_reason, ip
-FROM lme_map_tiles_data
-WHERE hexcol = {$coords_col} AND hexrow = {$coords_row}"
-            , PDO::FETCH_OBJ);
-
-        while($row = $sth->fetch(PDO::FETCH_OBJ)){
-            $revisions_string .= sprintf(
-                '<li><a href="edit.php?frontend=imagemap&col=%s&row=%s&hexcoord=%s&revision=%s">%s, %s</a> <em>(IP: %s)</em>: %s</li>'."\r\n",
-                $row->hexcol,
-                $row->hexrow,
-                $row->hexcoords,
-                $row->id,
-                $row->edit_date,
-                $row->editor,
-                $row->ip,
-                $row->edit_reason
-            );
-        }
-        if ($revisions_string == '')
-            $revisions_string = 'Это будет первая версия статьи!';
-
-    }
-    catch(PDOException $e) {
-        die($e->getMessage());
-    }
+    $revisions_string = DB_GetRevisionsList($dbh, $coords_col, $coords_row);
 } else {
     // заполняем данные
     $template = array(
@@ -141,3 +56,29 @@ WHERE hexcol = {$coords_col} AND hexrow = {$coords_row}"
 }
 
 $dbh = null;
+
+
+// параметр callback больше не передаем - отображение карты зависит от настроек в конфиге
+$TEMPLATE_DATA = array(
+    'html_callback'         =>  '/trollfjorden/map',
+    'project_title'         =>  '',
+    'map_title'             =>  '',
+    'hexcoord'              =>  $_GET['hexcoord'],
+    'coords_col'            =>  $coords_col,
+    'coords_row'            =>  $coords_row,
+    'region_name'           =>  $revision['title'],
+    'region_text'           =>  $revision['text'],
+    'region_edit_reason'    =>  $revision['edit_reason'],
+    'region_editor_name'    =>  $revision['editor_name'],
+    // revisions
+    'region_revisions'      =>  $revisions_string,
+    // other
+    'info_message'          =>  $revision['message'],
+    'copyright'             =>  '(c) Karel Wintersky, 2015, ver 0.5.1'
+);
+
+$tpl_file = 'template/edit.tpl.html';
+
+$html = websun_parse_template_path($TEMPLATE_DATA, $tpl_file);
+
+echo $html;
