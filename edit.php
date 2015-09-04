@@ -61,8 +61,8 @@ $dbh = null;
 // параметр callback больше не передаем - отображение карты зависит от настроек в конфиге
 $TEMPLATE_DATA = array(
     'html_callback'         =>  '/trollfjorden/map',
-    'project_title'         =>  '',
-    'map_title'             =>  '',
+    'project_title'         =>  'Trollfjorden -- Троллячьи фьорды',
+    'map_title'             =>  'основная карта',
     'hexcoord'              =>  $_GET['hexcoord'],
     'coords_col'            =>  $coords_col,
     'coords_row'            =>  $coords_row,
@@ -77,7 +77,7 @@ $TEMPLATE_DATA = array(
     'copyright'             =>  '(c) Karel Wintersky, 2015, ver 0.5.1'
 );
 
-$tpl_file = 'template/edit.tpl.html';
+$tpl_file = 'template/edit.html';
 
 $html = websun_parse_template_path($TEMPLATE_DATA, $tpl_file);
 

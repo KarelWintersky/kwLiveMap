@@ -24,4 +24,4 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^([A-Za-z0-9-]+)/([^/]+)([/]?)$ view.php?project=$1&map=$2 [L,QSA]
 
 #any project, any map, edit
-RewriteRule ^([A-Za-z0-9-]+)/([^/]+)/edit$ /edit.php?project=$1&map=$2 [L,QSA]
+RewriteRule ^([A-Za-z0-9-]+)/([^/]+)/edit$ edit.php?project=$1&map=$2 [L,QSA]

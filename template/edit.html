@@ -1,18 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{*project_title*}, {*map_title*}, EDIT</title>
+    <title>{*project_title*}, {*map_title*}, редактирование</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
     <script type="text/javascript" src="/frontend/js/html5shiv.js"></script>
     <script type="text/javascript" src="/frontend/js/jquery.min.js"></script>
     <script type="text/javascript" src="/frontend/js/tinymce/tinymce.min.js"></script>
-    <script type="text/javascript" src="/frontend/js/tinymce.config.js"></script>
+    <script type="text/javascript">
+        var tiny_config = {
+            theme: "modern",
+            skin: "lightgray",
+            language: 'ru',
+
+            forced_root_block : "",
+            force_br_newlines : true,
+            force_p_newlines : false,
+
+            height: 300,
+
+            plugins: [ "advlist lists autolink link image anchor responsivefilemanager charmap insertdatetime paste searchreplace contextmenu code textcolor template hr pagebreak table print preview wordcount visualblocks visualchars legacyoutput" ],
+            formats: {
+                strikethrough : {inline : 'del'},
+                underline : {inline : 'span', 'classes' : 'underline', exact : true}
+            },
+            insertdatetime_formats: ["%d.%m.%Y", "%H:%m", "%d/%m/%Y"],
+            contextmenu: "link image responsivefilemanager | inserttable cell row column deletetable | charmap",
+            toolbar1: "pastetext | undo redo | link unlink anchor | forecolor backcolor | styleselect formatselect fontsizeselect | template | print preview code | pastetext removeformat",
+            toolbar2: "responsivefilemanager image | bold italic underline subscript superscript strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table inserttime",
+            image_advtab: true, // advanced tab (without rel or class add)
+            // responsive filemanager
+            relative_urls: false,
+            document_base_url: "/",
+            external_filemanager_path:"/frontend/js/filemanager/",
+            filemanager_title:"Responsive Filemanager" ,
+            external_plugins: {
+                "filemanager" : "/frontend/js/filemanager/plugin.js"
+            }
+        };
+        function tinify(config, elem, mode)
+        {
+            m = (typeof mode != 'undefined') ? mode : true;
+            tinyMCE.settings = config;
+            m
+                    ? tinyMCE.execCommand('mceAddEditor', true, elem)
+                    : tinyMCE.execCommand('mceRemoveEditor', false, elem);
+        }
+
+
+    </script>
     <!-- styles -->
     <link rel="stylesheet" type="text/css" href="/frontend/css/frontend.edit.css" />
     <script type="text/javascript">
         $(document).ready(function(){
-            tinify(tiny_config['full'], 'edit-textarea');
+            tinify(tiny_config, 'edit-textarea');
+
             $("#actor-back").on('click', function(){
                 document.location.href = '{*html_callback*}';
             });
@@ -27,7 +69,7 @@
     <input type="hidden" name="hexcoords" value="{*hexcoord*}" />
     <input type="hidden" name="hexcoord_col" value="{*coords_col*}" />
     <input type="hidden" name="hexcoord_row" value="{*coords_row*}" />
-    <input type="hidden" name="callback" value="{*html_callback*}" />
+    <!-- <input type="hidden" name="callback" value="{*html_callback*}" /> -->
 
     <fieldset class="fields_area">
         <div class="field">
