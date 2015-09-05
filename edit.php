@@ -11,9 +11,7 @@ $revision = array();
 // check access rights
 $is_can_edit = auth_CanIEdit();
 
-$coords_col = intval($_GET['col']);
-$coords_row = intval($_GET['row']);
-
+// эти конструкции выглядят прозрачно и понятно, но их можно заменить на вызовы atordie()
 $project_name
     = isset($_GET['project'])
     ? $_GET['project']
@@ -23,6 +21,11 @@ $map_name
     = isset($_GET['map'])
     ? $_GET['map']
     : die('No such map!');
+
+$coords_col = intval( atordie($_GET, 'col', 'X-Coordinate required!'));
+
+$coords_row = intval( atordie($_GET, 'row', 'Y-Coordinate required!'));
+
 
 // коннект с базой
 $dbh = DB_Connect();
@@ -73,6 +76,8 @@ $TEMPLATE_DATA = array(
     'region_title'          =>  $revision['title'],
     'region_text'           =>  $revision['text'],
     'region_edit_reason'    =>  $revision['edit_reason'],
+
+    // имя куки возможно стоит перенести в глобальные настройки
     'region_editor_name'    =>  at($_COOKIE, 'kw_trpg_lme_auth_editorname', ""),
     // revisions
     'region_revisions'      =>  $revisions_string,

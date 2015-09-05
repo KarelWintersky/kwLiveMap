@@ -20,24 +20,26 @@ $map_name
 lme_projects    : настройки проекта
 lme_maps        : настройки конкретной карты
 
+Кстати, отображение карты - leaflet или канвас - тоже описывается в таблице lme_maps
+
 
 */
 
 $TEMPLATE_DATA = array(
     // project variables
-    'project_title' =>  "Trollfjorden -- Троллячьи фьорды",
-    'project_name'  =>  "trollfjorden",
+    'project_title'     =>  "Trollfjorden -- Троллячьи фьорды",
+    'project_name'      =>  "trollfjorden",
 
     // map variables
-    'map_title'     =>  "основная карта",
-    'map_name'      =>  "map",
-    'map_imagefile' =>  "/storage/trollfjorden/trollfjorden_l.png",
-    'map_max_col'   =>  23,
-    'map_max_row'   =>  16,
-    'map_bordersize'=>  1,
-    'map_grid_edge' =>  29.82,
+    'map_title'         =>  "основная карта",
+    'map_name'          =>  "map",
+    'map_imagefile'     =>  "/storage/trollfjorden/trollfjorden_l.png",
+    'map_max_col'       =>  23,
+    'map_max_row'       =>  16,
+    'map_bordersize'    =>  1,
+    'map_grid_edge'     =>  29.82,
     'map_grid_height'   =>  51.62,
-    'map_grid_type' =>  'hex:x_oriented',
+    'map_grid_type'     =>  'hex:x_oriented',
     'map_fog_hidden'    =>  0.2
 );
 

@@ -56,8 +56,8 @@
             $.ajaxSetup({cache: false});
             initHexGrid();
 
-            var canvas = document.getElementById('mapcanvas'),
-                    ctx = canvas.getContext('2d');
+            var canvas = document.getElementById('mapcanvas');
+            var ctx = canvas.getContext('2d');
 
             // создаем "туман войны"
             var revealedAreas = loadRevealedAreas(this_project);
@@ -113,7 +113,7 @@
 
             // `Edit this` click event
             $(document).on('click', '#actor-edit', function(){
-                document.location.href = '/{*project_name*}/{*map_name*}/edit?callback=canvas&' + $.param(hex_current_coords) + '&' + $.param(this_project) ;
+                document.location.href = '/{*project_name*}/{*map_name*}/edit?callback=canvas&' + $.param(hex_current_coords) /* + '&' + $.param(this_project) */ ;
             });
 
             // draggable plugin
