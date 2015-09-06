@@ -1,6 +1,7 @@
 <?php // websun 0.1.50
 
 /*
+ * http://webew.ru/articles/3609.webew
 0.1.50 - fixed default paths handling (see __construct() )
 
 0.1.49 - added preg_quote() in parse_cycle() for searching array's name

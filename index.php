@@ -10,7 +10,7 @@
 
 <ul>
     <li>
-        <a href="/trollfjorden/map">image version</a>
+        <a href="/trollfjorden">Trollfjorden</a>
     </li>
 </ul>
 
