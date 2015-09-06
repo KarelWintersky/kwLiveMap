@@ -3,7 +3,12 @@
  * User: Arris
  * Date: 03.09.15, time: 15:20
  */
+require_once 'backend/config/config.php';
+require_once 'backend/core.php';
+require_once 'backend/core.auth.php';
+require_once 'backend/core.pdo.php';
 require_once 'backend/websun.php';
+global $CONFIG;
 
 $template_file = '';
 $template_data = array();
@@ -11,6 +16,7 @@ $template_data = array();
 switch ($_GET['action']) {
     // user not logged in (вставить дополнительную проверку по сессии)
     case 'login': {
+        $new_username = at($_COOKIE, 'kw_livemap_new_registred_username', '');
         $template_file = 'auth/auth.login.html';
         break;
     }

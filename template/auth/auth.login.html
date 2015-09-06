@@ -13,7 +13,7 @@
 <form action="/backend/action.try.login.php" method="post">
     <div>
         <label for="log_in_email">E-Mail: </label>
-        <input type="text" size="15" id="log_in_email" name="auth:login_email">
+        <input type="text" size="15" id="log_in_email" name="auth:login_email" value="{*$new_username*}">
     </div>
     <div>
         <label for="log_in_password">Password</label>
@@ -23,6 +23,8 @@
         <button name="auth:logintry">Try!</button>
     </div>
 </form>
+
+<a href="/">На стартовую...</a>
 
 </body>
 </html>

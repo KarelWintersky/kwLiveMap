@@ -11,5 +11,7 @@ require_once 'websun.php';
 global $CONFIG;
 
 var_dump($_POST);
+
+// не забыть сбросить куку kw_livemap_new_registred_username
 die('Login try!');
  

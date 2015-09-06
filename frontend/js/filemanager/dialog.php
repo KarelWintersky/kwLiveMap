@@ -245,7 +245,7 @@ $get_params = http_build_query(array(
 	  <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
 	<![endif]-->
 	<script src="js/jquery.ui.position.min.js" type="text/javascript"></script>
-	<script src="js/jquery-ui-1.10.4.custom.js" type="text/javascript"></script>
+	<script src="js/jquery-ui-1.10.4.custom.min.js" type="text/javascript"></script>
 	<script src="js/jquery.contextMenu.min.js" type="text/javascript"></script>    
 	
 	<script>
