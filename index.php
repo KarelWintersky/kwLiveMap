@@ -1,18 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Trollfjorden :: Троллячьи фьорды</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-</head>
-<body>
+<?php
+require_once 'backend/websun.php';
 
-<h2>Троллячьи фьорды</h2>
+$tpl_file = 'index.html';
 
-<ul>
-    <li>
-        <a href="/trollfjorden">Trollfjorden</a>
-    </li>
-</ul>
+$html = websun_parse_template_path($TEMPLATE_DATA, $tpl_file, '$/template');
 
-</body>
-</html>
+echo $html;
+
