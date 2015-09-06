@@ -30,6 +30,9 @@ RewriteRule ^login$ auth.php?action=login [L,QSA]
 RewriteRule ^logout$ auth.php?action=logout [L,QSA]
 RewriteRule ^remember$ auth.php?action=remember [L,QSA]
 RewriteRule ^mysettings$ auth.php?action=mysettings [L,QSA]
+# PHPAuth required this pages
+RewriteRule ^auth_activateaccount$ auth.php?action=auth_activateaccount [L,QSA]
+RewriteRule ^auth_resetpassword$ auth.php?action=auth_resetpassword [L,QSA]
 
 #project info
 RewriteRule ^([A-Za-z0-9-]+)$ info.php?project=$1 [L,QSA]
