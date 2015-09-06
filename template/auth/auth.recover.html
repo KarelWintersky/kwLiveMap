@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Живые карты -- восстановление пароля</title>
+</head>
+<body>
+
+<h2>Восстановление пароля</h2>
+
+В настоящее время можно только получить на свой емейл новый пароль!<br/>
+
+<form action="/backend/action.try.recover.password.php" method="post">
+    <div>
+        <label for="auth_email">Регистрационный E-Mail: </label>
+        <input type="text" size="15" id="auth_email" name="auth:recover_email">
+    </div>
+    <div>
+        <button name="auth:recover_password">Try!</button>
+    </div>
+</form>
+
+</body>
+</html>

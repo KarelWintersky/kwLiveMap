@@ -9,21 +9,29 @@
 <h2>Общее</h2>
 
 <ul>
+{?*user_status="logged_out"*}
     <li>
         <a href="/login">Вход в систему</a>
-    </li>
-    <li>
-        <a href="/logout">Выход (логаут)</a>
-    </li>
-    <li>
-        <a href="/remember">Напомнить пароль</a>
     </li>
     <li>
         <a href="/register">Регистрация в системе</a>
     </li>
     <li>
+        <a href="/remember">Напомнить пароль</a>
+    </li>
+{*user_status="logged_out"*?}
+
+{?*user_status="logged_in"*}
+
+    <li>
         <a href="/mysettings">Мои настройки профиля</a>
     </li>
+    <li>
+        <a href="/logout">Выход (логаут)</a>
+    </li>
+
+{*user_status="logged_in"*?}
+
 </ul>
 
 <h2>Троллячьи фьорды</h2>

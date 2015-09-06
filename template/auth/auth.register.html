@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Живые карты -- регистрация нового пользователя</title>
+</head>
+<body>
+
+<h2>Регистрация</h2>
+
+<fieldset>
+    <legend>Условия использования</legend>
+    Не быть идиотом ;-)
+</fieldset>
+
+<form action="/backend/action.try.register.php" method="post">
+    <div>
+        <label for="reg_email">E-Mail:</label>
+        <input type="text" size="15" id="reg_email" name="auth:reg_email">
+    </div>
+    <div>
+        <label for="reg_password">Password:</label>
+        <input type="password" size="15" id="reg_password" name="auth:reg_password">
+    </div>
+    <div>
+        <label for="reg_password_again">Retype password:</label>
+        <input type="password" size="15" id="reg_password_again" name="auth:reg_password_again">
+    </div>
+    <div>
+        <label for="reg_username">Username:</label>
+        <input type="password" size="15" id="reg_username" name="auth:reg_username">
+    </div>
+    <div>
+        <label for="reg_eula">Я согласен с условиями</label>
+        <input type="checkbox" name="" id="reg_eula" name="auth:reg_eula_checked" required="1">
+    </div>
+    <div>
+        <button name="auth:reg_new_user_try">Try!</button>
+    </div>
+</form>
+
+</body>
+</html>
