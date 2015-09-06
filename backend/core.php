@@ -14,6 +14,7 @@ function at($array, $key, $default)
 }
 
 /**
+ * Аналог at(), только если не находит - умирает с сообщением.
  * @param $array    - массив, в котором ищем значение
  * @param $key      - ключ
  * @param string $message   - сообщение при смерти скрипта
@@ -35,4 +36,21 @@ function atordie($array, $key, $message = '')
     */
 }
 
- 
+/**
+ * Удаляет куку
+ * @param $cookie_name
+ */
+function unsetcookie($cookie_name)
+{
+    unset($_COOKIE[$cookie_name]);
+    setcookie($cookie_name, null, -1);
+}
+
+/**
+ * @param $url
+ */
+function redirect($url)
+{
+    if (headers_sent() === false) header('Location: '.$url);
+    die();
+}

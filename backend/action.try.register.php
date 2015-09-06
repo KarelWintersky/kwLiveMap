@@ -8,52 +8,30 @@ require_once 'core.php';
 require_once 'core.auth.php';
 require_once 'core.pdo.php';
 require_once 'websun.php';
+
+require_once "phpauth/languages/en_GB.php";
+require_once "phpauth/config.class.php";
+require_once "phpauth/auth.class.php";
+
 global $CONFIG;
 
-$html_callback = '/';
+$dbh = DB_Connect();
 
-$errors = array();
+$config = new PHPAuth\Config($dbh);
+$auth   = new PHPAuth\Auth($dbh, $config, $lang);
 
-if (!$_POST['auth:reg_email'])
-    $errors[] = 'E-Mail required';
-if (!$_POST['auth:reg_password'])
-    $errors[] = 'Password required';
-if (!$_POST['auth:reg_password_again'])
-    $errors[] = 'Please, retype password';
-if (trim($_POST['auth:reg_password']) !== trim($_POST['auth:reg_password_again']))
-    $errors[] = 'Password not match!';
-if (!$_POST['auth:reg_username'])
-    $errors[] = 'Username required';
-if (!$_POST['auth:reg_eula_checked'])
-    $errors[] = 'Eula must be checked!';
+$auth_result = $auth->register($_POST['auth:reg_email'], $_POST['auth:reg_password'], $_POST['auth:reg_password_again']);
 
-if (!$errors) {
+$html_callback
+    = ($auth_result['error'])
+    ? '/register'
+    : '/auth_activateaccount';
 
-    $userdata = array(
-        'email'     =>  $_POST['auth:reg_email'],
-        'password'  =>  $_POST['auth:reg_password'],
-        'username'  =>  $_POST['auth:reg_username'],
-        'regip'     =>  $_SERVER['REMOTE_ADDR'],
-        'regdate'   =>  time()
-    );
-
-    $dbh = DB_Connect();
-    $usercount = auth_getUsersByEmail($dbh, $userdata[':email']);
-
-    if ($usercount > 0) {
-        $errors[] = "Пользователь с таким email'ом уже есть в системе.";
-        $html_callback = '/register';
-    } else {
-        $register_result = auth_tryRegisterUser($dbh, $userdata);
-        $errors[] = "Пользователь зарегистрирован.";
-        $html_callback = '/login';
-        setcookie('kw_livemap_new_registred_username', $userdata['email'],  time()+60*5, "/");
-    }
-
-}
+if (!$auth_result['error'])
+    setcookie('kw_livemap_new_registred_username', $_POST['auth:reg_email'],  time()+60*5, "/");
 
 $template_data = array(
-    'error_messages'    => implode($errors, "<br/>\r\n"),
+    'error_messages'    =>  $auth_result['message'],
     'html_callback_timeout' =>  10,
     'html_callback'     =>  $html_callback
 );
@@ -63,7 +41,3 @@ $tpl_file = 'auth_callbacks/auth.callback.register.html';
 $html = websun_parse_template_path($template_data, $tpl_file, '$/template');
 
 echo $html;
-
-
-
-

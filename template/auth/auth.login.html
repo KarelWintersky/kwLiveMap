@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>Живые карты -- вход в систему</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
     <script type="text/javascript">
         // Хэшируем пароль на клиенте с полученной солью
     </script>
@@ -18,6 +20,10 @@
     <div>
         <label for="log_in_password">Password</label>
         <input type="password" size="15" id="log_in_password" name="auth:login_password">
+    </div>
+    <div>
+        <label for="log_in_remember_me">Помнить меня</label>
+        <input type="checkbox" id="log_in_remember_me" name="auth:login_remember_me" value="1" required checked>
     </div>
     <div>
         <button name="auth:logintry">Try!</button>

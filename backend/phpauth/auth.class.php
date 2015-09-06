@@ -15,6 +15,9 @@ class Auth
 	public $config;
 	public $lang;
 
+    private $min_password_length = 3;
+    private $max_password_length = 150;
+
     /**
      * Initiates database connection
      * @param \PDO $dbh
@@ -129,6 +132,7 @@ class Auth
 		$validateEmail = $this->validateEmail($email);
 		$validatePassword = $this->validatePassword($password);
 
+        //@todo: расширить настройками - нужно ли делать валидацию пароля и емейла
 		if ($validateEmail['error'] == 1) {
 			$return['message'] = $validateEmail['message'];
 			return $return;
@@ -735,10 +739,11 @@ class Auth
 	private function validatePassword($password) {
 		$return['error'] = true;
 
-		if (strlen($password) < 6) {
+        //@todo: расширить настройками: делать ли валидацию пароля по последнему "жёсткому" условию
+		if (strlen($password) < $this->min_password_length) {
 			$return['message'] = $this->lang["password_short"];
 			return $return;
-		} elseif (strlen($password) > 150) {
+		} elseif (strlen($password) > $this->max_password_length) {
 			$return['message'] = $this->lang["password_long"];
 			return $return;
 		} elseif (!preg_match('@[A-Z]@', $password) || !preg_match('@[a-z]@', $password) || !preg_match('@[0-9]@', $password)) {

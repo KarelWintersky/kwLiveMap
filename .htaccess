@@ -28,7 +28,7 @@ RewriteRule ^([A-Za-z0-9-]+)/([^/]+)/edit$ edit.php?project=$1&map=$2 [L,QSA]
 RewriteRule ^register$ auth.php?action=register [L,QSA]
 RewriteRule ^login$ auth.php?action=login [L,QSA]
 RewriteRule ^logout$ auth.php?action=logout [L,QSA]
-RewriteRule ^remember$ auth.php?action=remember [L,QSA]
+RewriteRule ^recover$ auth.php?action=recover [L,QSA]
 RewriteRule ^mysettings$ auth.php?action=mysettings [L,QSA]
 # PHPAuth required this pages
 RewriteRule ^auth_activateaccount$ auth.php?action=auth_activateaccount [L,QSA]

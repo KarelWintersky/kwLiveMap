@@ -1,8 +1,9 @@
 <?php
 /**
  * User: Arris
- * Date: 06.09.15, time: 16:36
+ * Date: 07.09.15, time: 1:37
  */
+
 require_once 'config/config.php';
 require_once 'core.php';
 require_once 'core.auth.php';
@@ -20,12 +21,18 @@ $dbh = DB_Connect();
 $config = new PHPAuth\Config($dbh);
 $auth   = new PHPAuth\Auth($dbh, $config, $lang);
 
-$auth_result = $auth->requestReset($_POST['auth:recover_email']);
+$auth_result = $auth->activate($_POST['auth:activate_key']);
 
 $html_callback
     = ($auth_result['error'])
-    ? '/recover'
-    : '/';
+    ? '/'
+    : '/login';
+
+/*
+@todo:
+Если активация аккаунта успешна - берем из POST поля с юзернейм и всем прочим
+и вставляем в БД. Если опять нет ошибок - выводим сообщение
+*/
 
 $template_data = array(
     'error_messages'    =>  $auth_result['message'],
@@ -33,10 +40,8 @@ $template_data = array(
     'html_callback'     =>  $html_callback
 );
 
-$tpl_file = 'auth_callbacks/auth.callback.recover.html';
+$tpl_file = 'auth_callbacks/auth.callback.activate.html';
 
 $html = websun_parse_template_path($template_data, $tpl_file, '$/template');
-
-
 
 echo $html;
