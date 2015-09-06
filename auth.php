@@ -9,25 +9,26 @@ require_once 'backend/core.auth.php';
 require_once 'backend/core.pdo.php';
 require_once 'backend/websun.php';
 
-require_once 'backend/config/config.php';
-require_once 'backend/core.php';
-require_once 'backend/core.pdo.php';
+require_once "backend/phpauth/languages/en_GB.php";
+require_once "backend/phpauth/config.class.php";
+require_once "backend/phpauth/auth.class.php";
 global $CONFIG;
+
+$dbh = DB_Connect();
 
 $config = new PHPAuth\Config($dbh);
 $auth   = new PHPAuth\Auth($dbh, $config, $lang);
 
 if(!isset($_COOKIE[$config->cookie_name]) || !$auth->checkSession($_COOKIE[$config->cookie_name])) {
-    $logged_in_status = 'logged_in';
-} else {
     $logged_in_status = 'logged_out';
+} else {
+    $logged_in_status = 'logged_in';
 }
 
 $template_file = '';
 $template_data = array();
 
-// 'auth.callback.instant_to_root.html';
-
+//@todo: оптимизировать флаг до boolean
 switch ($_GET['action']) {
     case 'login': {
         if ($logged_in_status == 'logged_in') {

@@ -1,8 +1,13 @@
 <?php
+require_once 'backend/config/config.php';
 require_once 'backend/core.php';
 require_once 'backend/core.auth.php';
 require_once 'backend/core.pdo.php';
 require_once 'backend/websun.php';
+
+require_once "backend/phpauth/languages/en_GB.php";
+require_once "backend/phpauth/config.class.php";
+require_once "backend/phpauth/auth.class.php";
 
 // init null values
 $revisions_string = '';
