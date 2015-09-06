@@ -81,8 +81,10 @@ switch ($_GET['action']) {
         }
         break;
     }
+
     case 'auth_activateaccount': {
-        if ($logged_in_status == 'logged_out') {
+        if ($logged_in_status == 'logged_in') {
+            // Активация аккаунта недоступна если мы залогинились
             $template_file = 'auth.callback.instant_to_root.html';
             redirect('/');
         } else {
@@ -91,7 +93,8 @@ switch ($_GET['action']) {
         break;
     }
     case 'auth_resetpassword': {
-        if ($logged_in_status == 'logged_out') {
+        if ($logged_in_status == 'logged_in') {
+            // Сброс недоступен если мы залогинились
             $template_file = 'auth.callback.instant_to_root.html';
             redirect('/');
         } else {

@@ -1,13 +1,10 @@
 <?php
 
-/**
-* Auth class
-* Works with PHP 5.4 and above.
-*/
 namespace PHPAuth;
 
 /**
- *
+ * Auth class
+ * Works with PHP 5.4 and above.
  */
 class Auth
 {
@@ -597,7 +594,7 @@ class Auth
 	{
 		require 'PHPMailer/PHPMailerAutoload.php';
 
-		$mail = new \PHPMailer; //@todo: warning
+		$mail = new \PHPMailer; //@todo: учесть это в форке с неймспейсами
 
 		$return['error'] = true;
 

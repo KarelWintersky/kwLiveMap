@@ -5,8 +5,6 @@
  */
 require_once 'config/config.php';
 
-/** @todo: класс, инкапсулирующий работу с базой */
-
 /**
  * Соединяемся с БД и отдаем DB Handler
  * @return PDO
@@ -26,7 +24,7 @@ function DB_Connect()
 }
 
 /**
- * @todo: ?
+ * Закрываем соединение с базой
  * @param $dbh
  */
 function DB_Close(&$dbh)
@@ -66,7 +64,15 @@ function DB_GetRevisionsCount($handler, $coords_col, $coords_row, $project_name,
     return $revisions_count;
 }
 
-
+/**
+ * Возвращаем последнюю ревизию информации о гексе
+ * @param $dbh
+ * @param $coords_col
+ * @param $coords_row
+ * @param $project_name
+ * @param $map_name
+ * @return array
+ */
 function DB_GetRevisionLast($dbh, $coords_col, $coords_row, $project_name, $map_name)
 {
     //@todo: перейти на prepared statement
@@ -97,7 +103,12 @@ function DB_GetRevisionLast($dbh, $coords_col, $coords_row, $project_name, $map_
     return $info;
 }
 
-
+/**
+ * Возвращаем ревизию информации о гексе по айди
+ * @param $dbh
+ * @param $revision_id
+ * @return array
+ */
 function DB_GetRevisionById($dbh, $revision_id)
 {
     //@todo: перейти на prepared statement
@@ -124,7 +135,16 @@ function DB_GetRevisionById($dbh, $revision_id)
     return $info;
 }
 
-
+/**
+ * Возвращаем список ревизий в виде строки из <LI>ссылок</LI>
+ * @todo: изменить ссылку!!!
+ * @param $dbh
+ * @param $coords_col
+ * @param $coords_row
+ * @param $project_name
+ * @param $map_name
+ * @return string
+ */
 function DB_GetListRevisions($dbh, $coords_col, $coords_row, $project_name, $map_name)
 {
     //@todo: перейти на prepared statement
@@ -141,7 +161,7 @@ AND map_name = '{$map_name}'
             , PDO::FETCH_ASSOC);
 
         while($row = $sth->fetch(PDO::FETCH_ASSOC)){
-            //@todo: изменить ссылку!!!
+
             $revisions_string .= sprintf(
                 '<li><a href="edit.php?frontend=imagemap&col=%s&row=%s&hexcoord=%s&revision=%s">%s, %s</a> <em>(IP: %s)</em>: %s</li>'."\r\n",
                 $row['hexcol'],
@@ -164,7 +184,12 @@ AND map_name = '{$map_name}'
     return $revisions_string;
 }
 
-
+/**
+ * Апдейтит в базу информацию по гексику
+ * @param $dbh
+ * @param $data
+ * @return mixed
+ */
 function DB_UpdateHexTile($dbh, $data)
 {
     try{
@@ -180,7 +205,13 @@ function DB_UpdateHexTile($dbh, $data)
 
 }
 
-
+/**
+ * Возвращает массив из открытых гексов (для тумана войны)
+ * @param $dbh
+ * @param $project_name
+ * @param $map_name
+ * @return array
+ */
 function DB_GetRevealedTiles($dbh, $project_name, $map_name)
 {
     //@todo: перейти на prepared statement
@@ -207,4 +238,3 @@ function DB_GetRevealedTiles($dbh, $project_name, $map_name)
     }
     return $revealed;
 }
-

@@ -1,10 +1,9 @@
 <?php
+namespace PHPAuth;
 
 /**
  * PHPAuth config class
  */
-namespace PHPAuth;
-
 class Config
 {
     private $dbh;

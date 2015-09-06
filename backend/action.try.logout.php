@@ -15,8 +15,6 @@ require_once "phpauth/auth.class.php";
 
 global $CONFIG;
 
-// не забыть сбросить куку kw_livemap_new_registred_username после логина
-
 $dbh = DB_Connect();
 
 $config = new PHPAuth\Config($dbh);

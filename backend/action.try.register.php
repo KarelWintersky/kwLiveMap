@@ -28,7 +28,8 @@ $html_callback
     : '/auth_activateaccount';
 
 if (!$auth_result['error'])
-    setcookie('kw_livemap_new_registred_username', $_POST['auth:reg_email'],  time()+60*5, "/");
+    setcookie('kw_livemap_new_registred_username', $_POST['auth:reg_email'],  time()+60*60*5, "/");
+//@todo: заменить на kw_livemap_last_logged_user
 
 $template_data = array(
     'error_messages'    =>  $auth_result['message'],

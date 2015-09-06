@@ -47,6 +47,7 @@ function unsetcookie($cookie_name)
 }
 
 /**
+ * Instant redirect по указанному URL
  * @param $url
  */
 function redirect($url)
