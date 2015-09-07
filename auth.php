@@ -29,13 +29,18 @@ $template_file = '';
 $template_data = array();
 
 //@todo: оптимизировать флаг до boolean
+
+/*
+ * Решил оставить в блоках и заполнение инстантного коллбэк-темплейта, и переход через
+ * смену хедера. А вдруг сломается? Как сделать лучше - не знаю.
+*/
 switch ($_GET['action']) {
     case 'login': {
         if ($logged_in_status == 'logged_in') {
             $template_file = 'auth.callback.instant_to_root.html';
             redirect('/');
         } else {
-            $new_username = at($_COOKIE, 'kw_livemap_new_registred_username', '');
+            $new_username = at($_COOKIE, 'kw_livemap_last_logged_user', '');
             $template_file = 'auth/auth.login.html';
         }
         break;
@@ -82,23 +87,23 @@ switch ($_GET['action']) {
         break;
     }
 
-    case 'auth_activateaccount': {
+    case 'activateaccount': {
         if ($logged_in_status == 'logged_in') {
             // Активация аккаунта недоступна если мы залогинились
             $template_file = 'auth.callback.instant_to_root.html';
             redirect('/');
         } else {
-            $template_file = 'auth/phpauth.activate.html';
+            $template_file = 'auth/auth.activate.html';
         }
         break;
     }
-    case 'auth_resetpassword': {
+    case 'resetpassword': {
         if ($logged_in_status == 'logged_in') {
             // Сброс недоступен если мы залогинились
             $template_file = 'auth.callback.instant_to_root.html';
             redirect('/');
         } else {
-            $template_file = 'auth/phpauth.resetpassword.html';
+            $template_file = 'auth/auth.resetpassword.html';
         }
         break;
     }

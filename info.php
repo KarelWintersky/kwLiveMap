@@ -16,7 +16,9 @@ require_once "backend/phpauth/auth.class.php";
 
 $tpl_file = 'info.project.html';
 
-$html = websun_parse_template_path($TEMPLATE_DATA, $tpl_file, '$/template');
+$template_data = array();
+
+$html = websun_parse_template_path($template_data, $tpl_file, '$/template');
 
 echo $html;
 
