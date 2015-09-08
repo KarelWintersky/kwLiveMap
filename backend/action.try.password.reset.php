@@ -31,7 +31,7 @@ if ($auth_result['error']) {
     $html_callback = '/resetpassword';
 } else {
     // reset password correct, set cookie
-    $html_callback = '/';
+    $html_callback = '/login';
     setcookie('kw_livemap_last_logged_user', $_POST['auth:reg_email'],  time()+60*60*5, "/");
 }
 

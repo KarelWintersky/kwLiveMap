@@ -12,10 +12,14 @@ class Config
 
     /**
      * @param \PDO $dbh
+     * @param string $config_table
      */
-    public function __construct(\PDO $dbh)
+    public function __construct(\PDO $dbh, $config_table = 'config')
     {
         $this->dbh = $dbh;
+
+        if (func_num_args() > 1)
+            $this->phpauth_config_table = $config_table;
 
         $this->config = array();
 
