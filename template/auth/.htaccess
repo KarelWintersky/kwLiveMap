@@ -1,3 +1,0 @@
-Deny from All
-Options All -Indexes
-AddOutputFilterByType DEFLATE text/html

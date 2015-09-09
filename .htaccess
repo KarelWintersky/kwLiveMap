@@ -35,9 +35,6 @@ RewriteRule ^login$ auth.php?action=login [L,QSA]
 RewriteRule ^logout$ auth.php?action=logout [L,QSA]
 RewriteRule ^recover$ auth.php?action=recover [L,QSA]
 RewriteRule ^mysettings$ auth.php?action=mysettings [L,QSA]
-# change my password (changePassword), required id, old and new password (twice)
-# change my email (changeEmail), required new email, password (and user id)
-# delete my account (deleteUser), required password
 
 # PHPAuth required this pages
 RewriteRule ^activateaccount$ auth.php?action=activateaccount [L,QSA]

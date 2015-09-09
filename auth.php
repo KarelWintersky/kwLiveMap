@@ -19,24 +19,19 @@ $dbh = DB_Connect();
 $config = new PHPAuth\Config($dbh);
 $auth   = new PHPAuth\Auth($dbh, $config, $lang);
 
-if(!isset($_COOKIE[$config->cookie_name]) || !$auth->checkSession($_COOKIE[$config->cookie_name])) {
-    $logged_in_status = 'logged_out';
-} else {
-    $logged_in_status = 'logged_in';
-}
+$is_logged_in = $auth->isLogged(); // true if logged-in
 
 $template_file = '';
 $template_data = array();
 
-//@todo: оптимизировать флаг до boolean
-
 /*
  * Решил оставить в блоках и заполнение инстантного коллбэк-темплейта, и переход через
- * смену хедера. А вдруг сломается? Как сделать лучше - не знаю.
+ * смену хедера. А вдруг сломается (смена хедера)? Как сделать лучше - пока идей нет.
 */
 switch ($_GET['action']) {
+    // обработка механизма входа в систему
     case 'login': {
-        if ($logged_in_status == 'logged_in') {
+        if ($is_logged_in) {
             $template_file = 'auth.callback.instant_to_root.html';
             redirect('/');
         } else {
@@ -45,8 +40,10 @@ switch ($_GET['action']) {
         }
         break;
     }
+
+    // обработка механизма регистрации
     case 'register': {
-        if ($logged_in_status == 'logged_in') {
+        if ($is_logged_in) {
             $template_file = 'auth.callback.instant_to_root.html';
             redirect('/');
         } else {
@@ -54,9 +51,11 @@ switch ($_GET['action']) {
         }
         break;
     }
+
+    // обработка механизма восстановления пароля
     case 'recover': {
         // если мы залогинились - глупо пытаться восстановить пароль
-        if ($logged_in_status == 'logged_in') {
+        if ($is_logged_in) {
             $template_file = 'auth.callback.instant_to_root.html';
             redirect('/');
         } else {
@@ -64,31 +63,32 @@ switch ($_GET['action']) {
         }
         break;
     }
-    // user logged in (вставить дополнительную проверку по сессии)
+
+    // мои настройки (разнообразные)
     case 'mysettings': {
-        //@todo: mysettings and debug values
-        var_dump($_COOKIE);
-
-        if ($logged_in_status == 'logged_out') {
-            $template_file = 'auth.callback.instant_to_root.html';
-            redirect('/');
-        } else {
+        if ($is_logged_in) {
             $template_file = 'auth/auth.mysettings.html';
-        }
-        break;
-    }
-    case 'logout': {
-        if ($logged_in_status == 'logged_out') {
+        } else {
             $template_file = 'auth.callback.instant_to_root.html';
             redirect('/');
-        } else {
-            $template_file = 'auth/auth.logout.html';
         }
         break;
     }
 
+    // механизм логаута
+    case 'logout': {
+        if ($is_logged_in) {
+            $template_file = 'auth/auth.logout.html';
+        } else {
+            $template_file = 'auth.callback.instant_to_root.html';
+            redirect('/');
+        }
+        break;
+    }
+
+    // ввод ключа активации аккаунта
     case 'activateaccount': {
-        if ($logged_in_status == 'logged_in') {
+        if ($is_logged_in) {
             // Активация аккаунта недоступна если мы залогинились
             $template_file = 'auth.callback.instant_to_root.html';
             redirect('/');
@@ -97,9 +97,10 @@ switch ($_GET['action']) {
         }
         break;
     }
+
+    // ввод ключа сброса пароля
     case 'resetpassword': {
-        if ($logged_in_status == 'logged_in') {
-            // Сброс недоступен если мы залогинились
+        if ($is_logged_in) {
             $template_file = 'auth.callback.instant_to_root.html';
             redirect('/');
         } else {
@@ -108,7 +109,7 @@ switch ($_GET['action']) {
         break;
     }
 
-    // error
+    // вообще непонятно как мы сюда попали
     default: {
         redirect('/');
         break;

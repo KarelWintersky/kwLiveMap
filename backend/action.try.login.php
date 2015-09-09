@@ -27,9 +27,11 @@ $auth_result = $auth->login(
 
 
 if (!$auth_result['error']) {
+    // no errors
     setcookie('kw_livemap_logged_in_session_hash', $auth_result['hash'],  time()+$auth_result['expire'], "/");
     setcookie($config->__get('cookie_name'), $auth_result['hash'], time()+$auth_result['expire'], "/");
     unsetcookie('kw_livemap_new_registred_username'); //@todo: заменить её на kw_livemap_last_logged_user
+
     $html_callback = '/';
 } else {
     $html_callback = '/login';

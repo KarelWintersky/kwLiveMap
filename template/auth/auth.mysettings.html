@@ -1,27 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Живые карты -- мои настройки</title>
+    <title>Живые карты -- настройки профиля пользователя</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
+    <style type="text/css">
+        body {font-size:14px;}
+        form {float:left;}
+        .field {clear:both; text-align:right; line-height:25px;}
+        label {float:left; padding-right:10px;}
+    </style>
 </head>
 <body>
+<h2>Настройки профиля пользователя</h2>
 
-<h2>Мои настройки (не работают)</h2>
+<fieldset>
+    <legend>Редактирование профиля</legend>
+    <form method="post" action="/backend/action.try.profile.edit.php">
+        <div class="field">
+            <label for="auth_editprofile_name">Имя: </label>
+            <input type="text" size="15" id="auth_editprofile_name" name="auth:editprofile:name" value="{*mysettings_name*}">
+        </div>
+        <div class="field">
+            <label for="auth_editprofile_birthday">Д/Р: </label>
+            <input type="text" size="15" id="auth_editprofile_birthday" name="auth:editprpfile:birthday">
+        </div>
+        <hr>
+        <div class="field">
+            <label for="auth_editprofile_password">Пароль: </label>
+            <input type="text" size="15" id="auth_editprofile_password" name="auth:editprpfile:password">
+        </div>
+        <div class="field">
+            <label for="auth_editprofile_submit"></label>
+            <button name="auth:editprofile:submit" id="auth_editprofile_submit">Сохранить</button>
+        </div>
+    </form>
+</fieldset>
 
-Who am i:
+<fieldset>
+    <legend>Участие в проектах</legend>
+    Список проектов, в которых пользователь участвует (с указанием статуса).
+    Варианты:
+    - наблюдатель: покинуть
+    - редактор: покинуть
+    - владелец: ничего сделать нельзя, проект удаляется со страницы настроек проекта
+</fieldset>
 
-<pre>
-Resend Activation: auth->resendActivation(email)
+<fieldset>
+    <legend>Сменить регистрационный e-mail</legend>
+    <form method="post" action="/backend/action.try.change.email.php">
+        <!--
 Change Password: $auth->changePassword()
-Change Email: auth->changeEmail()
-    </pre>
+        -->
+        <div class="field">
+            <label for="auth_changeemail_password">Пароль: </label>
+            <input type="text" size="15" id="auth_changeemail_password" name="auth:changeemail:password">
+        </div>
+        <div class="field">
+            <label for="auth_changeemail_newemail">Новый E-Mail: </label>
+            <input type="text" size="15" id="auth_changeemail_newemail" name="auth:changeemail:new">
+        </div>
+        <div class="field">
+            <label for="auth_changeemail_submit"></label>
+            <button name="auth:changepassword:submit" id="auth_changeemail_submit">Сменить E-Mail</button>
+        </div>
+    </form>
 
-<form action="/backend/action.try.updatemyprofile.php" method="post">
-    <div>
-        <button name="auth:updatemyprofile">Try!</button>
-    </div>
-</form>
+</fieldset>
+
+<fieldset>
+    <legend>Сменить пароль</legend>
+    <form method="post" action="/backend/action.try.change.password.php">
+        <!--
+Change Password: $auth->changePassword()
+        -->
+        <div class="field">
+            <label for="auth_changepassword_current">Current password: </label>
+            <input type="text" size="15" id="auth_changepassword_current" name="auth:changepassword:current">
+        </div>
+        <div class="field">
+            <label for="auth_changepassword_new">Новый пароль: </label>
+            <input type="text" size="15" id="auth_changepassword_new" name="auth:changepassword:new">
+        </div>
+        <div class="field">
+            <label for="auth_changepassword_again">Повторите пароль: </label>
+            <input type="text" size="15" id="auth_changepassword_again" name="auth:changepassword:again">
+        </div>
+        <div class="field">
+            <label for="auth_changepassword_submit">Current password: </label>
+            <button name="auth:changepassword:submit" id="auth_changepassword_submit">Сменить пароль</button>
+        </div>
+    </form>
+</fieldset>
+
+<fieldset>
+    <legend>Удаление аккаунта</legend>
+    Внимание, это действие необратимо! Снимаются все права, аккаунт замораживается.
+    <form method="post" action="/backend/action.try.delete.account.php">
+        <div class="field">
+            <label for="auth_deleteaccount_password">Current password: </label>
+            <input type="text" size="15" id="auth_deleteaccount_password" name="auth:deleteaccount:password">
+        </div>
+        <div class="field">
+            <label for="auth_deleteaccount_submit"></label>
+            <button name="auth:deleteaccount:submit" id="auth_deleteaccount_submit">Удалить аккаунт</button>
+        </div>
+    </form>
+</fieldset>
+
 
 <a href="/">На стартовую...</a>
 

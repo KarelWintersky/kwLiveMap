@@ -13,7 +13,7 @@ function DB_Connect()
 {
     global $CONFIG;
     try {
-        $dbh = new PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
+        $dbh = new \PDO($CONFIG['pdo_host'], $CONFIG['username'], $CONFIG['password']);
         $dbh->exec("SET NAMES utf8");
         $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }

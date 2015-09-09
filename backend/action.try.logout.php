@@ -20,8 +20,10 @@ $dbh = DB_Connect();
 $config = new PHPAuth\Config($dbh);
 $auth   = new PHPAuth\Auth($dbh, $config, $lang);
 
-if(isset($_COOKIE[$config->cookie_name]) || $auth->checkSession($_COOKIE[$config->cookie_name])) {
+if ($auth->isLogged()) {
+
     $session_hash = $_COOKIE[$config->cookie_name];
+
     $auth_result = $auth->logout($session_hash);
 
     if ($auth_result) {

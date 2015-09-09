@@ -22,13 +22,13 @@ $auth   = new PHPAuth\Auth($dbh, $config, $lang);
 
 $auth_result = $auth->register($_POST['auth:reg_email'], $_POST['auth:reg_password'], $_POST['auth:reg_password_again']);
 
-$html_callback
-    = ($auth_result['error'])
-    ? '/register'
-    : '/auth_activateaccount';
-
-if (!$auth_result['error'])
+if (!$auth_result['error']) {
+    // no errors
     setcookie('kw_livemap_last_logged_user', $_POST['auth:reg_email'],  time()+60*60*5, "/");
+    $html_callback = '/activateaccount';
+} else {
+    $html_callback = '/register';
+}
 
 $template_data = array(
     'error_messages'    =>  $auth_result['message'],
