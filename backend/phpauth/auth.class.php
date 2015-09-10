@@ -129,18 +129,23 @@ class Auth
             return $return;
         }
 
-        $validateEmail = $this->validateEmail($email);
-        $validatePassword = $this->validatePassword($password);
+        if ($password !== $repeatpassword) {
+            $return['message'] = $this->lang["password_nomatch"];
+            return $return;
+        }
 
         //@todo: расширить настройками - нужно ли делать валидацию пароля и емейла
+        // Validate email
+        $validateEmail = $this->validateEmail($email);
         if ($validateEmail['error'] == 1) {
             $return['message'] = $validateEmail['message'];
             return $return;
-        } elseif ($validatePassword['error'] == 1) {
+        }
+
+        // Validate password
+        $validatePassword = $this->validatePassword($password);
+        if ($validatePassword['error'] == 1) {
             $return['message'] = $validatePassword['message'];
-            return $return;
-        } elseif ($password !== $repeatpassword) {
-            $return['message'] = $this->lang["password_nomatch"];
             return $return;
         }
 
@@ -742,6 +747,7 @@ class Auth
 
         //@todo: расширить настройками: делать ли валидацию пароля по последнему "жёсткому" условию
         //@todo: перенести определение границ пароля в конфиг
+        //@todo: move to $config->password_min_lenght, password_max_lenght, password_check_rigidity
         if (strlen($password) < $this->min_password_length) {
             $return['message'] = $this->lang["password_short"];
             return $return;
