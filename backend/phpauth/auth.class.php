@@ -11,9 +11,6 @@ class Auth
     public $config;
     public $lang;
 
-    private $min_password_length = 3;
-    private $max_password_length = 150;
-
     /**
      * Initiates database connection
      * @param \PDO $dbh
@@ -134,7 +131,6 @@ class Auth
             return $return;
         }
 
-        //@todo: расширить настройками - нужно ли делать валидацию пароля и емейла
         // Validate email
         $validateEmail = $this->validateEmail($email);
         if ($validateEmail['error'] == 1) {
@@ -745,18 +741,18 @@ class Auth
     {
         $return['error'] = true;
 
-        //@todo: расширить настройками: делать ли валидацию пароля по последнему "жёсткому" условию
-        //@todo: перенести определение границ пароля в конфиг
-        //@todo: move to $config->password_min_lenght, password_max_lenght, password_check_rigidity
-        if (strlen($password) < $this->min_password_length) {
+        if (strlen($password) < $this->config->register_password_min_length) {
             $return['message'] = $this->lang["password_short"];
             return $return;
-        } elseif (strlen($password) > $this->max_password_length) {
+        } elseif (strlen($password) > $this->config->register_password_max_length) {
             $return['message'] = $this->lang["password_long"];
             return $return;
-        } elseif (!preg_match('@[A-Z]@', $password) || !preg_match('@[a-z]@', $password) || !preg_match('@[0-9]@', $password)) {
-            $return['message'] = $this->lang["password_invalid"];
-            return $return;
+        }
+        if ($this->config->register_password_strong_regidity) {
+            if (!preg_match('@[A-Z]@', $password) || !preg_match('@[a-z]@', $password) || !preg_match('@[0-9]@', $password)) {
+                $return['message'] = $this->lang["password_invalid"];
+                return $return;
+            }
         }
 
         $return['error'] = false;
@@ -772,11 +768,10 @@ class Auth
     {
         $return['error'] = true;
 
-        //@todo: перенести определение границ емейла в конфиг
-        if (strlen($email) < 5) {
+        if (strlen($email) < $this->config->register_email_min_length) {
             $return['message'] = $this->lang["email_short"];
             return $return;
-        } elseif (strlen($email) > 100) {
+        } elseif (strlen($email) > $this->config->register_email_max_length) {
             $return['message'] = $this->lang["email_long"];
             return $return;
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -784,11 +779,13 @@ class Auth
             return $return;
         }
 
-        $bannedEmails = json_decode(file_get_contents(__DIR__ . "/files/domains.json"));
+        if ($this->config->register_email_use_banlist) {
+            $bannedEmails = json_decode(file_get_contents(__DIR__ . "/files/domains.json"));
 
-        if (in_array(strtolower(explode('@', $email)[1]), $bannedEmails)) {
-            $return['message'] = $this->lang["email_banned"];
-            return $return;
+            if (in_array(strtolower(explode('@', $email)[1]), $bannedEmails)) {
+                $return['message'] = $this->lang["email_banned"];
+                return $return;
+            }
         }
 
         $return['error'] = false;
