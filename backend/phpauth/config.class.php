@@ -2,15 +2,18 @@
 namespace PHPAuth;
 
 /**
- * PHPAuth config class
+ *
  */
 class Config
 {
     private $dbh;
     private $config;
-    private $phpauth_config_table = 'lme_phpauth_config';
+    private $config_table = 'lme_phpauth_config';
 
     /**
+     *
+     * Config::__construct()
+     *
      * @param \PDO $dbh
      * @param string $config_table
      */
@@ -23,19 +26,20 @@ class Config
 
         $this->config = array();
 
-        $query = $this->dbh->prepare("SELECT * FROM {$this->phpauth_config_table}");
-        $query->execute();
+        $query = $this->dbh->query("SELECT * FROM {$this->config_table}");
 
         while($row = $query->fetch()) {
             $this->config[$row['setting']] = $row['value'];
         }
 
-        $this->setVerifyDefaults();
+        $this->setVerifyDefaults(); // Danger foreseen is half avoided.
     }
 
     /**
-     * @param $setting
-     * @return mixed
+     * Config::__get()
+     * 
+     * @param mixed $setting
+     * @return string
      */
     public function __get($setting)
     {
@@ -43,8 +47,10 @@ class Config
     }
 
     /**
-     * @param $setting
-     * @param $value
+     * Config::__set()
+     * 
+     * @param mixed $setting
+     * @param mixed $value
      * @return bool
      */
     public function __set($setting, $value)
@@ -54,11 +60,16 @@ class Config
         if($query->execute(array($value, $setting))) {
             $this->config[$setting] = $value;
             return true;
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
 
+    /**
+     * Danger foreseen is half avoided.
+     *
+     * Set default verify* values.
+     * REQUIRED FOR USERS THAT DOES NOT UPDATE THEIR `config` TABLES.
+     */
     private function setVerifyDefaults()
     {
         if (! isset($this->config['verify_password_min_length']) )
