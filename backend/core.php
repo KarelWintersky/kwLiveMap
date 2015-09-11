@@ -43,7 +43,7 @@ function atordie($array, $key, $message = '')
 function unsetcookie($cookie_name)
 {
     unset($_COOKIE[$cookie_name]);
-    setcookie($cookie_name, null, -1);
+    setcookie($cookie_name, null, -1, '/');
 }
 
 /**

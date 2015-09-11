@@ -40,12 +40,14 @@ $data = array(
 
 $dbh = DB_Connect();
 
-DB_UpdateHexTile($dbh, $data);
+$put_result = DB_UpdateHexTile($dbh, $data);
 
 $dbh = null;
 
 if ($data['editor'] != '')
     setcookie('kw_trpg_lme_auth_editorname', $data['editor'],  time()+60*60*24*7, "/{$project_name}/");
+
+unsetcookie('kwlme_filemanager_storagepath');
 
 $TEMPLATE_DATA = array(
     'html_callback'         =>  "/{$project_name}/{$map_name}",

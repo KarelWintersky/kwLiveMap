@@ -22,7 +22,6 @@ $dbh = DB_Connect();
 $config = new PHPAuth\Config($dbh);
 $auth   = new PHPAuth\Auth($dbh, $config, $lang);
 
-var_dump($_POST);
 $auth_result = array();
 $html_callback = '';
 

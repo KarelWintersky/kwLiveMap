@@ -41,7 +41,7 @@ function DB_Close(&$dbh)
  * @param $map_name
  * @return mixed
  */
-function DB_GetRevisionsCount($handler, $coords_col, $coords_row, $project_name, $map_name)
+function DB_GetRevisionsCount(\PDO $handler, $coords_col, $coords_row, $project_name, $map_name)
 {
     //@todo: перейти на prepared statement
     try {
@@ -73,7 +73,7 @@ function DB_GetRevisionsCount($handler, $coords_col, $coords_row, $project_name,
  * @param $map_name
  * @return array
  */
-function DB_GetRevisionLast($dbh, $coords_col, $coords_row, $project_name, $map_name)
+function DB_GetRevisionLast(\PDO $dbh, $coords_col, $coords_row, $project_name, $map_name)
 {
     //@todo: перейти на prepared statement
     try{
@@ -109,7 +109,7 @@ function DB_GetRevisionLast($dbh, $coords_col, $coords_row, $project_name, $map_
  * @param $revision_id
  * @return array
  */
-function DB_GetRevisionById($dbh, $revision_id)
+function DB_GetRevisionById(\PDO $dbh, $revision_id)
 {
     //@todo: перейти на prepared statement
     try {
@@ -145,7 +145,7 @@ function DB_GetRevisionById($dbh, $revision_id)
  * @param $map_name
  * @return string
  */
-function DB_GetListRevisions($dbh, $coords_col, $coords_row, $project_name, $map_name)
+function DB_GetListRevisions(\PDO $dbh, $coords_col, $coords_row, $project_name, $map_name)
 {
     //@todo: перейти на prepared statement
     $revisions_string = '';
@@ -190,7 +190,7 @@ AND map_name = '{$map_name}'
  * @param $data
  * @return mixed
  */
-function DB_UpdateHexTile($dbh, $data)
+function DB_UpdateHexTile(\PDO $dbh, $data)
 {
     try{
         $sth = $dbh->prepare("INSERT INTO lme_map_tiles_data (hexcol, hexrow, hexcoords, title, content, editor, edit_date, edit_reason, ip, project_id, project_name, map_id, map_name)
@@ -212,7 +212,7 @@ function DB_UpdateHexTile($dbh, $data)
  * @param $map_name
  * @return array
  */
-function DB_GetRevealedTiles($dbh, $project_name, $map_name)
+function DB_GetRevealedTiles(\PDO $dbh, $project_name, $map_name)
 {
     //@todo: перейти на prepared statement
     $revealed = array();

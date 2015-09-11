@@ -27,6 +27,8 @@ $map_name
     ? $_GET['map']
     : die('No such map!');
 
+setcookie('kwlme_filemanager_storagepath', $project_name, 0, "/"); // cookie for Responsive Manager
+
 $coords_col = intval( atordie($_GET, 'col', 'X-Coordinate required!'));
 
 $coords_row = intval( atordie($_GET, 'row', 'Y-Coordinate required!'));
