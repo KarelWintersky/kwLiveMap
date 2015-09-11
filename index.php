@@ -15,22 +15,13 @@ $dbh = DB_Connect();
 $config = new PHPAuth\Config($dbh);
 $auth   = new PHPAuth\Auth($dbh, $config, $lang);
 
-$logged_in_status = '';
-
-$is_logged_in = $auth->isLogged(); // true if logged-in
-
-if(!isset($_COOKIE[$config->cookie_name]) || !$auth->checkSession($_COOKIE[$config->cookie_name])) {
-    $logged_in_status = 'logged_out';
-} else {
-    $logged_in_status = 'logged_in';
-}
-
+$is_logged_in = (int)$auth->isLogged(); // 1 if logged-in, 0 elseether
 
 // show template
 $tpl_file = 'index.html';
 
 $template_data = array(
-    'user_status'           =>  $logged_in_status,
+    'is_logged_in'          =>  $is_logged_in
 );
 
 $html = websun_parse_template_path($template_data, $tpl_file, '$/template');

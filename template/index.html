@@ -9,7 +9,7 @@
 <h2>Общее</h2>
 
 <ul>
-{?*user_status="logged_out"*}
+{?*is_logged_in=0*}
     <li>
         <a href="/login">Вход в систему</a>
     </li>
@@ -25,9 +25,9 @@
     <li>
         <a href="/resetpassword">Перейти к вводу ключа восстановления аккаунта</a>
     </li>
-{*user_status="logged_out"*?}
+{*is_logged_in=0*?}
 
-{?*user_status="logged_in"*}
+{?*is_logged_in=1*}
 
     <li>
         <a href="/mysettings">Настройки аккаунта</a>
@@ -36,7 +36,7 @@
         <a href="/logout">Выход (логаут)</a>
     </li>
 
-{*user_status="logged_in"*?}
+{*is_logged_in=1*?}
 
 </ul>
 
