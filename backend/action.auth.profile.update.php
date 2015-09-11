@@ -1,8 +1,9 @@
 <?php
 /**
  * User: Arris
- * Date: 07.09.15, time: 1:37
+ * Date: 11.09.15, time: 9:54
  */
+
 
 require_once 'config/config.php';
 require_once 'core.php';
@@ -21,21 +22,47 @@ $dbh = DB_Connect();
 $config = new PHPAuth\Config($dbh);
 $auth   = new PHPAuth\Auth($dbh, $config, $lang);
 
-$auth_result = $auth->activate($_POST['auth:activate_key']);
+var_dump($_POST);
+$auth_result = array();
+$html_callback = '';
 
-$html_callback
-    = ($auth_result['error'])
-    ? '/'
-    : '/login';
+
+switch ($_POST['auth:editprofile:submit']) {
+    case 'update_personal_data' : {
+        // update personal data
+
+
+        break;
+    }
+    case 'change_email': {
+        // Change Password: $auth->changeEmail($uid, $email, $password)
+        break;
+    }
+    case 'change_password': {
+        // Change Password: $auth->changePassword($uid, $curr, $new, $new2)
+        break;
+    }
+    case 'delete_account': {
+        // $auth->deleteUser($id, $password)
+        break;
+    }
+    default: {
+        break;
+    }
+}
+
+
+
 
 $template_data = array(
     'error_messages'    =>  $auth_result['message'],
-    'html_callback_timeout' =>  10,
+    'html_callback_timeout' =>  1000,
     'html_callback'     =>  $html_callback
 );
-
+// --------
 $tpl_file = 'auth_callbacks/auth.callback.activate.html';
 
 $html = websun_parse_template_path($template_data, $tpl_file, '$/template');
 
 echo $html;
+ 

@@ -12,12 +12,14 @@
 <form action="/backend/action.try.password.recover.php" method="post">
     <div>
         <label for="auth_email">Регистрационный E-Mail: </label>
-        <input type="text" size="15" id="auth_email" name="auth:recover_email">
+        <input type="email" size="15" id="auth_email" name="auth:recover_email" required>
     </div>
     <div>
-        <button name="auth:recover_password">Try!</button>
+        <button name="auth:recover_password">Восстановить пароль</button>
     </div>
 </form>
+
+<hr>
 
 <a href="/">На стартовую...</a>
 

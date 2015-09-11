@@ -17,6 +17,8 @@ $auth   = new PHPAuth\Auth($dbh, $config, $lang);
 
 $logged_in_status = '';
 
+$is_logged_in = $auth->isLogged(); // true if logged-in
+
 if(!isset($_COOKIE[$config->cookie_name]) || !$auth->checkSession($_COOKIE[$config->cookie_name])) {
     $logged_in_status = 'logged_out';
 } else {

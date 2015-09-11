@@ -20,7 +20,18 @@ $dbh = DB_Connect();
 $config = new PHPAuth\Config($dbh);
 $auth   = new PHPAuth\Auth($dbh, $config, $lang);
 
-$auth_result = $auth->register($_POST['auth:reg_email'], $_POST['auth:reg_password'], $_POST['auth:reg_password_again']);
+$additional_fields = array(
+    'username'      =>  at($_POST, 'auth:reg_username', "Anonymous" ),
+    'gender'        =>  at($_POST, 'auth:reg_gender', 'N'),
+    'city'          =>  at($_POST, 'auth:reg_city', '')
+);
+
+$auth_result = $auth->register(
+    $_POST['auth:reg_email'],
+    $_POST['auth:reg_password'],
+    $_POST['auth:reg_password_again'],
+    $additional_fields
+);
 
 if (!$auth_result['error']) {
     // no errors

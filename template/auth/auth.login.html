@@ -14,18 +14,22 @@
         <input type="text" size="15" id="log_in_email" name="auth:login_email" value="{*$new_username*}">
     </div>
     <div class="field">
-        <label for="log_in_password">Password</label>
+        <label for="log_in_password">Пароль:</label>
         <input type="password" size="15" id="log_in_password" name="auth:login_password">
     </div>
     <div class="field">
-        <label for="log_in_remember_me">Помнить меня</label>
+        <label for="log_in_remember_me">Помнить меня:</label>
         <input type="checkbox" id="log_in_remember_me" name="auth:login_remember_me" value="1" required checked>
     </div>
+    <br/>
     <div>
-        <button name="auth:logintry">Try!</button>
+        <button name="auth:loginaction" value="login">Войти</button>
+        |
+        <button name="auth:loginaction" value="resendactivation">Повторная активация</button>
     </div>
 </form>
 <br>
+
 <!--
 resend activation email делается на этой же странице - либо логин, либо ресенд.
 

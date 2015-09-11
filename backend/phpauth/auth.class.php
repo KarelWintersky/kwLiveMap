@@ -74,6 +74,7 @@ class Auth
 			$this->addAttempt();
 
 			$return['message'] = $this->lang["email_password_incorrect"];
+            //@todo: add message 'user not found'
 			return $return;
 		}
 
@@ -300,7 +301,7 @@ class Auth
 	/***
 	* Gets UID for a given email address and returns an array
 	* @param string $email
-	* @return array $uid
+	* @return int $uid
 	*/
 
 	public function getUID($email)
