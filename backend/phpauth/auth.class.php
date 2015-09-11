@@ -741,14 +741,14 @@ class Auth
     {
         $return['error'] = true;
 
-        if (strlen($password) < $this->config->register_password_min_length) {
+        if (strlen($password) < $this->config->verify_password_min_length) {
             $return['message'] = $this->lang["password_short"];
             return $return;
-        } elseif (strlen($password) > $this->config->register_password_max_length) {
+        } elseif (strlen($password) > $this->config->verify_password_max_length) {
             $return['message'] = $this->lang["password_long"];
             return $return;
         }
-        if ($this->config->register_password_strong_regidity) {
+        if ($this->config->verify_password_strong_requirements) {
             if (!preg_match('@[A-Z]@', $password) || !preg_match('@[a-z]@', $password) || !preg_match('@[0-9]@', $password)) {
                 $return['message'] = $this->lang["password_invalid"];
                 return $return;
@@ -768,10 +768,10 @@ class Auth
     {
         $return['error'] = true;
 
-        if (strlen($email) < $this->config->register_email_min_length) {
+        if (strlen($email) < $this->config->verify_email_min_length) {
             $return['message'] = $this->lang["email_short"];
             return $return;
-        } elseif (strlen($email) > $this->config->register_email_max_length) {
+        } elseif (strlen($email) > $this->config->verify_email_max_length) {
             $return['message'] = $this->lang["email_long"];
             return $return;
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -779,7 +779,7 @@ class Auth
             return $return;
         }
 
-        if ($this->config->register_email_use_banlist) {
+        if ($this->config->verify_email_use_banlist) {
             $bannedEmails = json_decode(file_get_contents(__DIR__ . "/files/domains.json"));
 
             if (in_array(strtolower(explode('@', $email)[1]), $bannedEmails)) {

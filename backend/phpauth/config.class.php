@@ -29,6 +29,8 @@ class Config
         while($row = $query->fetch()) {
             $this->config[$row['setting']] = $row['value'];
         }
+
+        $this->setVerifyDefaults();
     }
 
     /**
@@ -55,5 +57,26 @@ class Config
         } else {
             return false;
         }
+    }
+
+    private function setVerifyDefaults()
+    {
+        if (! isset($this->config['verify_password_min_length']) )
+            $this->config['verify_password_min_length'] = 3;
+
+        if (! isset($this->config['verify_password_max_length']) )
+            $this->config['verify_password_max_length'] = 150;
+
+        if (! isset($this->config['verify_password_strong_requirements']) )
+            $this->config['verify_password_strong_requirements'] = 1;
+
+        if (! isset($this->config['verify_email_min_length']) )
+            $this->config['verify_email_min_length'] = 5;
+
+        if (! isset($this->config['verify_email_max_length']) )
+            $this->config['verify_email_max_length'] = 100;
+
+        if (! isset($this->config['verify_email_use_banlist']) )
+            $this->config['verify_email_use_banlist'] = 1;
     }
 }
