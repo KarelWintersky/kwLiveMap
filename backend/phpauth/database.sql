@@ -46,6 +46,9 @@ INSERT INTO `config` (`id`, `setting`, `value`) VALUES
 (30,    'verify_email_min_length',  '5'),
 (31,    'verify_email_max_length',  '100'),
 (32,    'verify_email_use_banlist', '1');
+-- Добавить "количество попыток входа до бана"
+-- Добавить "банить ли за попытки входа?"
+-- Добавить срок бана
 
 DROP TABLE IF EXISTS `attempts`;
 CREATE TABLE `attempts` (
