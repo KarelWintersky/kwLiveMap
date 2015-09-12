@@ -18,23 +18,23 @@
     <form method="post" action="/backend/action.auth.profile.update.php">
         <div class="field">
             <label for="auth_editprofile_name">Меня зовут: </label>
-            <input type="text" size="15" id="auth_editprofile_name" name="auth:editprofile:name" value="{*mysettings_name*}">
+            <input type="text" size="15" id="auth_editprofile_name" name="auth:editprofile:name" value="{*username*}">
         </div>
         <div>
             <label for="auth_editprofile_gender">Я: </label>
             <select id="auth_editprofile_gender" name="auth:editprofile:gender">
-                <option value="M">кавалер</option>
-                <option value="F">дама</option>
-                <option value="N">существо</option>
+                <option value="M"{?*gender="M"*} selected{*gender="M"*?}>кавалер</option>
+                <option value="F"{?*gender="F"*} selected{*gender="F"*?}>дама</option>
+                <option value="N"{?*gender="N"*} selected{*gender="N"*?}>существо</option>
             </select>
         </div>
         <div>
             <label for="auth_editprofile_city">Мой город:</label>
-            <input type="text" size="25" id="auth_editprofile_city" name="auth:editprofile:reg_city">
+            <input type="text" size="25" id="auth_editprofile_city" name="auth:editprofile:reg_city" value="{*city*}">
         </div>
         <div class="field">
-            <label for="auth_editprofile_password">Пароль: </label>
-            <input type="text" size="15" id="auth_editprofile_password" name="auth:editprpfile:password">
+            <label for="auth_editprofile_password">мой пароль: </label>
+            <input type="password" size="15" id="auth_editprofile_password" name="auth:editprpfile:password">
         </div>
         <div class="field">
             <label for="auth_editprofile_submit"></label>
@@ -49,19 +49,23 @@
     Варианты:
     - наблюдатель: покинуть
     - редактор: покинуть
-    - владелец: ничего сделать нельзя, проект удаляется со страницы настроек проекта
+    - владелец: ничего сделать нельзя, пока не удален проект (удаляется со страницы настроек проекта)
 </fieldset>
 
 <fieldset>
     <legend>Сменить регистрационный e-mail</legend>
     <form method="post" action="/backend/action.auth.profile.update.php">
         <div class="field">
-            <label for="auth_changeemail_newemail">Новый E-Mail: </label>
-            <input type="text" size="15" id="auth_changeemail_newemail" name="auth:changeemail:new" required>
+            <label for="auth_changeemail_current">Текущий E-Mail: </label>
+            <input type="email" size="15" id="auth_changeemail_current" disabled value="{*current_email*}">
         </div>
         <div class="field">
-            <label for="auth_changeemail_password">Пароль: </label>
-            <input type="text" size="15" id="auth_changeemail_password" name="auth:changeemail:password">
+            <label for="auth_changeemail_newemail">Новый E-Mail: </label>
+            <input type="email" size="15" id="auth_changeemail_newemail" name="auth:changeemail:new" required>
+        </div>
+        <div class="field">
+            <label for="auth_changeemail_password">Мой пароль: </label>
+            <input type="password" size="15" id="auth_changeemail_password" name="auth:changeemail:password">
         </div>
         <div class="field">
             <label for="auth_changeemail_submit"></label>
@@ -99,11 +103,11 @@
     <br/>
     <form method="post" action="/backend/action.auth.profile.update.php">
         <div class="field">
-            <label for="auth_currentmail_newemail">Новый E-Mail: </label>
+            <label for="auth_currentmail_newemail">Мой E-Mail: </label>
             <input type="text" size="15" id="auth_currentmail_newemail" name="auth:deleteaccount:email">
         </div>
         <div class="field">
-            <label for="auth_deleteaccount_password">Текущий пароль: </label>
+            <label for="auth_deleteaccount_password">Мой пароль: </label>
             <input type="text" size="15" id="auth_deleteaccount_password" name="auth:deleteaccount:password">
         </div>
         <div class="field">

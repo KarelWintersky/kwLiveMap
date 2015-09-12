@@ -67,6 +67,18 @@ switch ($_GET['action']) {
     // мои настройки (разнообразные)
     case 'mysettings': {
         if ($is_logged_in) {
+            // загрузить в переменные значения из базы и вставить их в темплейт
+            $userid = $auth->getSessionUID( $auth->getSessionHash() );
+            $userdata = $auth->getUser($userid);
+
+            $template_data = array(
+                'username'      =>  $userdata['username'],
+                'gender'        =>  $userdata['gender'],
+                'city'          =>  $userdata['city'],
+                'current_email' =>  $userdata['email']
+            );
+
+
             $template_file = 'auth/auth.mysettings.html';
         } else {
             $template_file = 'auth.callback.instant_to_root.html';
@@ -115,6 +127,8 @@ switch ($_GET['action']) {
         break;
     }
 };
+
+echo '<hr>';
 
 $html = websun_parse_template_path($template_data, $template_file, '$/template');
 

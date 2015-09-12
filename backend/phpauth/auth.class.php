@@ -11,11 +11,13 @@ class Auth
 	public $config;
 	public $lang;
 
-	/***
-	* Initiates database connection
-	*/
-
-	public function __construct(\PDO $dbh, $config, $lang)
+    /**
+     * Initiates database connection
+     * @param \PDO $dbh
+     * @param $config
+     * @param $lang
+     */
+    public function __construct(\PDO $dbh, $config, $lang)
 	{
 		$this->dbh = $dbh;
 		$this->config = $config;
@@ -459,7 +461,7 @@ class Auth
 	* @return boolean
 	*/
 
-	private function isEmailTaken($email)
+	public function isEmailTaken($email)
 	{
 		$query = $this->dbh->prepare("SELECT * FROM {$this->config->table_users} WHERE email = ?");
 		$query->execute(array($email));
@@ -475,60 +477,52 @@ class Auth
 	* Adds a new user to database
 	* @param string $email
 	* @param string $password
+    * @param array $params
 	* @return int $uid
 	*/
 
-	private function addUser($email, $password, $params = array())
-	{
-		$return['error'] = true;
+    private function addUser($email, $password, $params = array())
+    {
+        $return['error'] = true;
+        $query = $this->dbh->prepare("INSERT INTO {$this->config->table_users} VALUES ()");
+        if(!$query->execute()) {
+            $return['message'] = $this->lang["system_error"] . " #03";
+            return $return;
+        }
+        $uid = $this->dbh->lastInsertId();
+        $email = htmlentities(strtolower($email));
+        $addRequest = $this->addRequest($uid, $email, "activation");
+        if($addRequest['error'] == 1) {
+            $query = $this->dbh->prepare("DELETE FROM {$this->config->table_users} WHERE id = ?");
+            $query->execute(array($uid));
+            $return['message'] = $addRequest['message'];
+            return $return;
+        }
+        $password = $this->getHash($password);
 
-		$query = $this->dbh->prepare("INSERT INTO {$this->config->table_users} VALUES ()");
+        $setParams = '';
+        if (is_array($params)&& count($params) > 0) {
+            $customParamsQueryArray = Array();
 
-		if(!$query->execute()) {
-			$return['message'] = $this->lang["system_error"] . " #03";
-			return $return;
-		}
+            foreach($params as $paramKey => $paramValue) {
+                $customParamsQueryArray[] = array('value' => $paramKey . ' = ?');
+            }
 
-		$uid = $this->dbh->lastInsertId();
-		$email = htmlentities(strtolower($email));
-
-		$addRequest = $this->addRequest($uid, $email, "activation");
-
-		if($addRequest['error'] == 1) {
-			$query = $this->dbh->prepare("DELETE FROM {$this->config->table_users} WHERE id = ?");
-			$query->execute(array($uid));
-
-			$return['message'] = $addRequest['message'];
-			return $return;
-		}
-
-		$password = $this->getHash($password);
-
-		$customParamsQueryArray = Array();
-
-		foreach($params as $paramKey => $paramValue) {
-			$customParamsQueryArray[] = array('value' => $paramKey . ' = ?');
-		}
-
-		$setParams = ', ' . implode(', ', array_map(function ($entry) {
-			return $entry['value'];
-		}, $customParamsQueryArray));
-
-		$query = $this->dbh->prepare("UPDATE {$this->config->table_users} SET email = ?, password = ? {$setParams} WHERE id = ?");
-
-		$bindParams = array_values(array_merge(array($email, $password), $params, array($uid)));
-
-		if(!$query->execute($bindParams)) {
-			$query = $this->dbh->prepare("DELETE FROM {$this->config->table_users} WHERE id = ?");
-			$query->execute(array($uid));
-
-			$return['message'] = $this->lang["system_error"] . " #04";
-			return $return;
-		}
-
-		$return['error'] = false;
-		return $return;
-	}
+            $setParams = ', ' . implode(', ', array_map(function ($entry) {
+                return $entry['value'];
+            }, $customParamsQueryArray));
+        }
+        $query = $this->dbh->prepare("UPDATE {$this->config->table_users} SET email = ?, password = ? {$setParams} WHERE id = ?");
+        $bindParams = array_values(array_merge(array($email, $password), $params, array($uid)));
+        if(!$query->execute($bindParams)) {
+            $query = $this->dbh->prepare("DELETE FROM {$this->config->table_users} WHERE id = ?");
+            $query->execute(array($uid));
+            $return['message'] = $this->lang["system_error"] . " #04";
+            return $return;
+        }
+        $return['error'] = false;
+        return $return;
+    }
 
 	/**
 	* Gets user data for a given UID and returns an array
@@ -538,7 +532,7 @@ class Auth
 
 	public function getUser($uid)
 	{
-		$query = $this->dbh->prepare("SELECT email, password, isactive FROM {$this->config->table_users} WHERE id = ?");
+		$query = $this->dbh->prepare("SELECT * FROM {$this->config->table_users} WHERE id = ?");
 		$query->execute(array($uid));
 
 		if ($query->rowCount() == 0) {
@@ -616,14 +610,15 @@ class Auth
 		return $return;
 	}
 
-	/**
-	* Creates an activation entry and sends email to user
-	* @param int $uid
-	* @param string $email
-	* @return boolean
-	*/
+    /**
+     * Creates an activation entry and sends email to user
+     * @param int $uid
+     * @param string $email
+     * @param string $type
+     * @return boolean
+     */
 
-	private function addRequest($uid, $email, $type)
+    private function addRequest($uid, $email, $type)
 	{
 		require 'PHPMailer/PHPMailerAutoload.php';
 
@@ -965,8 +960,8 @@ class Auth
 	* @param int $uid
 	* @param string $currpass
 	* @param string $newpass
-    * @param $repeatnewpass
-	* @return $return
+    * @param string $repeatnewpass
+	* @return array $return
 	*/
     public function changePassword($uid, $currpass, $newpass, $repeatnewpass)
 	{
@@ -1203,12 +1198,73 @@ class Auth
 	* Returns is user logged in
 	* @return boolean
 	*/
-
 	public function isLogged() {
 		return (isset($_COOKIE[$this->config->cookie_name]) && $this->checkSession($_COOKIE[$this->config->cookie_name]));
 	}
 
+    /**
+     * KW: Returns session hash
+     * @return string
+     */
     public function getSessionHash(){
         return $_COOKIE[$this->config->cookie_name];
     }
+
+    /**
+     * KW: Проверяет, совпадает ли пароль с паролем пользователя, сохраненным в базе
+     * @param $userid
+     * @param $password_for_check
+     * @return bool
+     */
+    public function comparePasswords($userid, $password_for_check)
+    {
+        $query = $this->dbh->prepare("SELECT password FROM {$this->config->table_users} WHERE id = ?");
+        $query->execute(array($userid));
+
+        if ($query->rowCount() == 0) {
+            return false;
+        }
+
+        $data = $query->fetch(\PDO::FETCH_ASSOC);
+
+        if (!$data) {
+            return false;
+        }
+
+        return password_verify($password_for_check, $data['password']);
+    }
+
+    /**
+     * Update userinfo for user with given id = $uid
+     * @param int $uid
+     * @param array $params
+     * @return array $return[error/message]
+     */
+    public function updateUser($uid, $params)
+    {
+        $setParams = '';
+        if (is_array($params)&& count($params) > 0) {
+            $customParamsQueryArray = Array();
+
+            foreach($params as $paramKey => $paramValue) {
+                $customParamsQueryArray[] = array('value' => $paramKey . ' = ?');
+            }
+
+            $setParams = implode(', ', array_map(function ($entry) {
+                return $entry['value'];
+            }, $customParamsQueryArray));
+        }
+        $query = $this->dbh->prepare("UPDATE {$this->config->table_users} SET {$setParams} WHERE id = ?");
+        $bindParams = array_values(array_merge($params, array($uid)));
+
+        if(!$query->execute($bindParams)) {
+            $return['message'] = $this->lang["system_error"] . " #04";
+            return $return;
+        }
+        $return['error'] = false;
+		$return['message'] = 'Ok.';
+        return $return;
+    }
+
+
 }

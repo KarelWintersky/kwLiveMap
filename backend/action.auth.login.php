@@ -31,7 +31,6 @@ switch ($_POST['auth:loginaction']) {
 
         if (!$auth_result['error']) {
             // no errors
-            setcookie('kw_livemap_logged_in_session_hash', $auth_result['hash'],  time()+$auth_result['expire'], "/");
             setcookie($config->__get('cookie_name'), $auth_result['hash'], time()+$auth_result['expire'], "/");
             unsetcookie('kw_livemap_new_registred_username');
 

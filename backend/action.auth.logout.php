@@ -22,12 +22,11 @@ $auth   = new PHPAuth\Auth($dbh, $config, $lang);
 
 if ($auth->isLogged()) {
 
-    $session_hash = $_COOKIE[$config->cookie_name];
+    $session_hash = $auth->getSessionHash();
 
     $auth_result = $auth->logout($session_hash);
 
     if ($auth_result) {
-        unsetcookie('kw_livemap_logged_in_session_hash');
         unsetcookie($config->__get('cookie_name'));
         $template_data['error_messages'] = 'Мы успешно вышли из системы.';
     } else {
