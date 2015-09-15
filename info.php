@@ -6,7 +6,6 @@
 
 require_once 'backend/config/config.php';
 require_once 'backend/core.php';
-require_once 'backend/core.auth.php';
 require_once 'backend/core.pdo.php';
 require_once 'backend/websun.php';
 
@@ -22,7 +21,8 @@ $project_alias
 $dbh = DB_Connect();
 
 $is_this_exists = DB_checkProjectExists($dbh, $project_alias, 'map');
-if (!$is_this_exists['project'] && $project_alias != 'sandbox')     redirect('/sandbox/map');
+
+if (!$is_this_exists['project'] /* && $project_alias != 'sandbox' */)     redirect('/sandbox/map');
 
 
 $tpl_file = 'info.project.html';

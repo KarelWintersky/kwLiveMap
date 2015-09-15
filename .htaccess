@@ -10,17 +10,12 @@ RewriteBase /
 # RewriteCond %{REQUEST_FILENAME} !^favicon\.ico
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-# RewriteCond %{REQUEST_URI} !^/backend/
-# RewriteCond %{REQUEST_URI} !^/backend/*\.php$
-# ------------
-# swap this rules for change behavior
-# ------------
 
-#any project map
+# any project map
 RewriteRule ^([A-Za-z0-9-]+)/([^/]+)$ view.php?project=$1&map=$2 [L,QSA]
 
-#project settings
-#(костыыыыль), кроме того, вместо \* поставил \@ потому что * в ссылках криво парсится шаблонизатором
+# project settings
+#кроме того, вместо \* поставил \@ потому что * в ссылках криво парсится шаблонизатором
 RewriteRule ^([A-Za-z0-9-]+)/\@/project.editteam$ project_editteam.php?project=$1 [L,QSA]
 RewriteRule ^([A-Za-z0-9-]+)/\@/project.settings$ project_settings.php?project=$1 [L,QSA]
 RewriteRule ^([A-Za-z0-9-]+)/\@/project.contribution$ project_contribution.php?project=$1 [L,QSA]
@@ -29,16 +24,14 @@ RewriteRule ^([A-Za-z0-9-]+)/\@/project.contribution$ project_contribution.php?p
 #any project, any map, edit
 RewriteRule ^([A-Za-z0-9-]+)/([^/]+)/edit$ edit.php?project=$1&map=$2 [L,QSA]
 
-#root rules
+# root rules
 RewriteRule ^register$ auth.php?action=register [L,QSA]
 RewriteRule ^login$ auth.php?action=login [L,QSA]
 RewriteRule ^logout$ auth.php?action=logout [L,QSA]
 RewriteRule ^recover$ auth.php?action=recover [L,QSA]
 RewriteRule ^mysettings$ auth.php?action=mysettings [L,QSA]
-
-# PHPAuth required this pages
 RewriteRule ^activateaccount$ auth.php?action=activateaccount [L,QSA]
 RewriteRule ^resetpassword$ auth.php?action=resetpassword [L,QSA]
 
-#project info
+# project info
 RewriteRule ^([A-Za-z0-9-]+)$ info.php?project=$1 [L,QSA]

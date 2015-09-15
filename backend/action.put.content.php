@@ -1,7 +1,6 @@
 <?php
 require_once 'config/config.php';
 require_once 'core.php';
-require_once 'core.auth.php';
 require_once 'core.pdo.php';
 require_once 'websun.php';
 
@@ -33,7 +32,7 @@ $data = array(
     'ip'            =>  $_SERVER['REMOTE_ADDR'],
     'project_id'    =>  1,
     'project_alias' =>  $project_alias,
-    'map_id'        =>  0,
+    'map_id'        =>  1,
     'map_alias'     =>  $map_alias
 );
 

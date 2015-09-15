@@ -1,7 +1,6 @@
 <?php
 require_once 'config/config.php';
 require_once 'core.php';
-require_once 'core.auth.php';
 require_once 'core.pdo.php';
 
 global $CONFIG;

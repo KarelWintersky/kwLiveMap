@@ -5,7 +5,6 @@
  */
 require_once 'backend/config/config.php';
 require_once 'backend/core.php';
-require_once 'backend/core.auth.php';
 require_once 'backend/core.pdo.php';
 require_once 'backend/websun.php';
 
@@ -56,6 +55,8 @@ if ($map_info['is_sandbox']) {
 } else {
     $template_data['map_header'] = $map['project_title'] . " -- " . $map['map_title'];
 }
+
+$template_data['copyright'] = '(c) Karel Wintersky, 2015, ver 0.6.+';
 
 $tpl_file = 'view.canvas.html';
 

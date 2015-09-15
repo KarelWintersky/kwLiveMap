@@ -1,6 +1,6 @@
 function popupEmptyInfoBox(hexgrid_coords)
 {
-    $("#colorboxed-view-content").html('По гексу `'+ hexgrid_coords.hexcoord +'` информации нет! Но можно добавить: <button id="actor-edit"> Редактировать </button>');
+    $("#colorboxed-view-content").html('По региону `'+ hexgrid_coords.hexcoord +'` информации нет! Но можно добавить: <button id="actor-edit"> Редактировать </button>');
     $.colorbox({
         inline: true,
         href: '#colorboxed-view',

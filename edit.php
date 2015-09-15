@@ -1,7 +1,6 @@
 <?php
 require_once 'backend/config/config.php';
 require_once 'backend/core.php';
-require_once 'backend/core.auth.php';
 require_once 'backend/core.pdo.php';
 require_once 'backend/websun.php';
 
@@ -89,8 +88,8 @@ $template_data = array(
     // revisions
     'region_revisions'      =>  $revisions_string,
     // other
-    'info_message'          =>  $revision['message'],
-    'copyright'             =>  '(c) Karel Wintersky, 2015, ver 0.5.+'
+    'info_message'          =>  at($revision, 'message', ''),
+    'copyright'             =>  '(c) Karel Wintersky, 2015, ver 0.6.+'
 );
 
 $tpl_file = 'edit.html';

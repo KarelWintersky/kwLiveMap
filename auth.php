@@ -5,7 +5,6 @@
  */
 require_once 'backend/config/config.php';
 require_once 'backend/core.php';
-require_once 'backend/core.auth.php';
 require_once 'backend/core.pdo.php';
 require_once 'backend/websun.php';
 

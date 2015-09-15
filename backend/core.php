@@ -1,6 +1,15 @@
 <?php
 
 /**
+ * заглушка
+ * @return bool
+ */
+function auth_CanIEdit()
+{
+    return true;
+}
+
+/**
  * Эквивалент isset( array[ key ] ) ? array[ key ] : default ;
  * at PHP 7 useless, z = a ?? b;
  * А точнее z = $array[ $key ] ?? $default;
