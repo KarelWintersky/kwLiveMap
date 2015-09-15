@@ -17,17 +17,17 @@ $revision = array();
 $is_can_edit = auth_CanIEdit();
 
 // эти конструкции выглядят прозрачно и понятно, но их можно заменить на вызовы atordie()
-$project_name
+$project_alias
     = isset($_GET['project'])
     ? $_GET['project']
     : die('No such project!');
 
-$map_name
+$map_alias
     = isset($_GET['map'])
     ? $_GET['map']
     : die('No such map!');
 
-setcookie('kwlme_filemanager_storagepath', $project_name, 0, "/"); // cookie for Responsive Manager
+setcookie('kwlme_filemanager_storagepath', $project_alias, 0, "/"); // cookie for Responsive Manager
 
 $coords_col = intval( atordie($_GET, 'col', 'X-Coordinate required!'));
 
@@ -38,7 +38,7 @@ $coords_row = intval( atordie($_GET, 'row', 'Y-Coordinate required!'));
 $dbh = DB_Connect();
 
 // проверяем, сколько ревизий текста у гекса
-$revisions_count = DB_GetRevisionsCount($dbh, $coords_col, $coords_row, $project_name, $map_name);
+$revisions_count = DB_GetRevisionsCount($dbh, $coords_col, $coords_row, $project_alias, $map_alias);
 
 // в зависимости от количества ревизий заполняем данные шаблона
 if ($revisions_count != 0) {
@@ -46,7 +46,7 @@ if ($revisions_count != 0) {
     // если во входящих параметрах нет идентификатора ревизии - загружаем последнюю
     if (!isset($_GET['revision'])) {
         // загружаем последнюю ревизию
-        $revision = DB_GetRevisionLast($dbh, $coords_col, $coords_row, $project_name, $map_name);
+        $revision = DB_GetRevisionLast($dbh, $coords_col, $coords_row, $project_alias, $map_alias);
     } else {
         // загружаем нужную ревизию по идентификатору
         $revision_id = $_GET['revision'];
@@ -54,7 +54,7 @@ if ($revisions_count != 0) {
     }
 
     // выгружаем список ревизий
-    $revisions_string = DB_GetListRevisions($dbh, $coords_col, $coords_row, $project_name, $map_name);
+    $revisions_string = DB_GetListRevisions($dbh, $coords_col, $coords_row, $project_alias, $map_alias);
 } else {
     // заполняем данные
     $revision = array(
@@ -69,11 +69,11 @@ $dbh = null;
 
 
 // параметр callback больше не передаем - отображение карты зависит от настроек в конфиге
-$TEMPLATE_DATA = array(
-    'project_name'          =>  $project_name,
-    'map_name'              =>  $map_name,
+$template_data = array(
+    'project_alias'          =>  $project_alias,
+    'map_alias'              =>  $map_alias,
     //
-    'html_callback'         =>  "/{$project_name}/{$map_name}",
+    'html_callback'         =>  "/{$project_alias}/{$map_alias}",
     'project_title'         =>  'Trollfjorden -- Троллячьи фьорды',
     'map_title'             =>  'основная карта',
     //
@@ -95,6 +95,6 @@ $TEMPLATE_DATA = array(
 
 $tpl_file = 'edit.html';
 
-$html = websun_parse_template_path($TEMPLATE_DATA, $tpl_file, '$/template');
+$html = websun_parse_template_path($template_data, $tpl_file, '$/template');
 
 echo $html;

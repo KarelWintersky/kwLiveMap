@@ -18,32 +18,32 @@
     <script type="text/javascript" src="/frontend/js/kw.lme.view.js"></script>
     <!-- internal js -->
     <script type="text/javascript">
-        // в дальнейшем этот объект будет "приезжать" в шаблон из контроллера
         var this_project = {
             // параметры проекта и карты
-            project_name    :   '{*project_name*}',
-            map_name        :   '{*map_name*}',
+            project_alias    :   '{*project_alias*}',
+            map_alias        :   '{*map_alias*}',
         }
         var map_object = {
+            // параметры отображения
+            border_size     :   {*view_bordersize*},
 
-            // параметры изображения
-            image           :   '{*map_imagefile*}',
-            border_size     :   {*map_bordersize*},
             // ноль координат
             x0              :   null,
             y0              :   null,
+
             // параметры гексагональной сетки
-            grid_type       :   '{*map_grid_type*}',
-            max_col         :   {*map_max_col*},
-            max_row         :   {*map_max_row*},
+            grid_type       :   '{*grid_type*}',
+            max_col         :   {*grid_max_col*},
+            max_row         :   {*grid_max_row*},
+
             // заполняются отдельно, так как вычисляются
-            edge            :   {*map_grid_edge*}, // hexgrid_size
-            shift           :   null,
-            height          :   {*map_grid_height*},
-            halfheight      :   null,
+            grid_edge       :   {*grid_edge*}, // ребро сетки
+            grid_shift      :   null,
+            grid_transversive :   {*grid_transversive*},        // hexgrid transversive (высота или ширина гекса в зависимости от ориентации сетки)
+            grid_halftransversive      :   null,
 
             // настройки отрисовки
-            areas_hidden    :   {*map_fog_hidden*},
+            areas_hidden    :   {*view_fogdensity*},
             areas_revealed  :   0
         }
 
@@ -59,8 +59,9 @@
             var canvas = document.getElementById('mapcanvas');
             var ctx = canvas.getContext('2d');
 
-            // создаем "туман войны"
+            console.log('Making fog of war...');
             var revealedAreas = loadRevealedAreas(this_project);
+
             drawFogOfWar(ctx, revealedAreas);
 
             // анализируем hash-строку. Если её формат правильный - открываем нужный гексик
@@ -113,7 +114,7 @@
 
             // `Edit this` click event
             $(document).on('click', '#actor-edit', function(){
-                document.location.href = '/{*project_name*}/{*map_name*}/edit?callback=canvas&' + $.param(hex_current_coords) /* + '&' + $.param(this_project) */ ;
+                document.location.href = '/{*project_alias*}/{*map_alias*}/edit?callback=canvas&' + $.param(hex_current_coords);
             });
 
             // draggable plugin
@@ -130,13 +131,13 @@
     </script>
 </head>
 <body>
-
+<h4{?*mapis="sandbox"*} class="sandboxwarning"{*mapis="sandbox"*?}>{*map_header*}</h4>
+Нажмите на <strike>кексик</strike> гексик карты и... <br/>
 <div id="map-container">
-    <img class="themap" src="{*map_imagefile*}" border="1"/>
-    <canvas id="mapcanvas" width="1048" height="827"></canvas>
+    <img class="themap" src="{*image_filename*}" border="{*view_bordersize*}"/>
+    <canvas id="mapcanvas" width="{*image_width*}" height="{*image_height*}"></canvas>
 </div>
 <br/>
-Нажмите на <strike>кексик</strike> гексик карты и... =^.^=
 
 <div style="display:none">
     <div id="colorboxed-view" style="padding:10px; background:#fff;">

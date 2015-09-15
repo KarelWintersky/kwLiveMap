@@ -34,25 +34,30 @@ function DB_Close(&$dbh)
 
 /**
  * Возвращаем количество ревизий у гекса
- * @param $handler
+ * @param $dbh
  * @param $coords_col
  * @param $coords_row
- * @param $project_name
- * @param $map_name
+ * @param $project_alias
+ * @param $map_alias
  * @return mixed
  */
-function DB_GetRevisionsCount(\PDO $handler, $coords_col, $coords_row, $project_name, $map_name)
+function DB_GetRevisionsCount(\PDO $dbh, $coords_col, $coords_row, $project_alias, $map_alias)
 {
-    //@todo: перейти на prepared statement
     try {
-        $sth = $handler->query("SELECT COUNT(id)
+        $query = "SELECT COUNT(id)
         AS count_id
         FROM lme_map_tiles_data
-        WHERE hexcol = {$coords_col}
-        AND hexrow = {$coords_row}
-        AND project_name = '{$project_name}'
-        AND map_name = '{$map_name}'
-        ", PDO::FETCH_ASSOC);
+        WHERE hexcol = :coords_col
+        AND   hexrow = :coords_row
+        AND   project_alias = :project_alias
+        AND   map_alias = :map_alias ";
+        $sth = $dbh->prepare($query);
+        $sth->execute(array(
+            'coords_col'    =>  $coords_col,
+            'coords_row'    =>  $coords_row,
+            'project_alias' =>  $project_alias,
+            'map_alias'     =>  $map_alias
+        ));
 
         $row = $sth->fetch(PDO::FETCH_ASSOC);
 
@@ -69,22 +74,29 @@ function DB_GetRevisionsCount(\PDO $handler, $coords_col, $coords_row, $project_
  * @param $dbh
  * @param $coords_col
  * @param $coords_row
- * @param $project_name
- * @param $map_name
+ * @param $project_alias
+ * @param $map_alias
  * @return array
  */
-function DB_GetRevisionLast(\PDO $dbh, $coords_col, $coords_row, $project_name, $map_name)
+function DB_GetRevisionLast(\PDO $dbh, $coords_col, $coords_row, $project_alias, $map_alias)
 {
-    //@todo: перейти на prepared statement
     try{
-        $sth = $dbh->query("
+        $query = "
             SELECT title, content, editor, edit_reason
             FROM lme_map_tiles_data
-            WHERE hexcol = {$coords_col} AND hexrow = {$coords_row}
-            AND project_name = '{$project_name}'
-            AND map_name = '{$map_name}'
+            WHERE hexcol = :coords_col AND hexrow = :coords_row
+            AND project_alias = :project_alias
+            AND map_alias = :map_alias
             ORDER BY edit_date DESC
-            LIMIT 1");
+            LIMIT 1";
+
+        $sth = $dbh->prepare($query);
+        $sth->execute(array(
+            'coords_col'    =>  $coords_col,
+            'coords_row'    =>  $coords_row,
+            'project_alias' =>  $project_alias,
+            'map_alias'     =>  $map_alias
+        ));
 
         $row = $sth->fetch(PDO::FETCH_ASSOC);
 
@@ -104,6 +116,73 @@ function DB_GetRevisionLast(\PDO $dbh, $coords_col, $coords_row, $project_name, 
 }
 
 /**
+ * Возвращает информацию о карте-песочнице
+ * @return array
+ */
+function DB_GetMapSandbox()
+{
+    return array(
+        'id'                =>  0,
+        'project_alias'     =>  'sandbox',
+        'project_title'     =>  'Песочница',
+        'map_alias'         =>  'map',
+        'map_title'         =>  'Карта для развлечений',
+        'description'       =>  '',
+        'grid_edge'         =>  22,
+        'grid_transversive' =>  38,
+        'grid_type'         =>  'hex:x',
+        'grid_max_col'      =>  20,
+        'grid_max_row'      =>  20,
+        'image_filename'    =>  'sandbox.png',
+        'image_width'       =>  672,
+        'image_height'      =>  780,
+        'leaflet_filename'  =>  'sandbox.png',
+        'leaflet_width'     =>  672,
+        'leaflet_height'    =>  780,
+        'leaflet_ief'       =>  1,
+        'view_bordersize'   =>  1,
+        'view_fogdensity'   =>  0.2,
+        'view_style'        =>  'canvas',
+        'view_minzoom'      =>  1,
+        'view_maxzoom'      =>  1,
+        'view_defaultzoom'  =>  1
+    );
+}
+
+/**
+ * Загружает всю информацию о карте
+ *
+ * @param PDO $dbh
+ * @param $project
+ * @param $map
+ * @return array|mixed
+ */
+function DB_GetMapInfo(\PDO $dbh, $project, $map)
+{
+    $map_object = array();
+    $map_exists = true;
+    try {
+        $query = "SELECT * FROM lme_map_settings WHERE project_alias = ? AND map_alias = ?";
+        $sth = $dbh->prepare($query);
+        $sth->execute(array($project, $map));
+
+        if ($sth->rowCount() > 0) {
+            $map_object = $sth->fetch(\PDO::FETCH_ASSOC);
+        } else {
+            $map_exists = false;
+            $map_object = DB_GetMapSandbox();
+        }
+    } catch (PDOException $e) {
+        die(__LINE__ . $e->getMessage());
+    }
+    return array(
+        'map'           =>  $map_object,
+        'existance'     =>  $map_exists,
+        'is_sandbox'    =>  !$map_exists
+    );
+}
+
+/**
  * Возвращаем ревизию информации о гексе по айди
  * @param $dbh
  * @param $revision_id
@@ -111,13 +190,14 @@ function DB_GetRevisionLast(\PDO $dbh, $coords_col, $coords_row, $project_name, 
  */
 function DB_GetRevisionById(\PDO $dbh, $revision_id)
 {
-    //@todo: перейти на prepared statement
     try {
-        $sth = $dbh->query("
-            SELECT title, content, editor, edit_reason
+        $query = "SELECT title, content, editor, edit_reason
             FROM lme_map_tiles_data
-            WHERE id = {$revision_id}
-            ");
+            WHERE id = :revision_id ";
+        $sth = $dbh->prepare($query);
+        $sth->execute(array(
+            'revision_id'   =>  $revision_id
+        ));
 
         $row = $sth->fetch(PDO::FETCH_ASSOC);
 
@@ -141,29 +221,33 @@ function DB_GetRevisionById(\PDO $dbh, $revision_id)
  * @param $dbh
  * @param $coords_col
  * @param $coords_row
- * @param $project_name
- * @param $map_name
+ * @param $project_alias
+ * @param $map_alias
  * @return string
  */
-function DB_GetListRevisions(\PDO $dbh, $coords_col, $coords_row, $project_name, $map_name)
+function DB_GetListRevisions(\PDO $dbh, $coords_col, $coords_row, $project_alias, $map_alias)
 {
-    //@todo: перейти на prepared statement
     $revisions_string = '';
     try{
-        $sth = $dbh->query("
+        $query = "
 SELECT id, hexcol, hexrow, hexcoords, DATE_FORMAT(FROM_UNIXTIME(edit_date), '%d-%m-%Y %H:%m:%s') AS edit_date, editor, edit_reason, ip
 FROM lme_map_tiles_data
-WHERE hexcol = {$coords_col}
-AND hexrow = {$coords_row}
-AND project_name = '{$project_name}'
-AND map_name = '{$map_name}'
-"
-            , PDO::FETCH_ASSOC);
+WHERE hexcol = :coords_col
+AND hexrow = :coords_row
+AND project_alias = :project_alias AND map_alias = :map_alias";
+
+        $sth = $dbh->prepare($query);
+        $sth->execute(array(
+            'coords_col'    =>  $coords_col,
+            'coords_row'    =>  $coords_row,
+            'project_alias' =>  $project_alias,
+            'map_alias'     =>  $map_alias
+        ));
 
         while($row = $sth->fetch(PDO::FETCH_ASSOC)){
 
             $revisions_string .= sprintf(
-                '<li><a href="edit.php?frontend=imagemap&col=%s&row=%s&hexcoord=%s&revision=%s">%s, %s</a> <em>(IP: %s)</em>: %s</li>'."\r\n",
+                '<li><a href="edit.php?frontend=canvas&col=%s&row=%s&hexcoord=%s&revision=%s">%s, %s</a> <em>(IP: %s)</em>: %s</li>'."\r\n",
                 $row['hexcol'],
                 $row['hexrow'],
                 $row['hexcoords'],
@@ -193,8 +277,8 @@ AND map_name = '{$map_name}'
 function DB_UpdateHexTile(\PDO $dbh, $data)
 {
     try{
-        $sth = $dbh->prepare("INSERT INTO lme_map_tiles_data (hexcol, hexrow, hexcoords, title, content, editor, edit_date, edit_reason, ip, project_id, project_name, map_id, map_name)
-                          VALUES (:hexcol, :hexrow, :hexcoords, :title, :content, :editor, :edit_date, :edit_reason, :ip, :project_id, :project_name, :map_id, :map_name)");
+        $sth = $dbh->prepare("INSERT INTO lme_map_tiles_data (hexcol, hexrow, hexcoords, title, content, editor, edit_date, edit_reason, ip, project_id, project_alias, map_id, map_alias)
+                          VALUES (:hexcol, :hexrow, :hexcoords, :title, :content, :editor, :edit_date, :edit_reason, :ip, :project_id, :project_alias, :map_id, :map_alias)");
 
         $success = $sth->execute($data);
     }
@@ -208,22 +292,24 @@ function DB_UpdateHexTile(\PDO $dbh, $data)
 /**
  * Возвращает массив из открытых гексов (для тумана войны)
  * @param $dbh
- * @param $project_name
- * @param $map_name
+ * @param $project_alias
+ * @param $map_alias
  * @return array
  */
-function DB_GetRevealedTiles(\PDO $dbh, $project_name, $map_name)
+function DB_GetRevealedTiles(\PDO $dbh, $project_alias, $map_alias)
 {
-    //@todo: перейти на prepared statement
     $revealed = array();
     try {
-        $sth = $dbh->query("
-    SELECT hexcoords, hexcol, hexrow
+        $query = "SELECT hexcoords, hexcol, hexrow
     FROM lme_map_tiles_data
-    WHERE project_name = '{$project_name}'
-    AND map_name = '{$map_name}'
-    GROUP BY hexcoords
-    ", PDO::FETCH_ASSOC);
+    WHERE project_alias = :project_alias
+    AND map_alias = :map_alias
+    GROUP BY hexcoords  ";
+        $sth = $dbh->prepare($query);
+        $sth->execute(array(
+            'project_alias' =>  $project_alias,
+            'map_alias'     =>  $map_alias
+        ));
 
         while($row = $sth->fetch(PDO::FETCH_ASSOC)){
             $zarea = 'z'.$row['hexcoords'];
@@ -237,4 +323,110 @@ function DB_GetRevealedTiles(\PDO $dbh, $project_name, $map_name)
         die($e->getMessage());
     }
     return $revealed;
+}
+
+/**
+ * Проверяет существование проекта
+ * @param PDO $dbh
+ * @param $project_alias
+ * @param $map_alias
+ * @return int
+ */
+function DB_checkProjectExists(\PDO $dbh, $project_alias, $map_alias)
+{
+
+    try {
+        $query = "SELECT count(id) FROM lme_map_settings WHERE project_alias = ?";
+        $sth = $dbh->prepare($query);
+        $sth->execute(array($project_alias));
+
+        $result['project'] = ($sth->fetchColumn()) ? true : false;
+
+        $query = "SELECT count(id) FROM lme_map_settings WHERE map_alias = ?";
+        $sth = $dbh->prepare($query);
+        $sth->execute(array($map_alias));
+
+        $result['map'] = ($sth->fetchColumn())  ? true : false;
+
+    }catch (\PDOException $e){
+        die(__LINE__ . $e->getMessage());
+    }
+    return $result;
+}
+
+/**
+ * template function
+ * @param PDO $dbh
+ * @param $data
+ * @return int
+ */
+function DB_template(\PDO $dbh, $data)
+{
+    try {
+        $query = "";
+        $sth = $dbh->prepare($query);
+        $sth->execute();
+
+        return $sth->rowCount();
+
+    }catch (\PDOException $e){
+        die(__LINE__ . $e->getMessage());
+    }
+
+}
+
+
+function install(\PDO $dbh)
+{
+    // try add user 'root'
+
+
+    // try add project 'sandbox'
+
+
+    // try add map 'sandbox/map'
+    $sandbox_map = array(
+        'id'                =>  0,
+        'project_alias'     =>  'sandbox',
+        'project_title'     =>  'Песочница',
+        'map_alias'         =>  'map',
+        'map_title'         =>  'Карта для развлечений',
+        'description'       =>  '',
+        'grid_edge'         =>  22,
+        'grid_transversive' =>  38,
+        'grid_type'         =>  'hex:x',
+        'grid_max_col'      =>  20,
+        'grid_max_row'      =>  20,
+        'image_filename'    =>  'sandbox.png',
+        'image_width'       =>  672,
+        'image_height'      =>  780,
+        'leaflet_filename'  =>  'sandbox.png',
+        'leaflet_width'     =>  672,
+        'leaflet_height'    =>  780,
+        'leaflet_ief'       =>  1,
+        'view_bordersize'   =>  1,
+        'view_fogdensity'   =>  0.2,
+        'view_style'        =>  'canvas',
+        'view_minzoom'      =>  1,
+        'view_maxzoom'      =>  1,
+        'view_defaultzoom'  =>  1
+    );
+
+    try {
+        // $Config->table_map_settings
+        $query = "
+INSERT INTO lme_map_settings
+(project_alias, project_title, map_alias, map_title, description, grid_edge, grid_transversive, grid_type,
+grid_max_col, grid_max_row, image_filename, image_width, image_height, leaflet_filename, leaflet_width,
+leaflet_height, leaflet_ief, view_bordersize, view_fogdensity, view_style, view_minzoom, view_maxzoom, view_defaultzoom)
+VALUES
+(:project_alias, :project_title, :map_alias, :map_title, :description, :grid_edge, :grid_transversive, :grid_type,
+:grid_max_col, :grid_max_row, :image_filename, :image_width, :image_height, :leaflet_filename, :leaflet_width,
+:leaflet_height, :leaflet_ief, :view_bordersize, :view_fogdensity, :view_style, :view_minzoom, :view_maxzoom, :view_defaultzoom)";
+        $sth = $dbh->prepare($query);
+        $sth->execute($sandbox_map);
+
+    }catch (\PDOException $e){
+        die(__LINE__ . $e->getMessage());
+    }
 }

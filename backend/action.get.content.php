@@ -12,19 +12,19 @@ $coords_col = intval($_GET['col']);
 $coords_row = intval($_GET['row']);
 $hex_coords = $_GET['hexcoord'];
 
-$project_name
-    = isset($_GET['project_name'])
-    ? $_GET['project_name']
+$project_alias
+    = isset($_GET['project_alias'])
+    ? $_GET['project_alias']
     : die('No such project!');
 
-$map_name
-    = isset($_GET['map_name'])
-    ? $_GET['map_name']
+$map_alias
+    = isset($_GET['map_alias'])
+    ? $_GET['map_alias']
     : die('No such map!');
 
 $dbh = DB_Connect();
 
-$revision = DB_GetRevisionLast($dbh, $coords_col, $coords_row, $project_name, $map_name);
+$revision = DB_GetRevisionLast($dbh, $coords_col, $coords_row, $project_alias, $map_alias);
 
 $dbh = null;
 

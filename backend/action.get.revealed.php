@@ -8,17 +8,17 @@ $is_can_edit = auth_CanIEdit();
 
 $dbh = DB_Connect();
 
-$project_name
-    = isset($_GET['project_name'])
-    ? $_GET['project_name']
+$project_alias
+    = isset($_GET['project_alias'])
+    ? $_GET['project_alias']
     : die('No such project!');
 
-$map_name
-    = isset($_GET['map_name'])
-    ? $_GET['map_name']
+$map_alias
+    = isset($_GET['map_alias'])
+    ? $_GET['map_alias']
     : die('No such map!');
 
-$revealed = DB_GetRevealedTiles($dbh, $project_name, $map_name);
+$revealed = DB_GetRevealedTiles($dbh, $project_alias, $map_alias);
 
 $dbh = null;
 

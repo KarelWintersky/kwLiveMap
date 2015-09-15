@@ -14,6 +14,17 @@ require_once "backend/phpauth/languages/en_GB.php";
 require_once "backend/phpauth/config.class.php";
 require_once "backend/phpauth/auth.class.php";
 
+$project_alias
+    = isset($_GET['project'])
+    ? $_GET['project']
+    : die('No such project!');
+
+$dbh = DB_Connect();
+
+$is_this_exists = DB_checkProjectExists($dbh, $project_alias, 'map');
+if (!$is_this_exists['project'] && $project_alias != 'sandbox')     redirect('/sandbox/map');
+
+
 $tpl_file = 'info.project.html';
 
 $template_data = array();

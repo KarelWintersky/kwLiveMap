@@ -11,14 +11,14 @@ global $CONFIG;
 $is_can_edit = auth_CanIEdit();
 if (!$is_can_edit) die('Hacking attempt!');
 
-$project_name
-    = isset($_POST['project_name'])
-    ? $_POST['project_name']
+$project_alias
+    = isset($_POST['project_alias'])
+    ? $_POST['project_alias']
     : die('No such project!');
 
-$map_name
-    = isset($_POST['map_name'])
-    ? $_POST['map_name']
+$map_alias
+    = isset($_POST['map_alias'])
+    ? $_POST['map_alias']
     : die('No such map!');
 
 $data = array(
@@ -32,9 +32,9 @@ $data = array(
     'edit_reason'   =>  $_POST['edit_reason'],
     'ip'            =>  $_SERVER['REMOTE_ADDR'],
     'project_id'    =>  1,
-    'project_name'  =>  $project_name,
+    'project_alias' =>  $project_alias,
     'map_id'        =>  0,
-    'map_name'      =>  $map_name
+    'map_alias'     =>  $map_alias
 );
 
 
@@ -45,12 +45,12 @@ $put_result = DB_UpdateHexTile($dbh, $data);
 $dbh = null;
 
 if ($data['editor'] != '')
-    setcookie('kw_trpg_lme_auth_editorname', $data['editor'],  time()+60*60*24*7, "/{$project_name}/");
+    setcookie('kw_trpg_lme_auth_editorname', $data['editor'],  time()+60*60*24*7, "/{$project_alias}/");
 
 unsetcookie('kwlme_filemanager_storagepath');
 
 $TEMPLATE_DATA = array(
-    'html_callback'         =>  "/{$project_name}/{$map_name}",
+    'html_callback'         =>  "/{$project_alias}/{$map_alias}",
     'html_callback_timeout' =>  10,
 );
 

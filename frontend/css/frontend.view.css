@@ -49,3 +49,12 @@ button {
     position:relative;
     z-index:20;
 }
+
+h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+h4.sandboxwarning {
+    color: #ff3922;
+}

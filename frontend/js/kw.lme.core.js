@@ -1,6 +1,15 @@
 ;var sqrt3 = Math.sqrt(3); // 1.732
 
 /**
+ * Test for an empty Javascript object?
+ * @param obj
+ * @return {Boolean}
+ */
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
+}
+
+/**
  * Дополняет value нулями слева до полной длины строкового представления длиной stringsize.
  * @param value
  * @param stringsize
@@ -22,7 +31,7 @@ function getImageXYCoords(target, event)
     var bordersize = $target.attr('border');
     return {
         x:  (event.pageX - offset.left - bordersize) | 0,
-        y:  (event.pageY - offset.top - bordersize) | 0
+        y:  (event.pageY - offset.top  - bordersize) | 0
     }
 }
 
@@ -38,7 +47,7 @@ function getCanvasXYPos(canvas, event) {
     var bordersize = map_object.border_size || 0;
     return {
         x: event.clientX - rect.left - bordersize,
-        y: event.clientY - rect.top - bordersize
+        y: event.clientY - rect.top  - bordersize
     };
 }
 
@@ -82,7 +91,7 @@ function Vector0(x,y) {
  */
 function getHex(mx, my)
 {
-    var r = map_object.edge;
+    var r = map_object.grid_edge;
     // внимание, все следующие значения даны для OY-ориентированной сетки!!!
     // Аррис, не забудь!
     var width = r * sqrt3;
@@ -124,7 +133,7 @@ function getHex(mx, my)
 
     // снова инвертирование, только вывода - X отвечает за высоту, Y за ширину
     return {
-        row     :   ++X,
+        row     :   ++X,    // ++, потому что отсчет начинается от нуля
         col     :   ++Y,
         hexcoord:   pad(Y, 2) + pad(X, 2)
     }
@@ -185,11 +194,13 @@ function checkHexContent(hexcoord, projectdata)
 
 /**
  * Загружает из базы массив с информацией о разведанных областях.
- * @return {
+ * @param projectdata   - массив с информацией о карте и проекте {project_name, map_name }
+ * @return array, пример: {
+ *
  *    z0101:  {col:"1", row:"1"},
  *    z0301:  {col:"3", row:"1"}
- *    etc
  * }
+ * @return {String}
  */
 function loadRevealedAreas(projectdata)
 {
@@ -207,21 +218,21 @@ function loadRevealedAreas(projectdata)
 
 /**
  * Возвращает структуру с координатами вершин гексагона, заданного координатами Col-Row
- * требует в глобальной области видимости переменные edge, shift, h, hh
+ * требует в глобальной области видимости объект map_object
  * @param C
  * @param R
  * @return {Object}
  */
 function getHexPath(C, R)
 {
-    var xperiod = (map_object.edge + map_object.shift) * (C-1);
-    var yperiod = (map_object.halfheight) * (R-1);
-    var ybase = ((C % 2)==0) ? map_object.halfheight : 0;
+    var xperiod = (map_object.grid_edge + map_object.grid_shift) * (C-1);
+    var yperiod = (map_object.grid_halftransversive) * (R-1);
+    var ybase = ((C % 2)==0) ? map_object.grid_halftransversive : 0;
 
-    var shift = map_object.shift;
-    var edge = map_object.edge;
-    var hh = map_object.halfheight;
-    var h = map_object.height;
+    var shift = map_object.grid_shift;
+    var edge = map_object.grid_edge;
+    var hh = map_object.grid_halftransversive;
+    var h = map_object.grid_transversive;
 
     var hv = {
         v1: Vector(shift        +   xperiod, ybase +        h*(R-1)),
@@ -277,12 +288,17 @@ function drawFogOfWar(canvas_context, revealed_areas, alpha)
         maxcol  = map_object.max_col,
         maxrow  = map_object.max_row;
     var localalpha  = alpha || map_object.areas_hidden;
+    var fullfog = isEmpty(revealed_areas);
 
     for (var col=1; col <= maxcol; col++) {
         for (var row=1; row <= maxrow; row++) {
             zkey = 'z'+pad(col,2)+pad(row,2);
-            if (zkey in revealed_areas) continue;
-            if (row == maxrow && (col % 2) == 0) continue;
+
+            if (!fullfog) {
+                if (zkey in revealed_areas) continue;
+                if (row == maxrow && (col % 2) == 0) continue;
+            }
+
             drawHex(canvas_context, col, row, localalpha);
         }
     }
@@ -293,12 +309,10 @@ function drawFogOfWar(canvas_context, revealed_areas, alpha)
  */
 function initHexGrid()
 {
-    with (map_object) {
-        shift   = edge / 2;
-        halfheight = height / 2;
-        x0      = border_size;
-        y0      = border_size;
-    }
+    map_object.grid_shift = map_object.grid_edge / 2;
+    map_object.grid_halftransversive = map_object.grid_transversive / 2;
+    map_object.x0   =   map_object.border_size;
+    map_object.y0   =   map_object.border_size;
 }
 
 
