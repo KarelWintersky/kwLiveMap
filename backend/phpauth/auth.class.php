@@ -1266,5 +1266,15 @@ class Auth
         return $return;
     }
 
+    /**
+     * KW: Возвращает информацию о текущем пользователе (массив)
+     * get CURRENT userinfo: array or false
+     */
+    public function getCurrentUserInfo()
+    {
+        return $this->getUser($this->getSessionUID( $this->getSessionHash() ));
+    }
+
 
 }
+

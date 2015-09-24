@@ -22,12 +22,21 @@ $dbh = DB_Connect();
 
 $is_this_exists = DB_checkProjectExists($dbh, $project_alias, 'map');
 
-if (!$is_this_exists['project'] /* && $project_alias != 'sandbox' */)     redirect('/sandbox/map');
+// если проект не существует - идем в песочницу
+if (!$is_this_exists['project']) redirect('/sandbox');
 
+
+$project_info = DB_loadProjectInfo($dbh, $project_alias);
+$maps_list = DB_getMapsListInProject($dbh, $project_alias);
 
 $tpl_file = 'info.project.html';
 
-$template_data = array();
+$template_data = array(
+    'project_alias' =>  $project_alias,
+    'maps_list'     =>  $maps_list,
+    'project_description'   =>  $project_info['description']
+);
+
 
 $html = websun_parse_template_path($template_data, $tpl_file, '$/template');
 

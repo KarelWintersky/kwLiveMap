@@ -217,7 +217,6 @@ function DB_GetRevisionById(\PDO $dbh, $revision_id)
 
 /**
  * Возвращаем список ревизий в виде строки из <LI>ссылок</LI>
- * @todo: изменить ссылку!!!
  * @param $dbh
  * @param $coords_col
  * @param $coords_row
@@ -244,12 +243,12 @@ AND project_alias = :project_alias AND map_alias = :map_alias";
             'map_alias'     =>  $map_alias
         ));
 
-        while($row = $sth->fetch(PDO::FETCH_ASSOC)){
+        while ($row = $sth->fetch(\PDO::FETCH_ASSOC)){
 
             $revisions_string .= sprintf(
-                '<li><a href="edit.php?frontend=canvas&col=%s&row=%s&hexcoord=%s&revision=%s">%s, %s</a> <em>(IP: %s)</em>: %s</li>'."\r\n",
-                $row['hexcol'],
+                '<li><a href="edit.php?callback=canvas&row=%s&col=%s&hexcoord=%s&revision=%s">%s, %s</a> <em>(IP: %s)</em>: %s</li>'."\r\n",
                 $row['hexrow'],
+                $row['hexcol'],
                 $row['hexcoords'],
                 $row['id'],
                 $row['edit_date'],
@@ -430,3 +429,101 @@ VALUES
         die(__LINE__ . $e->getMessage());
     }
 }
+
+/**
+ * Загружает из БД информацию по проекту: описание проекта и так далее
+ * @todo: надо ли возвращать количество карт в проекте и вообще хранить его?
+ *
+ * @param PDO $dbh
+ * @param $project_alias
+ * @return bool
+ */
+function DB_loadProjectInfo(\PDO $dbh, $project_alias)
+{
+    $project = array();
+    // get base project_info
+    try {
+        $query = "
+        SELECT *
+        FROM lme_project_settings
+        ";
+        $sth = $dbh->prepare($query);
+        $sth->execute();
+
+        $row = $sth->fetch(\PDO::FETCH_ASSOC);
+
+        if ($row) {
+            $project = $row;
+        }
+    }catch (\PDOException $e){
+        die(__LINE__ . $e->getMessage());
+    }
+    return $project;
+}
+
+/**
+ * Возвращает список карт, имеющихся у проекта.
+ * RAW-функция, не учитывает никакие права доступа, возвращает список ВСЕХ имеющихся карт
+ * На самом деле надо показывать только те карты, которые или public, или к которым у текущего пользователя
+ * есть права viewer и старше.
+ *
+ * @todo: permissions
+ * @param PDO $dbh
+ * @param $project_alias
+ * @return array
+ *
+ */
+function DB_getMapsListInProject(\PDO $dbh, $project_alias)
+{
+    $maps_list = array();
+
+    try {
+        $query = "
+    SELECT id, owner_id, map_title, map_alias, view_style
+    FROM lme_map_settings
+    WHERE project_alias = ?";
+
+        $sth = $dbh->prepare($query);
+        $sth->execute(array($project_alias));
+
+        while($row = $sth->fetch(\PDO::FETCH_ASSOC)){
+            $maps_list[ $row['id'] ] = $row;
+        }
+
+    }catch (\PDOException $e) {
+        die(__LINE__ . $e->getMessage());
+    }
+
+    return $maps_list;
+}
+
+/**
+ * Возвращает список проектов, владелец которых - указанный пользователь
+ * @param PDO $dbh
+ * @param $userid
+ * @return array
+ */
+function DB_getProjectsByUser(\PDO $dbh, $userid)
+{
+    $plist = array();
+
+    try {
+        $query = "
+        SELECT id, project_alias, project_title
+        FROM lme_project_settings
+        WHERE owner_id = ?
+        ";
+        $sth = $dbh->prepare($query);
+        $sth->execute(array($userid));
+
+        while ($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
+            $plist[ $row['id'] ] = $row;
+        }
+
+    }catch (\PDOException $e) {
+        die(__LINE__ . $e->getMessage());
+    }
+
+    return $plist;
+}
+

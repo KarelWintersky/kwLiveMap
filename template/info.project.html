@@ -11,10 +11,19 @@
 <h2>Карты:</h2>
 
 <ul>
+    {%*maps_list*}
     <li>
-        <a href="/trollfjorden/map">Карта Троллячьих Фьордов</a>
+        <a href="/{*project_alias*}/{*maps_list:map_alias*}">{*maps_list:map_title*}</a>
     </li>
+    {*maps_list*%}
 </ul>
+
+<fieldset>
+    <legend>О проекте</legend>
+    {*project_description*}
+</fieldset>
+
+<br/>
 
 <fieldset>
     <legend>Список изменений</legend>

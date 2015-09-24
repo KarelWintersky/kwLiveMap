@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<h2>Общее</h2>
+<h2>Действия</h2>
 
 <ul>
 {?*is_logged_in=0*}
@@ -40,13 +40,35 @@
 
 </ul>
 
-<h2>Проекты</h2>
+{?*is_logged_in=1*}
+
+<h2>Мои проекты</h2>
+<ul>
+    {?*my_projects_count=0*}
+    <li>
+        У меня еще нет проектов.
+    </li>
+    {*my_projects_count=0*?}
+
+    {%*my_projects_list*}
+    <li>
+        <a href="/{*my_projects_list:project_alias*}">{*my_projects_list:project_title*}</a>
+    </li>
+    {*my_projects_list*%}
+</ul>
+<a href="">Создать проект >>> </a>
+
+{*is_logged_in=1*?}
+
+<h2>Общедоступные проекты</h2>
 
 <ul>
     <li>
         <a href="/sandbox">Песочница</a>
     </li>
 </ul>
+
+<a href="https://telegram.me/joinchat/BDcmKDuq5DGPwBx8z8ewuw">Книга жалоб и предложений (Telegram)</a>
 
 </body>
 </html>
