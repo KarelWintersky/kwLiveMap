@@ -446,9 +446,10 @@ function DB_loadProjectInfo(\PDO $dbh, $project_alias)
         $query = "
         SELECT *
         FROM lme_project_settings
+        WHERE project_alias LIKE ?
         ";
         $sth = $dbh->prepare($query);
-        $sth->execute();
+        $sth->execute(array($project_alias));
 
         $row = $sth->fetch(\PDO::FETCH_ASSOC);
 

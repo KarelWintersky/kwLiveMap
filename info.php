@@ -25,8 +25,12 @@ $is_this_exists = DB_checkProjectExists($dbh, $project_alias, 'map');
 // если проект не существует - идем в песочницу
 if (!$is_this_exists['project']) redirect('/sandbox');
 
-
 $project_info = DB_loadProjectInfo($dbh, $project_alias);
+// объединить две функции в одну. Если проекта нет - из базы придет пустой массив!
+// Т.е. нет смысла проверять наличие проекта, а потом еще раз дергать данные
+// к тому же устаревшее поведение - инфа о проекте лежит в lme_map_settings!
+
+
 $maps_list = DB_getMapsListInProject($dbh, $project_alias);
 
 $tpl_file = 'info.project.html';
@@ -36,7 +40,6 @@ $template_data = array(
     'maps_list'     =>  $maps_list,
     'project_description'   =>  $project_info['description']
 );
-
 
 $html = websun_parse_template_path($template_data, $tpl_file, '$/template');
 
