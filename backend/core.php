@@ -64,3 +64,12 @@ function redirect($url)
     if (headers_sent() === false) header('Location: '.$url);
     die();
 }
+
+/**
+ * @return string
+ */
+function getCopyright()
+{
+    global $CONFIG;
+    return '(c) Karel Wintersky, 2015, ver '.$CONFIG['version'];
+}

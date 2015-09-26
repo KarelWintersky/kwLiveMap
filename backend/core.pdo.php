@@ -168,6 +168,10 @@ function DB_GetMapInfo(\PDO $dbh, $project, $map)
 
         if ($sth->rowCount() > 0) {
             $map_object = $sth->fetch(\PDO::FETCH_ASSOC);
+
+            if (($map_object['view_style'] != 'canvas') || ($map_object['view_style'] != 'leaflet'))
+                $map_object['view_style'] = 'canvas';
+
         } else {
             $map_exists = false;
             $map_object = DB_GetMapSandbox();
@@ -325,35 +329,6 @@ function DB_GetRevealedTiles(\PDO $dbh, $project_alias, $map_alias)
 }
 
 /**
- * Проверяет существование проекта
- * @param PDO $dbh
- * @param $project_alias
- * @param $map_alias
- * @return int
- */
-function DB_checkProjectExists(\PDO $dbh, $project_alias, $map_alias)
-{
-
-    try {
-        $query = "SELECT count(id) FROM lme_map_settings WHERE project_alias = ?";
-        $sth = $dbh->prepare($query);
-        $sth->execute(array($project_alias));
-
-        $result['project'] = ($sth->fetchColumn()) ? true : false;
-
-        $query = "SELECT count(id) FROM lme_map_settings WHERE map_alias = ?";
-        $sth = $dbh->prepare($query);
-        $sth->execute(array($map_alias));
-
-        $result['map'] = ($sth->fetchColumn())  ? true : false;
-
-    }catch (\PDOException $e){
-        die(__LINE__ . $e->getMessage());
-    }
-    return $result;
-}
-
-/**
  * template function
  * @param PDO $dbh
  * @param $data
@@ -375,70 +350,14 @@ function DB_template(\PDO $dbh, $data)
 }
 
 
-function install(\PDO $dbh)
-{
-    // try add user 'root'
-
-
-    // try add project 'sandbox'
-
-
-    // try add map 'sandbox/map'
-    $sandbox_map = array(
-        'id'                =>  0,
-        'project_alias'     =>  'sandbox',
-        'project_title'     =>  'Песочница',
-        'map_alias'         =>  'map',
-        'map_title'         =>  'Карта для развлечений',
-        'description'       =>  '',
-        'grid_edge'         =>  22,
-        'grid_transversive' =>  38,
-        'grid_type'         =>  'hex:x',
-        'grid_max_col'      =>  20,
-        'grid_max_row'      =>  20,
-        'image_filename'    =>  'sandbox.png',
-        'image_width'       =>  672,
-        'image_height'      =>  780,
-        'leaflet_filename'  =>  'sandbox.png',
-        'leaflet_width'     =>  672,
-        'leaflet_height'    =>  780,
-        'leaflet_ief'       =>  1,
-        'view_bordersize'   =>  1,
-        'view_fogdensity'   =>  0.2,
-        'view_style'        =>  'canvas',
-        'view_minzoom'      =>  1,
-        'view_maxzoom'      =>  1,
-        'view_defaultzoom'  =>  1
-    );
-
-    try {
-        // $Config->table_map_settings
-        $query = "
-INSERT INTO lme_map_settings
-(project_alias, project_title, map_alias, map_title, description, grid_edge, grid_transversive, grid_type,
-grid_max_col, grid_max_row, image_filename, image_width, image_height, leaflet_filename, leaflet_width,
-leaflet_height, leaflet_ief, view_bordersize, view_fogdensity, view_style, view_minzoom, view_maxzoom, view_defaultzoom)
-VALUES
-(:project_alias, :project_title, :map_alias, :map_title, :description, :grid_edge, :grid_transversive, :grid_type,
-:grid_max_col, :grid_max_row, :image_filename, :image_width, :image_height, :leaflet_filename, :leaflet_width,
-:leaflet_height, :leaflet_ief, :view_bordersize, :view_fogdensity, :view_style, :view_minzoom, :view_maxzoom, :view_defaultzoom)";
-        $sth = $dbh->prepare($query);
-        $sth->execute($sandbox_map);
-
-    }catch (\PDOException $e){
-        die(__LINE__ . $e->getMessage());
-    }
-}
-
 /**
  * Загружает из БД информацию по проекту: описание проекта и так далее
- * @todo: надо ли возвращать количество карт в проекте и вообще хранить его?
  *
  * @param PDO $dbh
  * @param $project_alias
- * @return bool
+ * @return array - инфорация о проекте или пустой массив, если проекта нет.
  */
-function DB_loadProjectInfo(\PDO $dbh, $project_alias)
+function DB_getProjectInfo(\PDO $dbh, $project_alias)
 {
     $project = array();
     // get base project_info
@@ -474,7 +393,7 @@ function DB_loadProjectInfo(\PDO $dbh, $project_alias)
  * @return array
  *
  */
-function DB_getMapsListInProject(\PDO $dbh, $project_alias)
+function DB_getMapsListAtProject(\PDO $dbh, $project_alias)
 {
     $maps_list = array();
 

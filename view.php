@@ -22,43 +22,28 @@ $map_alias
     ? $_GET['map']
     : die('No such map!');
 
-/*
-Теперь нужно по полученным данным (project_name, map_name) извлечь из таблиц
-lme_projects    : настройки проекта
-lme_maps        : настройки конкретной карты
-Кстати, отображение карты - leaflet или канвас - тоже описывается в таблице lme_maps
-*/
-
 $dbh = DB_Connect();
 
-// redirect to sandbox or project folder if map not exists
-$is_this_exists = DB_checkProjectExists($dbh, $project_alias, $map_alias);
-if (!$is_this_exists['project'] && $project_alias != 'sandbox')     redirect('/sandbox/map');
-if (!$is_this_exists['map'] && $map_alias != 'map') redirect("/{$project_alias}");
-
-
+// загружаем информацию по карте и если такой карты нет - идем в корень текущего проекта
+// ну а если окажется, что и проекта нет - мы пойдем в песочницу
 $map_info = DB_GetMapInfo($dbh, $project_alias, $map_alias);
+if ( !$map_info['existance'] ) redirect("/{$project_alias}");
+
+$project_info = DB_getProjectInfo($dbh, $project_alias);
+
 $map = $map_info['map'];
 
 $template_data = $map;
 
-$template_data['image_filename'] = "/storage/{$project_alias}/{$map['image_filename']}";
-$template_data['leaflet_filename'] = "/storage/{$project_alias}/{$map['leaflet_filename']}";
+$template_data = array_merge($template_data, array(
+    'project_title'     =>  $project_info['project_title'],
+    'image_filename'    =>  "/storage/{$project_alias}/{$map['image_filename']}",
+    'leaflet_filename'  =>  "/storage/{$project_alias}/{$map['leaflet_filename']}",
+    'map_header'        =>  $project_info['project_title'] . " -- " . $map['map_title'],
+    'copyright'         =>  getCopyright()
+));
 
-if ($map_info['is_sandbox']) {
-    $template_data['map_header'] = "Такой карты нет, но вы можете поиграться в песочнице!";
-    $template_data['image_filename'] = "/storage/sandbox/{$map['image_filename']}";
-    $template_data['leaflet_filename'] = "/storage/sandbox/{$map['leaflet_filename']}";
-    $template_data['project_alias'] = 'sandbox';
-    $template_data['map_alias'] = 'map';
-    $template_data['mapis'] = 'sandbox';
-} else {
-    $template_data['map_header'] = $map['project_title'] . " -- " . $map['map_title'];
-}
-
-$template_data['copyright'] = '(c) Karel Wintersky, 2015, ver 0.6.+';
-
-$tpl_file = 'view.canvas.html';
+$tpl_file = "view.{$map['view_style']}.html";
 
 $html = websun_parse_template_path($template_data, $tpl_file, '$/template');
 

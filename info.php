@@ -20,18 +20,10 @@ $project_alias
 
 $dbh = DB_Connect();
 
-$is_this_exists = DB_checkProjectExists($dbh, $project_alias, 'map');
+$project_info = DB_getProjectInfo($dbh, $project_alias);
+if (count($project_info) == 0) redirect('/sandbox');
 
-// если проект не существует - идем в песочницу
-if (!$is_this_exists['project']) redirect('/sandbox');
-
-$project_info = DB_loadProjectInfo($dbh, $project_alias);
-// объединить две функции в одну. Если проекта нет - из базы придет пустой массив!
-// Т.е. нет смысла проверять наличие проекта, а потом еще раз дергать данные
-// к тому же устаревшее поведение - инфа о проекте лежит в lme_map_settings!
-
-
-$maps_list = DB_getMapsListInProject($dbh, $project_alias);
+$maps_list = DB_getMapsListAtProject($dbh, $project_alias);
 
 $tpl_file = 'info.project.html';
 
