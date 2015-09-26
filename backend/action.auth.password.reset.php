@@ -3,14 +3,7 @@
  * User: Arris
  * Date: 08.09.15, time: 01:15
  */
-require_once 'config/config.php';
-require_once 'core.php';
-require_once 'core.pdo.php';
-require_once 'websun.php';
-
-require_once "phpauth/languages/en_GB.php";
-require_once "phpauth/config.class.php";
-require_once "phpauth/auth.class.php";
+require_once '_required_libs.php';
 
 global $CONFIG;
 

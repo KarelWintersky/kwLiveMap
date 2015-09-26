@@ -1,8 +1,5 @@
 <?php
-require_once 'config/config.php';
-require_once 'core.php';
-require_once 'core.pdo.php';
-require_once 'websun.php';
+require_once '_required_libs.php';
 
 global $CONFIG;
 
@@ -19,6 +16,8 @@ $map_alias
     = isset($_POST['map_alias'])
     ? $_POST['map_alias']
     : die('No such map!');
+
+// получить project_id & map_id по алиасам!
 
 $data = array(
     'hexcol'        =>  intval($_POST['hexcoord_col']),
