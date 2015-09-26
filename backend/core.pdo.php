@@ -250,7 +250,7 @@ AND project_alias = :project_alias AND map_alias = :map_alias";
         while ($row = $sth->fetch(\PDO::FETCH_ASSOC)){
 
             $revisions_string .= sprintf(
-                '<li><a href="edit.php?callback=canvas&row=%s&col=%s&hexcoord=%s&revision=%s">%s, %s</a> <em>(IP: %s)</em>: %s</li>'."\r\n",
+                '<li><a href="edit.region.php?callback=canvas&row=%s&col=%s&hexcoord=%s&revision=%s">%s, %s</a> <em>(IP: %s)</em>: %s</li>'."\r\n",
                 $row['hexrow'],
                 $row['hexcol'],
                 $row['hexcoords'],

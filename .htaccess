@@ -1,9 +1,9 @@
 php_flag display_startup_errors on
-#php_flag display_errors on
+# php_flag display_errors on
 php_flag html_errors on
 php_value error_reporting "E_ALL & ~E_NOTICE"
 
-# ErrorDocument 404 /404.php
+ErrorDocument 404 /404.php
 
 RewriteEngine on
 RewriteBase /
@@ -12,27 +12,27 @@ RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 
-# any project map
-RewriteRule ^([A-Za-z0-9-]+)/([^/]+)$ view.php?project=$1&map=$2 [L,QSA]
+# project/map
+RewriteRule ^([A-Za-z0-9-]+)/([^/]+)$ map.php?project=$1&map=$2 [L,QSA]
 
-# project settings
+# project/settings
 #кроме того, вместо \* поставил \@ потому что * в ссылках криво парсится шаблонизатором
-RewriteRule ^([A-Za-z0-9-]+)/\@/project.editteam$ project_editteam.php?project=$1 [L,QSA]
-RewriteRule ^([A-Za-z0-9-]+)/\@/project.settings$ project_settings.php?project=$1 [L,QSA]
-RewriteRule ^([A-Za-z0-9-]+)/\@/project.contribution$ project_contribution.php?project=$1 [L,QSA]
+RewriteRule ^([A-Za-z0-9-]+)/\@/project.editteam$ project.editteam.php?project=$1 [L,QSA]
+RewriteRule ^([A-Za-z0-9-]+)/\@/project.settings$ project.settings.php?project=$1 [L,QSA]
+RewriteRule ^([A-Za-z0-9-]+)/\@/project.contribution$ project.contribution.php?project=$1 [L,QSA]
 
 # ---------------
-#any project, any map, edit
-RewriteRule ^([A-Za-z0-9-]+)/([^/]+)/edit$ edit.php?project=$1&map=$2 [L,QSA]
+# project/map/edit
+RewriteRule ^([A-Za-z0-9-]+)/([^/]+)/edit$ edit.region.php?project=$1&map=$2 [L,QSA]
 
-# root rules
-RewriteRule ^register$ auth.php?action=register [L,QSA]
-RewriteRule ^login$ auth.php?action=login [L,QSA]
-RewriteRule ^logout$ auth.php?action=logout [L,QSA]
-RewriteRule ^recover$ auth.php?action=recover [L,QSA]
-RewriteRule ^mysettings$ auth.php?action=mysettings [L,QSA]
-RewriteRule ^activateaccount$ auth.php?action=activateaccount [L,QSA]
-RewriteRule ^resetpassword$ auth.php?action=resetpassword [L,QSA]
+# root rules (auth)
+RewriteRule ^register$  auth.controller.php?action=register [L,QSA]
+RewriteRule ^login$     auth.controller.php?action=login [L,QSA]
+RewriteRule ^logout$    auth.controller.php?action=logout [L,QSA]
+RewriteRule ^recover$   auth.controller.php?action=recover [L,QSA]
+RewriteRule ^mysettings$ auth.controller.php?action=mysettings [L,QSA]
+RewriteRule ^activateaccount$ auth.controller.php?action=activateaccount [L,QSA]
+RewriteRule ^resetpassword$ auth.controller.php?action=resetpassword [L,QSA]
 
-# project info
-RewriteRule ^([A-Za-z0-9-]+)$ info.php?project=$1 [L,QSA]
+# /project (info)
+RewriteRule ^([A-Za-z0-9-]+)$ project.php?project=$1 [L,QSA]

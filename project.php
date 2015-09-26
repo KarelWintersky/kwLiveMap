@@ -25,7 +25,7 @@ if (count($project_info) == 0) redirect('/sandbox');
 
 $maps_list = DB_getMapsListAtProject($dbh, $project_alias);
 
-$tpl_file = 'info.project.html';
+$tpl_file = 'project.html';
 
 $template_data = array(
     'project_alias' =>  $project_alias,
