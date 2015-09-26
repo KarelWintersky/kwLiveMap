@@ -4,14 +4,15 @@
  * Date: 07.09.15, time: 1:37
  */
 
-require_once '_required_libs.php';
+require_once '_required_lme.php';
 
-global $CONFIG;
+$config = new LiveMapEngine\Config();
+$db     = new LiveMapEngine\DB();
+$dbh    = $config->getconnection();
 
-$dbh = DB_Connect();
+$authconfig = new PHPAuth\Config($dbh);
+$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
 
-$config = new PHPAuth\Config($dbh);
-$auth   = new PHPAuth\Auth($dbh, $config, $lang);
 
 $auth_result = $auth->activate($_POST['auth:activate_key']);
 

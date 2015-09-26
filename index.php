@@ -1,12 +1,12 @@
 <?php
-require_once 'backend/_required_libs.php';
+require_once 'backend/_required_lme.php';
 
-global $CONFIG;
+$config = new LiveMapEngine\Config();
+$db     = new LiveMapEngine\DB();
+$dbh    = $config->getconnection();
 
-$dbh = DB_Connect();
-
-$config = new PHPAuth\Config($dbh);
-$auth   = new PHPAuth\Auth($dbh, $config, $lang);
+$authconfig = new PHPAuth\Config($dbh);
+$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
 
 $is_logged_in = (int)$auth->isLogged(); // 1 if logged-in, 0 elseether
 
@@ -14,8 +14,11 @@ $this_user_id = $auth->getSessionUID( $auth->getSessionHash() );
 
 if ($is_logged_in) {
     // load my projects info
-    $my_projects_list = DB_getProjectsByUser($dbh, $this_user_id );
+    $my_projects_list = $db->getProjectsByUser( $this_user_id );
     $my_projects_count = count($my_projects_list);
+} else {
+    $my_projects_count = 0;
+    $my_projects_list = array();
 }
 
 // show template

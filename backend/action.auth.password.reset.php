@@ -3,14 +3,14 @@
  * User: Arris
  * Date: 08.09.15, time: 01:15
  */
-require_once '_required_libs.php';
+require_once '_required_lme.php';
 
-global $CONFIG;
+$config = new LiveMapEngine\Config();
+$db     = new LiveMapEngine\DB();
+$dbh    = $config->getconnection();
 
-$dbh = DB_Connect();
-
-$config = new PHPAuth\Config($dbh);
-$auth   = new PHPAuth\Auth($dbh, $config, $lang);
+$authconfig = new PHPAuth\Config($dbh);
+$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
 
 $auth_result = $auth->resetPass(
     $_POST['auth:reset_key'],

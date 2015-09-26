@@ -3,14 +3,14 @@
  * User: Arris
  * Date: 06.09.15, time: 16:34
  */
-require_once '_required_libs.php';
+require_once '_required_lme.php';
 
-global $CONFIG;
+$config = new LiveMapEngine\Config();
+$db     = new LiveMapEngine\DB();
+$dbh    = $config->getconnection();
 
-$dbh = DB_Connect();
-
-$config = new PHPAuth\Config($dbh);
-$auth   = new PHPAuth\Auth($dbh, $config, $lang);
+$authconfig = new PHPAuth\Config($dbh);
+$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
 
 if ($auth->isLogged()) {
 
@@ -19,7 +19,7 @@ if ($auth->isLogged()) {
     $auth_result = $auth->logout($session_hash);
 
     if ($auth_result) {
-        unsetcookie($config->__get('cookie_name'));
+        unsetcookie($authconfig->__get('cookie_name'));
         $template_data['error_messages'] = 'Мы успешно вышли из системы.';
     } else {
         $template_data['error_messages'] = 'UNKNOWN Error while logging out!';

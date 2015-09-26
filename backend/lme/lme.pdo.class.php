@@ -17,7 +17,8 @@ class DB extends Config {
      */
     public function __construct()
     {
-        $this->connection = $this->getconnection();
+        parent::__construct();
+        $this->connection = parent::getconnection();
     }
 
     /**
@@ -308,7 +309,7 @@ AND project_alias = :project_alias AND map_alias = :map_alias";
 
 
     /**
-     * Возвращает список проектов, владелец которых - указанный пользователь
+     * Возвращает список проектов, владелец которых - указанный (по id) пользователь
      * @param $userid
      * @return array
      */

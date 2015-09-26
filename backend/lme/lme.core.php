@@ -69,3 +69,4 @@ function redirect($url)
     if (headers_sent() === false) header('Location: '.$url);
     die();
 }
+

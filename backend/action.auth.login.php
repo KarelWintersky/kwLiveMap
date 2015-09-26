@@ -3,15 +3,14 @@
  * User: Arris
  * Date: 06.09.15, time: 16:34
  */
-require_once '_required_libs.php';
+require_once '_required_lme.php';
 
-global $CONFIG;
+$config = new LiveMapEngine\Config();
+$db     = new LiveMapEngine\DB();
+$dbh    = $config->getconnection();
 
-$dbh = DB_Connect();
-$auth_result = array();
-
-$config = new PHPAuth\Config($dbh);
-$auth   = new PHPAuth\Auth($dbh, $config, $lang);
+$authconfig = new PHPAuth\Config($dbh);
+$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
 
 switch ($_POST['auth:loginaction']) {
     case 'login': {
@@ -23,7 +22,7 @@ switch ($_POST['auth:loginaction']) {
 
         if (!$auth_result['error']) {
             // no errors
-            setcookie($config->__get('cookie_name'), $auth_result['hash'], time()+$auth_result['expire'], "/");
+            setcookie($authconfig->__get('cookie_name'), $auth_result['hash'], time()+$auth_result['expire'], "/");
             unsetcookie('kw_livemap_new_registred_username');
 
             $html_callback = '/';

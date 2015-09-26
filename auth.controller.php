@@ -3,14 +3,14 @@
  * User: Arris
  * Date: 03.09.15, time: 15:20
  */
-require_once 'backend/_required_libs.php';
+require_once 'backend/_required_lme.php';
 
-global $CONFIG;
+$config = new LiveMapEngine\Config();
+$db     = new LiveMapEngine\DB();
+$dbh    = $config->getconnection();
 
-$dbh = DB_Connect();
-
-$config = new PHPAuth\Config($dbh);
-$auth   = new PHPAuth\Auth($dbh, $config, $lang);
+$authconfig = new PHPAuth\Config($dbh);
+$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
 
 $is_logged_in = $auth->isLogged(); // true if logged-in
 

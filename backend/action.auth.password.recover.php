@@ -3,14 +3,14 @@
  * User: Arris
  * Date: 06.09.15, time: 16:36
  */
-require_once '_required_libs.php';
+require_once '_required_lme.php';
 
-global $CONFIG;
+$config = new LiveMapEngine\Config();
+$db     = new LiveMapEngine\DB();
+$dbh    = $config->getconnection();
 
-$dbh = DB_Connect();
-
-$config = new PHPAuth\Config($dbh);
-$auth   = new PHPAuth\Auth($dbh, $config, $lang);
+$authconfig = new PHPAuth\Config($dbh);
+$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
 
 $auth_result = $auth->requestReset($_POST['auth:recover_email']);
 

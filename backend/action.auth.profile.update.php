@@ -4,14 +4,14 @@
  * Date: 11.09.15, time: 9:54
  */
 
-require_once '_required_libs.php';
+require_once '_required_lme.php';
 
-global $CONFIG;
+$config = new LiveMapEngine\Config();
+$db     = new LiveMapEngine\DB();
+$dbh    = $config->getconnection();
 
-$dbh = DB_Connect();
-
-$config = new PHPAuth\Config($dbh);
-$auth   = new PHPAuth\Auth($dbh, $config, $lang);
+$authconfig = new PHPAuth\Config($dbh);
+$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
 
 $auth_result = array();
 $html_callback = '';
@@ -77,7 +77,7 @@ switch ($_POST['auth:editprofile:submit']) {
             if ( $auth->logout( $auth->getSessionHash() ) ) {
                 /* И удаление кук */
 
-                unsetcookie($config->__get('cookie_name'));
+                unsetcookie($authconfig->__get('cookie_name'));
 
                 //@todo: Не забываем: еще нужно удалить записи из таблицы `lme_user_permissions` (которой еще нет)
                 // и вообще много где подчистить мусор.

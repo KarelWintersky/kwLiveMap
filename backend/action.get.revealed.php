@@ -1,9 +1,14 @@
 <?php
-require_once '_required_libs.php';
+require_once '_required_lme.php';
+
+$config = new LiveMapEngine\Config();
+$db     = new LiveMapEngine\DB();
+$dbh    = $config->getconnection();
+
+$authconfig = new PHPAuth\Config($dbh);
+$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
 
 $is_can_edit = auth_CanIEdit();
-
-$dbh = DB_Connect();
 
 $project_alias
     = isset($_GET['project_alias'])
@@ -15,7 +20,7 @@ $map_alias
     ? $_GET['map_alias']
     : die('No such map!');
 
-$revealed = DB_GetRevealedTiles($dbh, $project_alias, $map_alias);
+$revealed = $db->getRevealedTiles($project_alias, $map_alias);
 
 $dbh = null;
 

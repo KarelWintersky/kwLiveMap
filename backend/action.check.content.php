@@ -1,7 +1,12 @@
 <?php
-require_once '_required_libs.php';
+require_once '_required_lme.php';
 
-global $CONFIG;
+$config = new LiveMapEngine\Config();
+$db     = new LiveMapEngine\DB();
+$dbh    = $config->getconnection();
+
+$authconfig = new PHPAuth\Config($dbh);
+$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
 
 $is_can_edit = auth_CanIEdit();
 
@@ -18,9 +23,7 @@ $map_alias
     ? $_GET['map_alias']
     : die('No such map!');
 
-$dbh = DB_Connect();
-
-$check_result = DB_GetRevisionsCount($dbh, $col, $row, $project_alias, $map_alias);
+$check_result = $db->getRevisionsCount($col, $row, $project_alias, $map_alias);
 
 if ($check_result == 0) {
     $ret = ($is_can_edit) ? 'empty' : 'ignore';

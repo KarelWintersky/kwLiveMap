@@ -10,13 +10,11 @@ class Logger extends Config
 {
     private $connection;
 
-    /*
     public function __construct()
     {
-        $this->connection = Config::getconnection(); // ??????????
-
+        parent::__construct();
+        $this->connection = parent::getconnection();
     }
-    */
 
     /**
      * @param $where

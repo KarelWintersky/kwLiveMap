@@ -1,5 +1,12 @@
 <?php
-require_once 'backend/_required_libs.php';
+require_once 'backend/_required_lme.php';
+
+$config = new LiveMapEngine\Config();
+$db     = new LiveMapEngine\DB();
+$dbh    = $config->getconnection();
+
+$authconfig = new PHPAuth\Config($dbh);
+$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
 
 // init null values
 $revisions_string = '';
@@ -26,11 +33,8 @@ $coords_col = intval( atordie($_GET, 'col', 'X-Coordinate required!'));
 $coords_row = intval( atordie($_GET, 'row', 'Y-Coordinate required!'));
 
 
-// коннект с базой
-$dbh = DB_Connect();
-
 // проверяем, сколько ревизий текста у гекса
-$revisions_count = DB_GetRevisionsCount($dbh, $coords_col, $coords_row, $project_alias, $map_alias);
+$revisions_count = $db->getRevisionsCount($coords_col, $coords_row, $project_alias, $map_alias);
 
 // в зависимости от количества ревизий заполняем данные шаблона
 if ($revisions_count != 0) {
@@ -38,15 +42,15 @@ if ($revisions_count != 0) {
     // если во входящих параметрах нет идентификатора ревизии - загружаем последнюю
     if (!isset($_GET['revision'])) {
         // загружаем последнюю ревизию
-        $revision = DB_GetRevisionLast($dbh, $coords_col, $coords_row, $project_alias, $map_alias);
+        $revision = $db->getRevisionLast($coords_col, $coords_row, $project_alias, $map_alias);
     } else {
         // загружаем нужную ревизию по идентификатору
         $revision_id = $_GET['revision'];
-        $revision = DB_GetRevisionById($dbh, $revision_id);
+        $revision = $db->getRevisionById($revision_id);
     }
 
     // выгружаем список ревизий
-    $revisions_string = DB_GetListRevisions($dbh, $coords_col, $coords_row, $project_alias, $map_alias);
+    $revisions_string = $db->getListRevisions($coords_col, $coords_row, $project_alias, $map_alias);
 } else {
     // заполняем данные
     $revision = array(
@@ -56,9 +60,6 @@ if ($revisions_count != 0) {
         'editor_name'   =>  at($_COOKIE, 'kwtrpglme_auth_editorname', ''),
     );
 }
-
-$dbh = null;
-
 
 // параметр callback больше не передаем - отображение карты зависит от настроек в конфиге
 $template_data = array(
@@ -82,10 +83,10 @@ $template_data = array(
     'region_revisions'      =>  $revisions_string,
     // other
     'info_message'          =>  at($revision, 'message', ''),
-    'copyright'             =>  '(c) Karel Wintersky, 2015, ver 0.6.+'
+    'copyright'             =>  $db->getCopyright()
 );
 
-$tpl_file = 'edit.html';
+$tpl_file = 'edit.form.html';
 
 $html = websun_parse_template_path($template_data, $tpl_file, '$/template');
 

@@ -1,7 +1,12 @@
 <?php
-require_once '_required_libs.php';
+require_once '_required_lme.php';
 
-global $CONFIG;
+$config = new LiveMapEngine\Config();
+$db     = new LiveMapEngine\DB();
+$dbh    = $config->getconnection();
+
+$authconfig = new PHPAuth\Config($dbh);
+$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
 
 // check access rights
 $is_can_edit = auth_CanIEdit();
@@ -36,9 +41,7 @@ $data = array(
 );
 
 
-$dbh = DB_Connect();
-
-$put_result = DB_UpdateHexTile($dbh, $data);
+$put_result = $db->updateHexTile($data);
 
 $dbh = null;
 

@@ -4,9 +4,7 @@
  * Date: 26.09.15, time: 13:37
  */
 
-require_once 'backend/_required_libs.php';
-
-global $CONFIG;
+require_once 'backend/_required_lme.php';
 
 $template_data = array();
 

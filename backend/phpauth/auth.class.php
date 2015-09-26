@@ -1207,7 +1207,10 @@ class Auth
      * @return string
      */
     public function getSessionHash(){
-        return $_COOKIE[$this->config->cookie_name];
+        return
+            isset($_COOKIE[$this->config->cookie_name])
+            ? $_COOKIE[$this->config->cookie_name]
+            : null;
     }
 
     /**
