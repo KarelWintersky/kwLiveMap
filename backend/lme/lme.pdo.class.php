@@ -295,7 +295,6 @@ AND project_alias = :project_alias AND map_alias = :map_alias";
                 $map_object = $sth->fetch(\PDO::FETCH_ASSOC);
             } else {
                 $map_exists = false;
-                $map_object = $this->getSandboxMap();
             }
         } catch (\PDOException $e) {
             die(__LINE__ . $e->getMessage());
@@ -303,7 +302,6 @@ AND project_alias = :project_alias AND map_alias = :map_alias";
         return array(
             'map'           =>  $map_object,
             'existance'     =>  $map_exists,
-            'is_sandbox'    =>  !$map_exists
         );
     }
 

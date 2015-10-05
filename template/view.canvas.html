@@ -18,6 +18,7 @@
     <script type="text/javascript" src="/frontend/js/kw.lme.view.js"></script>
     <!-- internal js -->
     <script type="text/javascript">
+        var current_href = '';
         var this_project = {
             // параметры проекта и карты
             project_alias    :   '{*project_alias*}',
@@ -127,7 +128,22 @@
             $(document).on('cbox_closed', function(){
                 clearHash();
             });
+
+            // обрабатываем клик по ссылке внутри попап окна
+            $(document).on('click', '#cboxLoadedContent a', function(){
+                var href = $(this).attr('href');
+                current_href = href;
+                window.location.assign(href);
+                window.location.reload(true);
+            });
+
+
         });
+        window.onpopstate = function(){
+            if (window.location.href != current_href) {
+                window.location.reload(true);
+            }
+        }
     </script>
 </head>
 <body>

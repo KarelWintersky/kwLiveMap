@@ -174,6 +174,9 @@
 {?*a>3*}..{*a>3*?}
 */
 
+/**
+ *
+ */
 class websun {
 	
 	public $vars;
@@ -182,8 +185,14 @@ class websun {
 	public $TIMES;
 	private $profiling;
 	private $predecessor; // объект шаблонизатора верхнего уровня, из которого делался вызов текущего
-	
-	function __construct(
+
+    /**
+     * @param array $vars
+     * @param bool $templates_root
+     * @param bool $profiling
+     * @param bool $predecessor
+     */
+    function __construct(
 			$vars = array(), 
 			$templates_root = FALSE, 
 			$profiling = FALSE,
@@ -219,9 +228,13 @@ class websun {
 		
 		$this->predecessor = $predecessor;
 	}
-	
-	
-	function parse_template($template) {
+
+
+    /**
+     * @param $template
+     * @return mixed
+     */
+    function parse_template($template) {
 		if ($this->profiling)
 			$start = microtime(1);
 		
@@ -277,9 +290,12 @@ class websun {
 		return $template;
 	}
 	
-	// дописывание массива переменных из шаблона
-	// (хак для Бурцева)
-	function addvars($matches) {
+    /**
+     * Дописывание массива переменных из шаблона (хак для Бурцева)
+     * @param $matches
+     * @return bool
+     */
+    function addvars($matches) {
 		if ($this->profiling) 
 			$start = microtime(1);
 		
@@ -298,9 +314,12 @@ class websun {
 		
 		return TRUE;
 	}
-	
-	
-	function var_value($string) {
+
+    /**
+     * @param $string
+     * @return array|bool|int|mixed|null|string
+     */
+    function var_value($string) {
 		
 		if ($this->profiling)
 			$start = microtime(1);
@@ -335,7 +354,7 @@ class websun {
 		elseif (mb_strlen($string) AND !preg_match('/\D/', $string))
 			# опять же скалярная величина (число)
 				// (0.1.17 - numeric() вместо этого нельзя,
-				// т.к. тогда могу быть неполадки с разворотом циклов 
+				// т.к. тогда могут быть неполадки с разворотом циклов
 				// - точки с числами могут встать хитрым образом
 				// и перепутаться с этим),
 				// а is_int() нельзя, т.к. возвращает 
@@ -392,8 +411,12 @@ class websun {
 		
 		return $out;
 	}
-	
-	function find_and_parse_cycle($template) {
+
+    /**
+     * @param $template
+     * @return mixed
+     */
+    function find_and_parse_cycle($template) {
 		if ($this->profiling) 
 			$start = microtime(1);
 		// пришлось делать специальную функцию, чтобы реализовать рекурсию
@@ -412,8 +435,12 @@ class websun {
 		
 		return $out;
 	}
-	
-	function parse_cycle($matches) {
+
+    /**
+     * @param $matches
+     * @return bool|mixed
+     */
+    function parse_cycle($matches) {
 		
 		if ($this->profiling) 
 			$start = microtime(1);
@@ -451,8 +478,12 @@ class websun {
 		
 		return $parsed;
 	}
-	
-	function find_and_parse_if($template) {
+
+    /**
+     * @param $template
+     * @return mixed
+     */
+    function find_and_parse_if($template) {
 		
 		if ($this->profiling)
 			$start = microtime(1);
@@ -472,9 +503,12 @@ class websun {
 		
 		return $out;
 	}
-	
-	
-	function parse_if($matches) {
+
+    /**
+     * @param $matches
+     * @return mixed|string
+     */
+    function parse_if($matches) {
 		// 1 - ? или ?!
 		// 2 - тело условия
 		// 3 - тело if
@@ -514,8 +548,12 @@ class websun {
 		
 		return $parsed_if;
 	}
-	
-	function check_if_condition_part($str) {
+
+    /**
+     * @param $str
+     * @return bool
+     */
+    function check_if_condition_part($str) {
 		
 		if ($this->profiling)
 			$start = microtime(1);
@@ -569,8 +607,12 @@ class websun {
 		
 		return $check;
 	}
-	
-	function parse_vars_templates_modules($matches) {
+
+    /**
+     * @param $matches
+     * @return array|bool|int|mixed|null|string
+     */
+    function parse_vars_templates_modules($matches) {
 		if ($this->profiling) 
 			$start = microtime(1);
 		
@@ -656,8 +698,14 @@ class websun {
 
 		return $html;
 	}
-	
-	function call_template($template_notation, $vars) {
+
+    /**
+     *
+     * @param $template_notation
+     * @param $vars
+     * @return mixed
+     */
+    function call_template($template_notation, $vars) {
 		if ($this->profiling) 
 			$start = microtime(1);
 
@@ -693,8 +741,12 @@ class websun {
 		
 		return $result;
 	}
-	
-	function get_var_or_string($str) {
+
+    /**
+     * @param $str
+     * @return array|bool|int|mixed|null|string
+     */
+    function get_var_or_string($str) {
 		// используется, в основном, 
 		// для получения имён шаблонов и модулей
 		if ($this->profiling) 
@@ -713,8 +765,12 @@ class websun {
 		
 		return $out;
 	}
-	
-	function get_template($tpl) {
+
+    /**
+     * @param $tpl
+     * @return bool|mixed
+     */
+    function get_template($tpl) {
 		if ($this->profiling) 
 			$start = microtime(1);
 		
@@ -734,17 +790,21 @@ class websun {
 		
 		return $out;
 	}
-	
-	
-	function template_real_path($tpl) {
-		// функция определяет реальный путь к шаблону в файловой системе
-		// первый символ пути к шаблону определяет тип пути 
-		// если в начале адреса есть / - интерпретируем как абсолютный путь ФС
-		// если второй символ пути - двоеточие (путь вида C:/ - Windows) - 
-		// также интепретируем как абсолютный путь ФС
-		// если есть ^ - отталкиваемся от $templates_root_dir
-		// если $ - от $_SERVER[DOCUMENT_ROOT]
-		// во всех остальных случаях отталкиваемся от каталога текущего шаблона - templates_current_dir
+
+    /**
+     * Функция определяет реальный путь к шаблону в файловой системе
+     * первый символ пути к шаблону определяет тип пути
+     * если в начале адреса есть / - интерпретируем как абсолютный путь ФС
+     * если второй символ пути - двоеточие (путь вида C:/ - Windows) -
+     * также интепретируем как абсолютный путь ФС
+     * если есть ^ - отталкиваемся от $templates_root_dir
+     * если $ - от $_SERVER[DOCUMENT_ROOT]
+     * во всех остальных случаях отталкиваемся от каталога текущего шаблона: templates_current_dir
+     * @param $tpl
+     * @return string
+     */
+    function template_real_path($tpl) {
+
 		if ($this->profiling) 
 			$start = microtime(1);
 		
@@ -773,12 +833,16 @@ class websun {
 		
 		return $tpl_real_path;
 	}
-	
-	function write_time($method, $start, $end) {
+
+    /**
+     * @param $method
+     * @param $start
+     * @param $end
+     */
+    function write_time($method, $start, $end) {
 		
 		//echo ($this->predecessor) . '<br>';
-		
-		
+
 		if (!$this->predecessor)
 			$time = &$this->TIMES;
 		
@@ -800,16 +864,22 @@ class websun {
 	}
 }
 
-
+/**
+ * Функция-обёртка для быстрого вызова класса
+ * принимает шаблон в виде пути к нему
+ * @param $data
+ * @param $template_path
+ * @param bool $templates_root_dir
+ * @param bool $profiling
+ * @return mixed
+ */
 function websun_parse_template_path(
 		$data, 
 		$template_path, 
 		$templates_root_dir = FALSE,
 		$profiling = FALSE
 	) {
-	// функция-обёртка для быстрого вызова класса
-	// принимает шаблон в виде пути к нему
-	
+
 	$W = new websun($data, $templates_root_dir, $profiling);
 	$tpl = $W->get_template($template_path);
 	$W->templates_current_dir = pathinfo( $W->template_real_path($template_path), PATHINFO_DIRNAME ) . '/';
@@ -817,19 +887,23 @@ function websun_parse_template_path(
 	return $string;
 }
 
-
+/**
+ * Функция-обёртка для быстрого вызова класса
+ * принимает шаблон непосредственно в виде кода
+ * @param $data
+ * @param $template_code
+ * @param bool $templates_root_dir
+ * @param bool $profiling
+ * @return mixed
+ */
 function websun_parse_template(
 		$data, 
 		$template_code, 
 		$templates_root_dir = FALSE,
 		$profiling = FALSE
 	) {
-	// функция-обёртка для быстрого вызова класса
-	// принимает шаблон непосредственно в виде кода
 	$W = new websun($data, $templates_root_dir, $profiling);
 	$string = $W->parse_template($template_code);
 	return $string;
 }
 
-
-?>

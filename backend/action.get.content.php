@@ -6,7 +6,7 @@ $db     = new LiveMapEngine\DB();
 $dbh    = $config->getconnection();
 
 $authconfig = new PHPAuth\Config($dbh);
-$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
+$phpauth    = new PHPAuth\Auth($dbh, $authconfig, $lang);
 
 $is_can_edit = auth_CanIEdit();
 
@@ -23,6 +23,13 @@ $map_alias
     = isset($_GET['map_alias'])
     ? $_GET['map_alias']
     : die('No such map!');
+
+//
+/* @todo: вероятно сейчас надо проверить настройку карты "показывать ли туман войны"
+ * посетителю с данной ролью. Кроме того, вероятно следует объединить checkContent и
+ * getContent в 1 функцию! *
+ */
+
 
 $revision = $db->getRevisionLast($coords_col, $coords_row, $project_alias, $map_alias);
 

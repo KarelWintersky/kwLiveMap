@@ -1278,6 +1278,16 @@ class Auth
         return $this->getUser($this->getSessionUID( $this->getSessionHash() ));
     }
 
+    /**
+     * KW: Возвращает идентификатор текущего пользователя или false, если
+     * мы не залогинены.
+     * @return int
+     */
+    public function getCurrentUID()
+    {
+        return $this->getSessionUID( $this->getSessionHash() );
+    }
+
 
 }
 

@@ -23,4 +23,15 @@ class Auth extends Config
         return true;
     }
 
+    /**
+     * Возвращает права доступа пользователя к проекту и карте.
+     * @param $userid
+     * @param $project_alias
+     * @param $map_alias (Если не указать - к самому проекту)
+     */
+    public function checkUserPermissions($userid, $project_alias, $map_alias='')
+    {
+
+    }
+
 }
