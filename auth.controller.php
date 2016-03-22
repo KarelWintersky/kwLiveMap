@@ -5,13 +5,6 @@
  */
 require_once 'backend/_required_lme.php';
 
-$config = new LiveMapEngine\Config();
-$db     = new LiveMapEngine\DB();
-$dbh    = $config->getconnection();
-
-$authconfig = new PHPAuth\Config($dbh);
-$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
-
 $is_logged_in = $auth->isLogged(); // true if logged-in
 
 $template_file = '';
@@ -40,6 +33,7 @@ switch ($_GET['action']) {
             $template_file = 'auth.callback.instant_to_root.html';
             redirect('/');
         } else {
+            $template_data['strong_password'] = $authconfig->verify_password_strong_requirements;
             $template_file = 'auth/auth.register.html';
         }
         break;
@@ -68,7 +62,8 @@ switch ($_GET['action']) {
                 'username'      =>  $userdata['username'],
                 'gender'        =>  $userdata['gender'],
                 'city'          =>  $userdata['city'],
-                'current_email' =>  $userdata['email']
+                'current_email' =>  $userdata['email'],
+                'strong_password'=> $authconfig->verify_password_strong_requirements
             );
 
 

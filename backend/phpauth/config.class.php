@@ -2,37 +2,33 @@
 namespace PHPAuth;
 
 /**
- *
+ * PHPAuth Config class
  */
 class Config
 {
-    private $dbh;
     private $config;
-    private $config_table = 'lme_phpauth_config';
 
     /**
-     *
-     * Config::__construct()
-     *
-     * @param \PDO $dbh
-     * @param string $config_table
+     * Конструктор
+     * @param string $config_file
      */
-    public function __construct(\PDO $dbh, $config_table = 'config')
+    public function __construct($config_file = 'phpauth.ini')
     {
-        $this->dbh = $dbh;
-
-        if (func_num_args() > 1)
-            $this->phpauth_config_table = $config_table;
-
         $this->config = array();
 
-        $query = $this->dbh->query("SELECT * FROM {$this->config_table}");
+        $configfile = ($config_file == '') ? 'phpauth.ini' : trim($config_file, '/');
+        $path = __DIR__ . '/' . $configfile;
 
-        while($row = $query->fetch()) {
-            $this->config[$row['setting']] = $row['value'];
+        if (file_exists($path)) {
+            $parsed = parse_ini_file($path);
+            foreach ($parsed as $setting => $value) {
+                $this->config [$setting] = $value;
+            }
+        } else {
+            die("<strong>FATAL ERROR:</strong> PHPAuth config file `{$path}` not found or not exists. ");
         }
 
-        $this->setVerifyDefaults(); // Danger foreseen is half avoided.
+        $this->setForgottenDefaults(); // Danger foreseen is half avoided.
     }
 
     /**
@@ -48,29 +44,54 @@ class Config
 
     /**
      * Config::__set()
-     * 
+     *
      * @param mixed $setting
      * @param mixed $value
      * @return bool
      */
     public function __set($setting, $value)
     {
-        $query = $this->dbh->prepare("UPDATE {$this->phpauth_config_table} SET value = ? WHERE setting = ?");
-
-        if($query->execute(array($value, $setting))) {
-            $this->config[$setting] = $value;
-            return true;
-        } 
         return false;
     }
 
     /**
-     * Danger foreseen is half avoided.
-     *
-     * Set default verify* values.
-     * REQUIRED FOR USERS THAT DOES NOT UPDATE THEIR `config` TABLES.
+     * Config::override()
+     * 
+     * @param mixed $setting
+     * @param mixed $value
+     * @return bool
      */
-    private function setVerifyDefaults()
+    public function override($setting, $value){
+
+        $this->config[$setting] = $value;
+        return true;
+    }
+
+    /**
+     * Deprecated ?
+     * @param $name
+     * @param $args
+     */
+    public function __call($name, $args)
+    {
+        if ($name == 'get') {
+            return $this->config[$args[0]];
+        } elseif ($name == 'getAll') {
+            return $this->config;
+        } else {
+            var_dump('Called undefined method: ' . $name);
+            return false;
+        }
+    }
+
+
+    /**
+     * Danger foreseen is half avoided. Verify values.
+     *
+     * Set default values.
+     * REQUIRED FOR USERS THAT DOES NOT UPDATE THEIR `config` TABLES or config file.
+     */
+    private function setForgottenDefaults()
     {
         if (! isset($this->config['verify_password_min_length']) )
             $this->config['verify_password_min_length'] = 3;
@@ -89,5 +110,14 @@ class Config
 
         if (! isset($this->config['verify_email_use_banlist']) )
             $this->config['verify_email_use_banlist'] = 1;
+
+        if (! isset($this->config['emailmessage_suppress_activation']) )
+            $this->config['emailmessage_suppress_activation'] = 0;
+
+        if (! isset($this->config['emailmessage_suppress_reset']) )
+            $this->config['emailmessage_suppress_reset'] = 0;
+
     }
+
+
 }

@@ -6,13 +6,6 @@
 
 require_once '_required_lme.php';
 
-$config = new LiveMapEngine\Config();
-$db     = new LiveMapEngine\DB();
-$dbh    = $config->getconnection();
-
-$authconfig = new PHPAuth\Config($dbh);
-$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
-
 $auth_result = array();
 $html_callback = '';
 

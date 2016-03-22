@@ -13,9 +13,9 @@
     <script type="text/javascript" src="/frontend/js/jquery/jquery.colorbox.js"></script>
     <script type="text/javascript" src="/frontend/js/jquery/jquery.tiny-draggable.js"></script>
     <!-- custom js -->
-    <script type="text/javascript" src="/frontend/js/kw.lme.core.js"></script>
-    <script type="text/javascript" src="/frontend/js/kw.wlh.js"></script>
-    <script type="text/javascript" src="/frontend/js/kw.lme.view.js"></script>
+    <script type="text/javascript" src="/frontend/js/core.js"></script>
+    <script type="text/javascript" src="/frontend/js/winlochash.js"></script>
+    <script type="text/javascript" src="/frontend/js/mapview.js"></script>
     <!-- internal js -->
     <script type="text/javascript">
         var current_href = '';
@@ -115,7 +115,11 @@
 
             // `Edit this` click event
             $(document).on('click', '#actor-edit', function(){
-                document.location.href = '/{*project_alias*}/{*map_alias*}/edit?callback=canvas&' + $.param(hex_current_coords);
+                // document.location.href = '/{*project_alias*}/{*map_alias*}/edit?callback=canvas&' + $.param(hex_current_coords);
+                document.location.href =
+                        '/' + this_project.project_alias+
+                        '/' + this_project.map_alias    +
+                        '/edit?' + $.param(hex_current_coords);
             });
 
             // draggable plugin

@@ -90,6 +90,9 @@
             <label for="auth_changepassword_again">Повторите пароль: </label>
             <input type="text" size="15" id="auth_changepassword_again" name="auth:changepassword:again">
         </div>
+        {?*strong_password*}
+        <div class="hint">В пароле должна быть хотя бы 1 цифра, 1 строчная и 1 прописная буква.</div>
+        {*strong_password*?}
         <div class="field">
             <label for="auth_changepassword_submit"></label>
             <button name="auth:editprofile:submit" id="auth_changepassword_submit" value="change_password">Сменить пароль</button>

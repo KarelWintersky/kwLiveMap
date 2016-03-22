@@ -11,7 +11,15 @@ require_once 'lme/lme.auth.class.php';
 require_once 'websun/websun.php';
 
 // PHPAuth Engine
-require_once "phpauth/languages/ru_RU.php";
+// require_once "phpauth/languages/ru_RU.php";
 require_once "phpauth/config.class.php";
 require_once "phpauth/auth.class.php";
+
+$config = new LiveMapEngine\Config();
+$db     = new LiveMapEngine\DB();
+$dbh    = $config->getconnection();
+
+$authconfig = new PHPAuth\Config();
+$auth       = new PHPAuth\Auth($dbh, $authconfig);
+
  

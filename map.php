@@ -5,13 +5,6 @@
  */
 require_once 'backend/_required_lme.php';
 
-$config = new LiveMapEngine\Config();
-$db     = new LiveMapEngine\DB();
-$dbh    = $config->getconnection();
-
-$authconfig = new PHPAuth\Config($dbh);
-$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
-
 $project_alias
     = isset($_GET['project'])
     ? $_GET['project']

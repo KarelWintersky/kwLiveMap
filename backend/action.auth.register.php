@@ -5,13 +5,6 @@
  */
 require_once '_required_lme.php';
 
-$config = new LiveMapEngine\Config();
-$db     = new LiveMapEngine\DB();
-$dbh    = $config->getconnection();
-
-$authconfig = new PHPAuth\Config($dbh);
-$auth       = new PHPAuth\Auth($dbh, $authconfig, $lang);
-
 $additional_fields = array(
     'username'      =>  at($_POST, 'auth:reg_username', "Anonymous" ),
     'gender'        =>  at($_POST, 'auth:reg_gender', 'N'),

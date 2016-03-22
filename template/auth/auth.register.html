@@ -51,7 +51,9 @@
         <label for="reg_password_again">Повторите пароль:</label>
         <input type="text" size="15" id="reg_password_again" name="auth:reg_password_again">
     </div>
+{?*strong_password*}
     <div class="hint">В пароле должна быть хотя бы 1 цифра, 1 строчная и 1 прописная буква.</div>
+{*strong_password*?}
     <div>
         <button name="auth:reg_new_user_try">Регистрация >>> </button>
     </div>
